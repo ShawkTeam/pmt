@@ -5,7 +5,6 @@
    - provide a more modular code
    - go to the change named project (Partition backupper (pbt) to Partition Manager (pmt)
 
-|------------------------------------|
 |   END OF VERSION 1.5.0 CHANGELOG   |
 |------------------------------------|
 
