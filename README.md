@@ -6,7 +6,7 @@ It offers a lot of options. I will place these below. But first let me talk abou
 ```
 1. The partition name is obtained (with the -p or --partition argument)
 2. Other arguments (if used) are processed.
-3. It is backed up using DD. If the progress is not a problem, it is not given (DD)
+3. The backup and flashing processes were written according to DD's code. So there is a piece of toybox code
 ```
 
 #### Presented arguments (options)
@@ -41,7 +41,7 @@ Report bugs to <yagizzengin73@gmail.com>
 - Packages are available in publications.
 - İt is mandatory to use the `-b` | `--backup` or `-f` | `--flash` and `-p` | `--partition` argument. After all, a partition name and progress type is required to be progress.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
-- [Click to see special version changes](https://github.com/YZBruh/pbt/blob/1.8.0-en/CHANGELOG.md)
+- [Click to see special version changes](https://github.com/YZBruh/pbt/blob/1.9.0-en/CHANGELOG.md)
 - Let me know your suggestions!
 
 ### How is it built?
