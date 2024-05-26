@@ -5,5 +5,5 @@
     - option trading logic changed
     - more details
 
-|   END OF VERSION 1.8.0 CHANGELOG   |
+|   END OF VERSION 1.9.0 CHANGELOG   |
 |------------------------------------|
