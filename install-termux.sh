@@ -3,7 +3,7 @@
 # By YZBruh
 #
 
-VERSION="2.1.0"
+VERSION="2.3.0"
 CUR_DIR="$(pwd)"
 TMP_DIR="${CUR_DIR}/tempinstall"
 TERMUX_BIN_PREFIX="/data/data/com.termux/files/usr/bin"
