@@ -1,4 +1,4 @@
-/* By YZBruh */
+/* By YZBruh | ShawkTeam */
 
 /*
  * Copyright 2024 Partition Manager
@@ -78,7 +78,7 @@ void help(void)
     printf("   %s flash /sdcard/twrp/boot.img boot_a -c /dev/block/platform/bootdevice/by-name\n", bin_name);
     printf("   %s format ext4 system_a --logical\n", bin_name);
     printf("   %s -c /dev/block/platform/bootdevice/by-name --list\n\n", bin_name);
-    printf("%s <t.me/YZBruh>\n", curr_docs->docs_strs_l15);
+    printf("%s <t.me / ShawkTeam | Community / Topics -- pmt>\n", curr_docs->docs_strs_l15);
 }
 
 #if defined(__cplusplus)

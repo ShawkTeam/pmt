@@ -27,25 +27,25 @@ Examples:
    pmt format ext4 system_a --logical
    pmt -c /dev/block/platform/bootdevice/by-name --list
 
-Report bugs to <t.me/YZBruh>
+Report bugs to <t.me / ShawkTeam | Community / Topics -- pmt>
 ```
 
 #### Some notes
 
-- pmt supports multiple languages. [See languages.](https://github.com/YZBruh/pbt/blob/2.4.0/LANGUAGES.md)
-- [Add language.](https://github.com/YZBruh/pbt/blob/2.4.0/ADD-LANGUAGES.md)
+- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.4.0/LANGUAGES.md)
+- [Add language.](https://github.com/ShawkTeam/pmt/blob/2.4.0/ADD-LANGUAGES.md)
 - Feel free to ask any questions you want.
 - Packages are available in publications.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
-- [Click to see special version changes.](https://github.com/YZBruh/pbt/blob/2.4.0/CHANGELOG.md)
-- Let me know your suggestions!
+- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.4.0/CHANGELOG.md)
+- We are always open to your suggestions and support (developing)!
 
 ### How is it built?
 Android NDK is required to build.
  - [Download](https://developer.android.com/ndk/downloads) and extract the NDK package.
  - Clone this repository. And get access to it.
 ```
-git clone https://github.com/YZBruh/pbt -b 2.4.0 ./pmt
+git clone https://github.com/ShawkTeam/pmt -b 2.4.0
 cd pmt
 ```
  - Set the NDK working directory variable.

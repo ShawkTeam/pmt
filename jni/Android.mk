@@ -1,4 +1,4 @@
-# By YZBruh
+# By YZBruh | ShawkTeam
 
 # Copyright 2024 Partition Manager
 # 
