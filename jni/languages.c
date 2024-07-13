@@ -135,9 +135,9 @@ struct pmt_langdb_general tr = {
 };
 
 struct pmt_langdb_docs en_docs = {
-    .docs_strs_l1 = "[OPTIONS] backup PARTITION [OUTPUT] [OPTIONS]...",
-    .docs_strs_l2 = "[OPTIONS] flash FILE PARTITION [OPTIONS]...",
-    .docs_strs_l3 = "[OPTIONS] format FILE_SYSTEM[ext/2/3/4] PARTITION [OPTIONS]...",
+    .docs_strs_l1 = "backup PARTITION [OUTPUT] [OPTIONS]...",
+    .docs_strs_l2 = "flash FILE PARTITION [OPTIONS]...",
+    .docs_strs_l3 = "format FILE_SYSTEM[ext/2/3/4] PARTITION [OPTIONS]...",
     .docs_strs_l4 = "Options",
     .docs_strs_l5 = "It is meant to determine whether the target partition is logical.",
     .docs_strs_l6 = "It is meant to specify a custom /dev context. Only classic partitions (default: /dev/block/by-name).",

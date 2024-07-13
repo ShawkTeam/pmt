@@ -1,4 +1,4 @@
-/* By YZBruh | ShawkTeam */
+/* By YZBruh */
 
 /**
  * Copyright 2024 Partition Manager
@@ -59,6 +59,21 @@ extern int pmt_langdb_total;
 static const char* opt_symbol = "-";
 static char common_symbol_rule[350];
 
+#if !defined(__clang__)
+
+static char*
+strdup(const char* s)
+{
+    size_t len = strlen(s) + 1;
+    char* copy = malloc(len);
+    if (copy) {
+        memcpy(copy, s, len);
+    }
+    return copy;
+}
+
+#endif
+
 /**
  * He controls whether the '-' sign at 
  * the beginning of the given word
@@ -101,7 +116,7 @@ int main(int argc, char* argv[])
 
     /* check argument total */
     if (argc < 2)
-        LOGE("%s\n%s `%s --help' %s.\n", current->missing_operand, current->try_h, argv[0], current->for_more);
+        LOGE("%s.\n%s `%s --help' %s.\n", current->missing_operand, current->try_h, argv[0], current->for_more);
 
     /* a structure for long arguments */
     struct option long_options[] = {
@@ -126,8 +141,6 @@ int main(int argc, char* argv[])
     static bool pmt_setlang = false;
     static char* langpr;
     static int search_result = 3;
-    static int getvar_temp;
-    static int check_getvar_temp;
     static int opt;
 
     /* control for each argument */
@@ -194,7 +207,7 @@ int main(int argc, char* argv[])
                 return 1;
                 break;
             default:
-                LOGD("%s: %s [backup] [flash] [format] [-l | --logical] [-c | --context] [-D | --list] [-v | --version] [--help] [-L | --license]\n", current->usage_head, argv[0]);
+                LOGD("%s: %s [backup] [flash] [format] [-l | --logical] [-c | --context] [-p | --list] [-v | --version] [--help] [-L | --license]\n", current->usage_head, argv[0]);
                 return 1;
         }
     }
@@ -238,79 +251,57 @@ int main(int argc, char* argv[])
     static char arg1[20];
     sprintf(arg1, "%s", argv[1]);
 
-    for (int argtest = 2; argtest == argc; argtest++)
+    if (strcmp(argv[1], "backup") == 0)
     {
-        getvar_temp = argtest;
-        check_getvar_temp = getvar_temp;
-        getvar_temp++;
+        if (argc == 2)
+            LOGE("%s 0.\n", current->expected_backup_arg);
 
-        if (strcmp(argv[argtest], "backup") == 0)
-        {
-            check_getvar_temp++;
+        target_partition = argv[2];
 
-            if (argc < check_getvar_temp)
-                LOGE("%s 0.\n", current->expected_backup_arg);
+        if (argc == 3)
+            out = target_partition;
+        else
+            out = argv[3];
 
-            target_partition = argv[getvar_temp];
+        check_optsym(target_partition);
+        check_optsym(out);
 
-            if (argc == check_getvar_temp) out = target_partition;
-            else
-            {
-                getvar_temp++;
-                out = argv[getvar_temp];
-            }
-
-            check_optsym(target_partition);
-            check_optsym(out);
-
-            pmt_backup = true;
-
-            break;
-        }
-        else if (strcmp(argv[argtest], "flash") == 0)
-        {
-            check_getvar_temp++;
-
-            if (argc < check_getvar_temp)
+        pmt_backup = true;
+    }
+    else if (strcmp(argv[1], "flash") == 0)
+    {
+        if (argc == 2)
                 LOGE("%s 0.\n", current->expected_flash_arg);
 
-            if (argc == check_getvar_temp)
+        if (argc == 2)
                 LOGE("%s 1.\n", current->expected_flash_arg);
 
-            target_flash_file = argv[getvar_temp];
+        target_flash_file = argv[2];
 
-            getvar_temp++;
-            target_partition = argv[getvar_temp];
+        target_partition = argv[3];
 
-            check_optsym(target_flash_file);
-            check_optsym(target_partition);
+        check_optsym(target_flash_file);
+        check_optsym(target_partition);
 
-            pmt_flash = true;
+        pmt_flash = true;
+    }
+    else if (strcmp(argv[1], "format") == 0)
+    {
 
-            break;
-        }
-        else if (strcmp(argv[argtest], "format") == 0)
-        {
-            check_getvar_temp++;
-
-            if (argc < check_getvar_temp)
+        if (argc == 2)
                 LOGE("%s 0.\n", current->expected_format_arg);
 
-            if (argc == check_getvar_temp)
+        if (argc == 3)
                 LOGE("%s 1.\n", current->expected_format_arg);
 
-            format_fs = argv[getvar_temp];
+        format_fs = argv[2];
 
-            getvar_temp++;
-            target_partition = argv[getvar_temp];
+        target_partition = argv[3];
 
-            check_optsym(format_fs);
-            check_optsym(target_partition);
+        check_optsym(format_fs);
+        check_optsym(target_partition);
 
-            pmt_format = true;
-
-            break;
-        }
+        pmt_format = true;
     }
 
     /* target control is done */
