@@ -155,9 +155,9 @@ struct pmt_langdb_docs en_docs = {
 };
 
 struct pmt_langdb_docs tr_docs = {
-    .docs_strs_l1 = "[SEÇENEKLER] backup BÖLÜM [ÇIKTI] [SEÇENEKLER]...",
-    .docs_strs_l2 = "[SEÇENEKLER] flash DOSYA BÖLÜM [SEÇENEKLER]...",
-    .docs_strs_l3 = "[SEÇENEKLER] format DOSYA_SİSTEMİ[ext/2/3/4] BÖLÜM [SEÇENEKLER]...",
+    .docs_strs_l1 = "backup BÖLÜM [ÇIKTI] [SEÇENEKLER]...",
+    .docs_strs_l2 = "flash DOSYA BÖLÜM [SEÇENEKLER]...",
+    .docs_strs_l3 = "format DOSYA_SİSTEMİ[ext/2/3/4] BÖLÜM [SEÇENEKLER]...",
     .docs_strs_l4 = "Seçenekler",
     .docs_strs_l5 = "Bu seçeneği kullanarak mantıksal (logical) bir bölümle işlem yapılacağını belirtebilirsiniz.",
     .docs_strs_l6 = "Bu seçeneği kullanarak özel /dev bağlamı belirtebilirsiniz. Sadece normal (mantıksal olmayan) bölümler içindir (Varsayılan: /dev/block/by-name).",
