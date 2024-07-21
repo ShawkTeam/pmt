@@ -1,6 +1,6 @@
 echo -e "Compiled with clang
 
-${CC_VERSION}
+\`${CC_VERSION}\`
 
 VERSION: \`${PMT_VERSION}\`
 VERSION CODE: \`${PMT_VERSION_CODE}\`
