@@ -56,8 +56,10 @@ export NDK_PROJECT_PATH="${PWD}"
 ```
  - Go to the NDK directory and start the build
 ```
-# Required by pmt's Android.mk
+# Required for creating clang version information and directory access
 export NDK_ROOT_DIR="${PWD}"
+cd "${NDK_PROJECT_PATH}" && bash build/bash/gen-header \
+&& cd "${NDK_ROOT_DIR}"
 
 # Start build
 ./ndk-build
