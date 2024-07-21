@@ -1,39 +1,21 @@
 name: Build and release
 
-on:
-  push:
-  workflow_dispatch:
+on: [workflow_dispatch]
 
 jobs:
-  build:
+  build-and-rel-pmt:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Detect starting type
-        id: check-start-type
-        run: |
-          COMM_MSG=$(git log -1 --pretty=%B)
-          if [ "${GITHUB_EVENT_NAME}" == "push" ]; then
-              if [[ "${COMM_MSG}" == *"initial"* ]]; then
-                  echo "build_and_release=true" >> $GITHUB_ENV
-              else
-                  echo "build_and_release=false" >> $GITHUB_ENV
-              fi
-          elif [ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]; then
-              echo "build_and_release=true" >> $GITHUB_ENV
-          fi
-
       - name: Cleanup
         id: cleanup
-        if: env.build_and_release == 'true'
         uses: rokibhasansagar/slimhub_actions@main
 
       - name: Setup GitHub CLI
         id: setup-gh
-        if: env.build_and_release == 'true'
         run: |
           type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
           curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
@@ -44,7 +26,6 @@ jobs:
 
       - name: Update and setup packages
         id: setup-packages
-        if: env.build_and_release == 'true'
         run: |
           sudo apt update \
           && sudo apt upgrade -y \
@@ -52,7 +33,6 @@ jobs:
 
       - name: Save spefic version variables
         id: save-vars
-        if: env.build_and_release == 'true'
         run: |
           . build/workflow/build.config
           echo "PMT_VERSION=${PMT_VERSION}" >> $GITHUB_ENV
@@ -70,7 +50,6 @@ jobs:
 
       - name: Download and extract NDK
         id: setup-ndk
-        if: env.build_and_release == 'true'
         run: |
           echo "Downloading NDK ${{ env.NDK_VERSION }}..."
           aria2c "${{ env.NDK_LINK }}"
@@ -82,7 +61,6 @@ jobs:
 
       - name: Build pmt
         id: build-pmt
-        if: env.build_and_release == 'true'
         run: |
           make gen-ndk-makefiles
           export NDK_PROJECT_PATH=${PWD}
@@ -95,7 +73,6 @@ jobs:
 
       - name: Last small transactions
         id: small-transactions
-        if: env.build_and_release == 'true'
         run: |
           export CC_64="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
           export CC_32="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
@@ -122,7 +99,6 @@ jobs:
 
       - name: Upload to release
         id: upload-to-rels
-        if: env.build_and_release == 'true'
         uses: softprops/action-gh-release@v2
         with:
           files: |
