@@ -9,6 +9,6 @@ TARGET ARCHITECTURE: \`arm64-v8a\` (64-bit) and \`armeabi-v7a\` (32-bit)
 Notes:
 Builded with Android NDK ${NDK_VERSION}
 Packages are compressed with xz.
-Builded debian packages for termux.
+Builded debian packages for termux. [Click](https://github.com/ShawkTeam/pmt/blob/${PMT_VERSION}/SETUP-DEBS.md) for guide.
 Report bugs and suggestions.
 [Click](https://github.com/ShawkTeam/pmt/blob/${PMT_VERSION}/CHANGELOG.md) for viewing version ${PMT_VERSION} changelog."
