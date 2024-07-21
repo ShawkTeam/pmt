@@ -133,4 +133,4 @@ jobs:
           tag_name: ${{ env.PMT_VERSION }}
           body_path: /home/pmt/release_body.txt
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PMT_WORKFLOW_GTOKEN }}
