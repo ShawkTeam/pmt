@@ -1,7 +1,6 @@
 ## Partition Manager (pmt)
 
-This binary C is for manage partitions of android devices.
-It offers a lot of options. I will place these below. But first let me talk about the operation...
+This binary, written in C, is for writing/reading and formatting on Android partitions.
 
 #### Presented arguments (options)
 
