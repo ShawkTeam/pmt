@@ -69,7 +69,7 @@ all:
 	$(hide)printf " - Copying files...\n"
 	# prepare
 	$(hide)cp -r $(DEBUTILS_DIR)/data $(TEMP_DIR) || exit 1
-	$(hide)rm -f $(DEBTERMUX_USR)/share/man/man1/dummy
+	$(hide)rm -f $(DEBTERMUX_USR)/share/man/man8/dummy
 	$(hide)rm -f $(DEBTERMUX_USR)/bin/dummy
 	$(call mdir,$(TEMP_DIR)/DEBIAN)
 	$(hide)abort() { \
