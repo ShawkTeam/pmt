@@ -1,6 +1,6 @@
 /* By YZBruh */
 
-/**
+/*
  * Copyright 2024 Partition Manager
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,26 +16,15 @@
  * limitations under the License.
  */
 
-#ifdef __cplusplus
-extern "C" {
+#ifndef __PMT_DOCS_H
+#define __PMT_DOCS_H
+
+__BEGIN_DECLS
+
+void help(void);
+
+__END_DECLS
+
 #endif
 
-#define INC_MAIN_LIBS
-#define INC_DEBUGERS
-
-#include <pmt/pmt.h>
-#include <pmt/stringkeys.h>
-
-/* root checker function */
-void check_root(void)
-{
-    /* a quick, easy method for verifying root */
-    if (getuid() != 0)
-        LOGE("%s\n", current->no_root);
-}
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-/* end of code */
+/* end */

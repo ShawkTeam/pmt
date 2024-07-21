@@ -1,0 +1,37 @@
+# By YZBruh
+
+# Copyright 2024 Partition Manager
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+function abort()
+{
+    [ -n "$1" ] && echo -e " - ${RED}${BOLD}Error:${BOLD_RESET}${RESET} $1"
+    exit 1
+}
+
+function read_file()
+{
+    cat "$1" >> "$2" || abort "failed to read/write $1/$2"
+}
+
+function gen()
+{
+    [ "${FORCE_GEN}" = "true" -a "${UPDATE_MAKEFILES}" = "true" ] && rm -f "$1"
+    touch "$1" || abort "failed to generate: $1"
+}
+
+function print()
+{
+    echo -e "$1"
+}

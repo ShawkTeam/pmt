@@ -1,4 +1,4 @@
-/* By YZBruh | ShawkTeam */
+/* By YZBruh */
 
 /**
  * Copyright 2024 Partition Manager
@@ -16,20 +16,15 @@
  * limitations under the License.
  */
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 #define INC_MAIN_LIBS
-#define INC_VERSIONER_REQS
 
-#include <pmt.h>
-
-extern char* bin_name;
-
-extern struct pmt_langdb_general* current;
-extern struct pmt_langdb_general en;
-extern struct pmt_langdb_general tr;
+#include <pmt/pmt.h>
+#include <pmt/stringkeys.h>
+#include <pmt/versioning.h>
 
 void version(void)
 {
@@ -43,14 +38,14 @@ void version(void)
         LOGD("<%s> %s\n", current->unknw_str, current->bin_str);
     #endif
 
-    #if defined(__clang__)
-        LOGD("%s: clang %d.%d.%d (NDK r%d%s %s)\n", current->compiler_str, __clang_major__, __clang_minor__, __clang_patchlevel__, __NDK_MAJOR__, __NDK_MINOR_STATUS__, __NDK_BETA_STATUS__);
+    #if defined(__clang__) && !defined(__NDK_BUILD)
+        LOGD("%s: clang %d.%d.%d\n", current->compiler_str, __clang_major__, __clang_minor__, __clang_patchlevel__);
+    #elif defined(__clang__) && defined(__NDK_BUILD)
+        LOGD("%s\n", __NDK_CC_VERSION__);
     #endif
-
-    LOGD("%s\n", current->see_license);
 }
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif
 

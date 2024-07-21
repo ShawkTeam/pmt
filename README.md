@@ -7,8 +7,8 @@ It offers a lot of options. I will place these below. But first let me talk abou
 
 ```
 Usage:  pmt backup PARTITION [OUTPUT] [OPTIONS]...
-  or:   pmt flash FILE PARTITION [OPTIONS]...
-  or:   pmt format FILE_SYSTEM[ext/2/3/4] PARTITION [OPTIONS]...
+  or:   pmt flash PARTITION FILE [OPTIONS]...
+  or:   pmt format PARTITION FILE_SYSTEM[ext/2/3/4] [OPTIONS]...
 
 Options:
    -l, --logical     It is meant to determine whether the target partition is logical.
@@ -19,7 +19,6 @@ Options:
    -S, --set-lang    Set current language.
    -v, --version     See version.
        --help        See this help message.
-   -L, --license     See license.
 
 Examples:
    pmt backup boot_a -c /dev/block/platform/bootdevice/by-name
@@ -27,33 +26,40 @@ Examples:
    pmt format ext4 system_a --logical
    pmt -c /dev/block/platform/bootdevice/by-name --list
 
-Report bugs to <t.me / ShawkTeam | Community / Topics -- pmt>
+Report bugs to <t.me/ShawkTeam | Topics | pmt>
 ```
 
 #### Some notes
 
-- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.4.0/LANGUAGES.md)
-- [Add language.](https://github.com/ShawkTeam/pmt/blob/2.4.0/ADD-LANGUAGES.md)
+- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.5.0/LANGUAGES.md)
+- [Add language.](https://github.com/ShawkTeam/pmt/blob/2.5.0/ADD-LANGUAGES.md)
 - Feel free to ask any questions you want.
 - Packages are available in publications.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
-- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.4.0/CHANGELOG.md)
+- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.5.0/CHANGELOG.md)
 - We are always open to your suggestions and support (developing)!
 
 ### How is it built?
-Android NDK is required to build.
- - [Download](https://developer.android.com/ndk/downloads) and extract the NDK package.
+Make or Android NDK is required to build.
+
+##### Build with NDK
+ - [Download Android NDK](https://developer.android.com/ndk/downloads) and extract the NDK package.
  - Clone this repository. And get access to it.
 ```
-git clone https://github.com/ShawkTeam/pmt -b 2.4.0
+git clone https://github.com/ShawkTeam/pmt -b 2.5.0
 cd pmt
 ```
  - Set the NDK working directory variable.
 ```
-export NDK_PROJECT_PATH=$(pwd)
+make gen-ndk-makefiles
+export NDK_PROJECT_PATH="${PWD}"
 ```
- - Go to the NDK directory and start the construction
+ - Go to the NDK directory and start the build
 ```
+# Required by pmt's Android.mk
+export NDK_ROOT_DIR="${PWD}"
+
+# Start build
 ./ndk-build
 ```
  - The output files will be inside the `pmt` folder. Binaries are available in two architectures within the `libs` folder. `arm64-v8a` (64-bit) and `armeabi-v7a` (32-bit).
@@ -62,7 +68,7 @@ export NDK_PROJECT_PATH=$(pwd)
                      |
      ________________|________________
      |         |            |        |
-   jni/    debutils/       obj/    libs/            
+   src/      build/        obj/    libs/
                                      |
                            __________|__________
                            |                   |
@@ -70,24 +76,24 @@ export NDK_PROJECT_PATH=$(pwd)
                            |                   |
                           pmt                 pmt
 ```
- - For the make installable debian package make-deb.sh use the script. It can be created within two architectures. Use the script flags correctly: arm64-v8a, armeabi-v7a. If you want to process with root, add sudo as the second argument. If you don't want, use no-sudo or leave it blank
+
+##### Build with Makefiles
 
 ```
---Usage--
+make
 
-./make-deb.sh [arm64-v8a, armeabi-v7a] [sudo, no-sudo, <blank>]
+# Use termux :D
 ```
- 
+ - For the make installable debian package:
+
 ```
-chmod 777 utils.sh
+make deb <ARCH_NUM>
 
-# for making 64-bit package
-./utils.sh make-deb arm64-v8a 
-
-# for making 32-bit package
-./utils.sh make-deb armeabi-v7a
+# Examples
+make deb FOR_THIS=64
+make deb FOR_THIS=32
 ```
 
 ### Notes
 If you want to change something, take a look at the configuration. You can change him.
-it is located in the `jni/config` folder. His name is `env.mk`. I gave the information in the file. You can ask more.
+it is located in the `build/config` folder. His name is `env.mk`. I gave the information in the file. You can ask more.

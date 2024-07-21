@@ -1,4 +1,4 @@
-/* By YZBruh | ShawkTeam */
+/* By YZBruh */
 
 /**
  * Copyright 2024 Partition Manager
@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -24,7 +24,8 @@ extern "C" {
 #define INC_DEBUGERS
 #define INC_DIRENT
 
-#include <pmt.h>
+#include <pmt/pmt.h>
+#include <pmt/stringkeys.h>
 
 /* current /dev context */
 #define CUR_DEV_CNTX "/dev/block/by-name"
@@ -32,25 +33,14 @@ extern "C" {
 /* for logical partitions */
 #define LGC_DEV_CNTX "/dev/block/mapper"
 
-extern bool pmt_use_cust_cxt;
-extern bool pmt_ab;
-extern bool pmt_logical;
-extern bool pmt_silent;
-extern bool pmt_force_mode;
-extern char* cust_cxt;
-extern char* bin_name;
-
-extern struct pmt_langdb_general* current;
-extern struct pmt_langdb_general en;
-extern struct pmt_langdb_general tr;
-
-DIR *dir;
+static DIR *dir;
 
 static int
 list(const char* operation, const char* target_dir)
 {
     static bool list = false;
-    struct dirent *entry;
+    static int count;
+    struct dirent **nlist;
     dir = NULL;
 
     if (strcmp(operation, "access") == 0)
@@ -64,24 +54,31 @@ list(const char* operation, const char* target_dir)
 
     if (dir != NULL)
     {
-        if (!list)
-        {
-            closedir(dir);
-            return 0;
-        }
-        else
-        {
-            LOGD("%s: `%s'\n", current->list_of_dir, target_dir);
-            while ((entry = readdir(dir)) != NULL)
-            {
-                LOGD("%s\n", entry->d_name);
-            }
-            closedir(dir);
-            return 0;
-        }
+        closedir(dir);
+        return 0;
     }
     else
         return -1;
+
+    if (list)
+    {
+        count = scandir(target_dir, &nlist, NULL, alphasort);
+
+        if (count < 0)
+            LOGE("%s: `%s': %s\n", current->not_readdir, target_dir, strerror(errno));
+
+        for (int cont_count = 0; cont_count < count; cont_count++)
+        {
+            if (nlist[cont_count]->d_name[0] != '.')
+                LOGD("%s\n", nlist[cont_count]->d_name);
+
+            free(nlist[cont_count]);
+        }
+
+        free(nlist);
+
+        return 0;
+    }
 
     return 2;
 }
@@ -131,7 +128,7 @@ int listpart(void)
     return 0;
 }
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 

@@ -1,4 +1,4 @@
-/* By YZBruh | ShawkTeam */
+/* By YZBruh */
 
 /**
  * Copyright 2024 Partition Manager
@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -26,26 +26,8 @@ extern "C" {
 #define INC_DEBUGERS
 #define INC_TOOLS_REQS
 
-#include <pmt.h>
-
-extern char* out;
-extern char* format_fs;
-extern char* cust_cxt;
-extern char* target_partition;
-extern char* target_flash_file;
-extern char* partition_type;
-extern char* bin_name;
-extern bool pmt_use_logical;
-extern bool pmt_use_cust_cxt;
-extern bool pmt_logical;
-extern bool pmt_flash;
-extern bool pmt_backup;
-extern bool pmt_silent;
-extern bool pmt_force_mode;
-
-extern struct pmt_langdb_general* current;
-extern struct pmt_langdb_general en;
-extern struct pmt_langdb_general tr;
+#include <pmt/pmt.h>
+#include <pmt/stringkeys.h>
 
 /**
  * it is meant to calculate the size of the quickly given file. 
@@ -79,8 +61,6 @@ partition_not_found(void) { LOGE("%s\n", current->part_not_found); }
 
 /* to stop use of function type */
 #define partition_not_found partition_not_found()
-
-
 
 /* the partitions are meant to quickly find. */
 static void
@@ -135,13 +115,13 @@ int pmt(unsigned short progress_code)
         /* determine output */
         if (strcmp(out, target_partition) == 0)
         {
-            sprintf(outf, "%s.img", target_partition);
+            sprintf(outf, "%s.img", out);
             LOGW("%s: %s\n", current->out_not_spec, outf);
         }
         else
-            sprintf(outf, "%s", target_partition);
+            sprintf(outf, "%s", out);
 
-        targetf = open(outf, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+        targetf = open(outf, O_WRONLY | O_CREAT | O_TRUNC, 0660);
         if (targetf == -1)
             LOGE("%s: %s: %s\n", current->not_gen, outf, strerror(errno));
 
@@ -188,19 +168,22 @@ int pmt(unsigned short progress_code)
         else
             LOGW("%s\n", current->flash_file_sz_fail);
 
-        if (calc_flsz(target_partition) != -1)
-            LOGD("%s: %.2f\n", current->part_disk_sz, calc_flsz(target_partition));
+        if (calc_flsz(flasher_path) != -1)
+            LOGD("%s: %.2f\n", current->part_disk_sz, calc_flsz(flasher_path));
         else
             LOGW("%s\n", current->part_disk_sz_fail);
 
-        if (calc_flsz(target_flash_file) > calc_flsz(target_partition))
-            LOGE("%s\n", current->ffile_more_part);
+        if (calc_flsz(target_flash_file) != -1 && calc_flsz(flasher_path) != -1)
+        {
+            if (calc_flsz(target_flash_file) > calc_flsz(flasher_path))
+                LOGE("%s\n", current->ffile_more_part);
+        }
 
         srcf = open(target_flash_file, O_RDONLY);
         if (srcf == -1)
             LOGF("%s: %s: %s\n", current->not_read, target_flash_file, strerror(errno));
 
-        targetf = open(target_partition, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+        targetf = open(target_partition, O_WRONLY | O_CREAT | O_TRUNC, 0660);
         if (targetf == -1)
             LOGF("%s: %s: %s\n", current->not_read, target_partition, strerror(errno));
 
@@ -252,7 +235,7 @@ int pmt(unsigned short progress_code)
     return 0;
 }
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 

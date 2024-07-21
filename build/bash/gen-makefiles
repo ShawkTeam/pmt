@@ -1,0 +1,64 @@
+# By YZBruh
+
+# Copyright 2024 Partition Manager
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+. build/bash/vars
+. build/bash/functions
+
+[ ! "${UPDATE_MAKEFILES}" = "true" ] && . build/bash/check-makefiles
+[ ! "${THIS_IS}" = "main" ] && abort "The caller is not the main makefile. Something's wrong."
+
+if [ "${UPDATE_MAKEFILES}" = "true" ]; then
+    GENR="Re-generating"
+else
+    GENR="Generating"
+fi
+
+if [ "${NDK_PROG}" = "true" ]; then
+
+    gen "${SOURCE_DIR}/Android.mk"
+    gen "${SOURCE_DIR}/Application.mk"
+
+else
+
+    gen "${CUR_DIR}/Makefile"
+    gen "${OUT_DIR}/Makefile"
+    gen "${SOURCE_DIR}/Makefile"
+
+fi
+
+if [ "${NDK_PROG}" = "true" ]; then
+
+    print " - ${GENR} Android.mk..."
+    read_file "${OTHERS}/makefile.androidmk" "${SOURCE_DIR}/Android.mk"
+
+    print " - ${GENR} Application.mk"
+    read_file "${OTHERS}/makefile.applicationmk" "${SOURCE_DIR}/Application.mk"
+
+else
+
+    print " - Re-generating main makefile..."
+    rm -f "${CUR_DIR}/Makefile"
+    read_file "${OTHERS}/makefile.main" "${CUR_DIR}/Makefile"
+
+    print " - ${GENR} output directory makefile..."
+    read_file "${OTHERS}/makefile.outdir" "${OUT_DIR}/Makefile"
+
+    print " - ${GENR} source directory makefile..."
+    read_file "${OTHERS}/makefile.sourcedir" "${SOURCE_DIR}/Makefile"
+
+fi
+
+print " - Success."

@@ -1,4 +1,4 @@
-/* By YZBruh | ShawkTeam */
+/* By YZBruh */
 
 /**
  * Copyright 2024 Partition Manager
@@ -16,20 +16,14 @@
  * limitations under the License.
  */
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 #define INC_MAIN_LIBS
 
-#include <pmt.h>
-
-extern char* bin_name;
-extern bool pmt_silent;
-
-extern struct pmt_langdb_general* current;
-extern struct pmt_langdb_general en;
-extern struct pmt_langdb_general tr;
+#include <pmt/pmt.h>
+#include <pmt/stringkeys.h>
 
 void debug(LogLevel status, const char* _Nullable fmt, ...)
 {
@@ -72,7 +66,7 @@ void debug(LogLevel status, const char* _Nullable fmt, ...)
     va_end(args);
 }
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif
 

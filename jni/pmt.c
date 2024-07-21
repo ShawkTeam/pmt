@@ -17,7 +17,7 @@
  */
 
 /* force use C std (if default is C++) */
-#if defined(__cplusplus)
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -25,9 +25,11 @@ extern "C" {
 #define INC_DEBUGERS
 #define INC_STAT
 #define INC_GETOPT
-#define INC_DOCS_REQS
 
-#include <pmt.h>
+#include <pmt/pmt.h>
+#include <pmt/stringkeys.h>
+#include <pmt/deprecates.h>
+#include <pmt/docs.h>
 
 /* add value to variables that are added globally and are not worth */
 char* out = NULL;
@@ -47,13 +49,6 @@ bool pmt_backup = false;
 bool pmt_format = false;
 bool pmt_force_mode = false;
 bool pmt_inst_on_termux = false;
-
-/* import language structs etc. */
-struct pmt_langdb_general* current = NULL;
-extern struct pmt_langdb_general en;
-extern struct pmt_langdb_general tr;
-extern const char* pmt_langdb_langs[];
-extern int pmt_langdb_total;
 
 /* variable for use in control of '-' expression */
 static const char* opt_symbol = "-";
@@ -79,15 +74,22 @@ strdup(const char* s)
  * the beginning of the given word
  */
 static void
-check_optsym(const char* _Nonnull mystring)
+check_optsym(const char* _Nullable symbol)
 {
-    if (strncmp(mystring, opt_symbol, 1) == 0)
+    if (symbol != NULL)
     {
-        if (!pmt_force_mode)
+        if (strncmp(symbol, opt_symbol, 1) == 0)
             LOGE("%s\n", common_symbol_rule);
-        else
-            exit(1);
     }
+}
+
+static bool
+ctrl_arg(const char* _Nullable argv_holder)
+{
+    if (strcmp(argv_holder, "--logical") != 0 && strcmp(argv_holder, "--context") != 0 && strcmp(argv_holder, "--silent") != 0 && strcmp(argv_holder, "-l") != 0 && strcmp(argv_holder, "-c") != 0 && strcmp(argv_holder, "-s") != 0)
+        return true;
+
+    return false;
 }
 
 /* classic main function (C binary here xd) */
@@ -96,15 +98,13 @@ int main(int argc, char* argv[])
     bin_name = argv[0];
 
     /* load language */
-    static char* langctrl_str;
-    langctrl_str = loadlang();
+    if (loadlang() != 0)
+    {
+        printf("loadlang fail\n");
+        exit(1);
+    }
 
-    if (strcmp(langctrl_str, "en") == 0)
-        current = &en;
-    else if (strcmp(langctrl_str, "tr") == 0)
-        current = &tr;
-
-    sprintf(common_symbol_rule, "%s\n", current->common_symbol_rule);
+    sprintf(common_symbol_rule, "%s", current->common_symbol_rule);
 
     if (search_sls() == 0)
     {
@@ -119,7 +119,11 @@ int main(int argc, char* argv[])
         LOGE("%s.\n%s `%s --help' %s.\n", current->missing_operand, current->try_h, argv[0], current->for_more);
 
     /* a structure for long arguments */
-    struct option long_options[] = {
+    struct option option_table[] = {
+        {"backup", no_argument, 0, 'b'},
+        {"flash", no_argument, 0, 'F'},
+        {"format", no_argument, 0, 'r'},
+        {"is_dummy", no_argument, 0, 'D'},
         {"logical", no_argument, 0, 'l'},
         {"context", required_argument, 0, 'c'},
         {"list", no_argument, 0, 'p'},
@@ -134,8 +138,8 @@ int main(int argc, char* argv[])
 
     /* boolean statements (only valid in this file) to distinguish. and pointer from a shortcut for the symbol rule */
     static bool wiew_help = false;
-    static bool wiew_licenses = false;
     static bool wiew_version = false;
+    static bool logical_spec = false;
     static bool list_partitions = false;
     static bool combo_wiewers = false;
     static bool pmt_setlang = false;
@@ -143,20 +147,104 @@ int main(int argc, char* argv[])
     static int search_result = 3;
     static int opt;
 
+    if (strcmp(argv[1], "backup") == 0)
+    {
+        if (argc <= 2)
+            LOGE("%s 0.\n", current->expected_backup_arg);
+
+        if (ctrl_arg(argv[2]))
+            target_partition = argv[2];
+        else
+            LOGE("%s.\n", current->not_spec_opt);
+
+        out = target_partition;
+
+        if (argc > 3 && ctrl_arg(argv[3]))
+            out = argv[3];
+
+        check_optsym(target_partition);
+        check_optsym(out);
+
+        pmt_backup = true;
+    }
+    else if (strcmp(argv[1], "flash") == 0)
+    {
+        if (argc <= 2)
+                LOGE("%s 0.\n", current->expected_flash_arg);
+
+        if (argc <= 3)
+                LOGE("%s 1.\n", current->expected_flash_arg);
+
+        if (ctrl_arg(argv[2]))
+            target_partition = argv[2];
+        else
+            LOGE("%s.\n", current->not_spec_opt);
+
+        if (ctrl_arg(argv[3]))
+            target_flash_file = argv[3];
+        else
+            LOGE("%s.\n", current->not_spec_opt);
+
+        check_optsym(target_flash_file);
+        check_optsym(target_partition);
+
+        pmt_flash = true;
+    }
+    else if (strcmp(argv[1], "format") == 0)
+    {
+
+        if (argc <= 2)
+                LOGE("%s 0.\n", current->expected_format_arg);
+
+        if (argc <= 3)
+                LOGE("%s 1.\n", current->expected_format_arg);
+
+        if (ctrl_arg(argv[2]))
+            target_partition = argv[2];
+        else
+            LOGE("%s.\n", current->not_spec_opt);
+
+        if (ctrl_arg(argv[3]))
+            format_fs = argv[3];
+        else
+            LOGE("%s.\n", current->not_spec_opt);
+
+        check_optsym(format_fs);
+        check_optsym(target_partition);
+
+        pmt_format = true;
+    }
+
     /* control for each argument */
-    while ((opt = getopt_long(argc, argv, "lc:psfS:vL", long_options, NULL)) != -1)
+    while ((opt = getopt_long(argc, argv, "bFrDlc:psfS:vL", option_table, NULL)) != -1)
     {
         /* process arguments */
         switch (opt)
         {
+            /* handle deprecates */
+            case 'b':
+                DEPR_HANDLE('b', "backup", current->depr_backup_opt);
+                exit(1);
+                break;
+            case 'F':
+                DEPR_HANDLE('F', "flash", current->depr_flash_opt);
+                exit(1);
+                break;
+            case 'r':
+                DEPR_HANDLE('r', "format", current->depr_format_opt);
+                exit(1);
+                break;
+            case 'D':
+                DEPR_HANDLE('D', "NULLPTR", current->depr_ch_list_opt);
+                exit(1);
+                break;
+            case 'L':
+                DEPR_HANDLE('L', "license", current->depr_Vlicense_opt);
+                exit(1);
+                break;
             /* logical partitions option */
             case 'l':
-                check_root();
-                check_dev_point();
-                if (pmt_logical)
-                    pmt_use_logical = true;
-                else
-                    LOGE("%s\n", current->not_logical);
+                logical_spec = true;
                 break;
             /* context selector option */
             case 'c':
@@ -168,7 +256,7 @@ int main(int argc, char* argv[])
             case 'p':
                 list_partitions = true;
                 /* check combo wiewer options and progress */
-                if (wiew_version || wiew_help || wiew_licenses) combo_wiewers = true;
+                if (wiew_version || wiew_help) combo_wiewers = true;
                 break;
             /* force mode option */
             case 'f':
@@ -187,19 +275,13 @@ int main(int argc, char* argv[])
             case 'v':
                 wiew_version = true;
                 /* check combo wiewer options and progress */
-                if (list_partitions || wiew_help || wiew_licenses) combo_wiewers = true;
+                if (list_partitions || wiew_help) combo_wiewers = true;
                 break;
             /* help message opption */
             case 0:
                 wiew_help = true;
                 /* check combo wiewer options and progress */
-                if (wiew_version || list_partitions || wiew_licenses) combo_wiewers = true;
-                break;
-            /* license wiewer option */
-            case 'L':
-                wiew_licenses = true;
-                /* check combo wiewer options and progress */
-                if (wiew_version || wiew_help || list_partitions) combo_wiewers = true;
+                if (wiew_version || list_partitions) combo_wiewers = true;
                 break;
             /* for invalid options */
             case '?':
@@ -207,7 +289,7 @@ int main(int argc, char* argv[])
                 return 1;
                 break;
             default:
-                LOGD("%s: %s [backup] [flash] [format] [-l | --logical] [-c | --context] [-p | --list] [-v | --version] [--help] [-L | --license]\n", current->usage_head, argv[0]);
+                LOGD("%s: %s [backup] [flash] [format] [-l | --logical] [-c | --context] [-p | --list] [-s | --silent] [-v | --version] [--help]\n", current->usage_head, argv[0]);
                 return 1;
         }
     }
@@ -227,11 +309,6 @@ int main(int argc, char* argv[])
         version();
         return 0;
     }
-    else if (wiew_licenses)
-    {
-        licenses();
-        return 0;
-    }
     else if (list_partitions)
     {
         check_root();
@@ -241,81 +318,31 @@ int main(int argc, char* argv[])
     if (pmt_setlang)
     {
         LOGD("%s: %s\n", argv[0], current->switching_lang);
-        setlang(langpr);
+        setlang(langpr, 0);
         sleep(2);
         LOGD("%s: %s.\n", argv[0], current->please_rerun);
         return 0;
     }
 
-    /* detect target mode */
-    static char arg1[20];
-    sprintf(arg1, "%s", argv[1]);
-
-    if (strcmp(argv[1], "backup") == 0)
-    {
-        if (argc == 2)
-            LOGE("%s 0.\n", current->expected_backup_arg);
-
-        target_partition = argv[2];
-
-        if (argc == 3)
-            out = target_partition;
-        else
-            out = argv[3];
-
-        check_optsym(target_partition);
-        check_optsym(out);
-
-        pmt_backup = true;
-    }
-    else if (strcmp(argv[1], "flash") == 0)
-    {
-        if (argc == 2)
-                LOGE("%s 0.\n", current->expected_flash_arg);
-
-        if (argc == 2)
-                LOGE("%s 1.\n", current->expected_flash_arg);
-
-        target_flash_file = argv[2];
-
-        target_partition = argv[3];
-
-        check_optsym(target_flash_file);
-        check_optsym(target_partition);
-
-        pmt_flash = true;
-    }
-    else if (strcmp(argv[1], "format") == 0)
-    {
-
-        if (argc == 2)
-                LOGE("%s 0.\n", current->expected_format_arg);
-
-        if (argc == 3)
-                LOGE("%s 1.\n", current->expected_format_arg);
-
-        format_fs = argv[2];
-
-        target_partition = argv[3];
-
-        check_optsym(format_fs);
-        check_optsym(target_partition);
-
-        pmt_format = true;
-    }
-
-    /* target control is done */
     if (!pmt_backup && !pmt_flash && !pmt_format)
-        LOGE("%s `%s --help` %s\n", current->missing_operand, current->try_h, current->for_more);
+        LOGE("%s.\n%s `%s --help` %s\n", current->no_target, current->try_h, argv[0], current->for_more);
+
+    if (pmt_format)
+    {
+        if (strcmp(format_fs, "ext4") != 0 && strcmp(format_fs, "ext3") != 0 && strcmp(format_fs, "ext2") != 0)
+            LOGE("%s: %s\n", current->unsupported_fs, format_fs);
+    }
 
     /* checks */
     check_root();
     check_dev_point();
 
-    if (pmt_format)
+    if (logical_spec)
     {
-        if (strcmp(format_fs, "ext4") != 0 || strcmp(format_fs, "ext3") != 0 || strcmp(format_fs, "ext2") != 0)
-            LOGE("%s: %s\n", current->unsupported_fs, format_fs);
+        if (pmt_logical)
+            pmt_use_logical = true;
+        else
+            LOGE("%s\n", current->not_logical);
     }
 
     if (pmt_flash)
@@ -362,12 +389,10 @@ int main(int argc, char* argv[])
             return pmt(2);
         else if (pmt_format)
             return pmt(3);
-        else
-            LOGE("%s\n%s `%s --help' %s\n", current->no_target, current->try_h, argv[0], current->for_more);
     }
 }
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif
 

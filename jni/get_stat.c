@@ -1,4 +1,4 @@
-/* By YZBruh | ShawkTeam */
+/* By YZBruh */
 
 /**
  * Copyright 2024 Partition Manager
@@ -16,14 +16,15 @@
  * limitations under the License.
  */
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 #define INC_MAIN_LIBS
 #define INC_STAT
 
-#include <pmt.h>
+#include <pmt/pmt.h>
+#include <pmt/stringkeys.h>
 
 /**
  * The target file is controlled by the stat function. 
@@ -71,7 +72,7 @@ int get_stat(const char* _Nonnull filepath, const char* _Nonnull stype)
     return 2;
 }
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif
 

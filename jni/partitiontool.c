@@ -1,4 +1,4 @@
-/* By YZBruh | ShawkTeam */
+/* By YZBruh */
 
 /**
  * Copyright 2024 Partition Manager
@@ -16,24 +16,19 @@
  * limitations under the License.
  */
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 #define INC_MAIN_LIBS
 
-#include <pmt.h>
-
-extern bool pmt_use_cust_cxt;
-extern bool pmt_ab;
-extern bool pmt_logical;
-extern char* cust_cxt;
+#include <pmt/pmt.h>
 
 static int
 accf(const char* _Nonnull target) { return access(target, F_OK); }
 
 /* check parts */
-void check_dev_point()
+void check_dev_point(void)
 {
     /* true = ab | false = a */
     if (pmt_use_cust_cxt)
@@ -74,7 +69,7 @@ void check_dev_point()
     }
 }
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 

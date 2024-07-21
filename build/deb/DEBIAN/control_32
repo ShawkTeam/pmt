@@ -1,0 +1,9 @@
+Source: pmt
+Package: pmt
+Version: 2.5.0
+Architecture: arm
+Description: pmt is for reading, writing and formatting partitions of android devices
+Section: misc
+Priority: optional
+Maintainer: YZBruh <yagizzengin73@gmail.com>
+Standards-Version: 4.5.0

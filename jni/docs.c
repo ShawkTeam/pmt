@@ -1,4 +1,4 @@
-/* By YZBruh | ShawkTeam */
+/* By YZBruh */
 
 /*
  * Copyright 2024 Partition Manager
@@ -16,45 +16,28 @@
  * limitations under the License.
  */
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 extern "C" {
 #endif
 
 #define INC_MAIN_LIBS
-#define INC_DOCS_REQS
 
-#include <pmt.h>
+#include <pmt/pmt.h>
+#include <pmt/stringkeys.h>
+#include <pmt/docs.h>
 
 extern char* bin_name;
-extern char* pmt_langdb_langs_docs[];
+extern char* curr_lang;
 
 struct pmt_langdb_docs* curr_docs = NULL;
-extern struct pmt_langdb_docs en_docs;
-extern struct pmt_langdb_docs tr_docs;
 
 static void
 prepare_langconf_docs(void)
 {
-    static char* langctrl_str;
-    langctrl_str = loadlang();
-
-    if (strcmp(langctrl_str, "en") == 0)
+    if (strcmp(curr_lang, "en") == 0)
         curr_docs = &en_docs;
-    else if (strcmp(langctrl_str, "tr") == 0)
+    else if (strcmp(curr_lang, "tr") == 0)
         curr_docs = &tr_docs;
-}
-
-void licenses(void)
-{
-    printf("Copyright 2024 Partition Manager\n");
-    printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
-    printf("you may not use this file except in compliance with the License.\n");
-    printf("You may obtain a copy of the License at\n\n");
-    printf("    http://www.apache.org/licenses/LICENSE-2.0\n\n");
-    printf("Unless required by applicable law or agreed to in writing, software\n");
-    printf("distributed under the License is distributed on an \"AS IS\" BASIS,\n");
-    printf("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n");
-    printf("See the License for the specific language governing permissions and limitations under the License.\n");
 }
 
 void help(void)
@@ -71,17 +54,16 @@ void help(void)
     printf("   -f, --force       %s\n", curr_docs->docs_strs_l9);
     printf("   -S, --set-lang    %s\n", curr_docs->docs_strs_l10);
     printf("   -v, --version     %s\n", curr_docs->docs_strs_l11);
-    printf("       --help        %s\n", curr_docs->docs_strs_l12);
-    printf("   -L, --license     %s\n\n", curr_docs->docs_strs_l13);
-    printf("%s:\n", curr_docs->docs_strs_l14);
+    printf("       --help        %s\n\n", curr_docs->docs_strs_l12);
+    printf("%s:\n", curr_docs->docs_strs_l13);
     printf("   %s backup boot_a -c /dev/block/platform/bootdevice/by-name\n", bin_name);
     printf("   %s flash /sdcard/twrp/boot.img boot_a -c /dev/block/platform/bootdevice/by-name\n", bin_name);
     printf("   %s format ext4 system_a --logical\n", bin_name);
     printf("   %s -c /dev/block/platform/bootdevice/by-name --list\n\n", bin_name);
-    printf("%s <t.me / ShawkTeam | Community / Topics -- pmt>\n", curr_docs->docs_strs_l15);
+    printf("%s <t.me/ShawkTeam | Topics | pmt>\n", curr_docs->docs_strs_l14);
 }
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
