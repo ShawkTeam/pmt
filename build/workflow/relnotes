@@ -1,10 +1,7 @@
-echo -e "Compiled with clang
+echo -e "\`${CC_VERSION}\`
 
-\`${CC_VERSION}\`
-
-VERSION: \`${PMT_VERSION}\`
-VERSION CODE: \`${PMT_VERSION_CODE}\`
-TARGET ARCHITECTURE: \`arm64-v8a\` (64-bit) and \`armeabi-v7a\` (32-bit)
+Version/Version Code: \`${PMT_VERSION}\`/\`${PMT_VERSION_CODE}\`
+Supported architectures: \`arm64-v8a\` (64-bit) and \`armeabi-v7a\` (32-bit)
 
 Notes:
 Builded with Android NDK ${NDK_VERSION}
