@@ -57,8 +57,8 @@ void help(void)
     printf("       --help        %s\n\n", curr_docs->docs_strs_l12);
     printf("%s:\n", curr_docs->docs_strs_l13);
     printf("   %s backup boot_a -c /dev/block/platform/bootdevice/by-name\n", bin_name);
-    printf("   %s flash /sdcard/twrp/boot.img boot_a -c /dev/block/platform/bootdevice/by-name\n", bin_name);
-    printf("   %s format ext4 system_a --logical\n", bin_name);
+    printf("   %s flash boot_a /sdcard/twrp/boot.img -c /dev/block/platform/bootdevice/by-name\n", bin_name);
+    printf("   %s format system_a ext4 --logical\n", bin_name);
     printf("   %s -c /dev/block/platform/bootdevice/by-name --list\n\n", bin_name);
     printf("%s <t.me/ShawkTeam | Topics | pmt>\n", curr_docs->docs_strs_l14);
 }
