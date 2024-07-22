@@ -1,6 +1,11 @@
-WARNING: 
- Disclaimer of Liability Regarding the Use of the C Library
- - This library is intended for the user to manage the C android partitions. However, we do not accept responsibility for any problems or losses that may arise during its use.
- - Users should carefully test the library functions and, if necessary, implement their own error management mechanisms.
- - The authors reserve the right to make any changes or updates related to the library.
- - This library is intended for management android partitions and its suitability for any specific project or application is not guaranteed. It is important for users to evaluate the suitability of their own projects.
+Disclaimer regarding problems caused by PMT
+
+ 1. This program is provided as is, without warranty.
+ 2. Not for commercial purposes.
+ 3. The developer is NOT responsible for any damages, losses or similar problems that may occur as a result of the use of the program.
+ 4. THE USER IS RESPONSIBLE FOR ANY PROBLEMS THAT MAY COME FROM WRONG OR FAILURE USING THE PROGRAM.
+ 5. Developers do NOT have to keep the program always updated.
+ 6. There is NO guarantee that updates will be provided in the future.
+ 7. The user must use the program IN ACCORDANCE with the license.
+ 8. The developer has ALL rights to the development and distribution of the program.
+ 9. The developer will only be interested in solving users' queries etc. AND THE UPDATE MAY NOT DO THIS AFTER THE INTERRUPTION.
