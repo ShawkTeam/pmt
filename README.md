@@ -21,8 +21,8 @@ Options:
 
 Examples:
    pmt backup boot_a -c /dev/block/platform/bootdevice/by-name
-   pmt flash /sdcard/twrp/boot.img boot_a -c /dev/block/platform/bootdevice/by-name
-   pmt format ext4 system_a --logical
+   pmt flash boot_a /sdcard/twrp/boot.img -c /dev/block/platform/bootdevice/by-name
+   pmt format system_a ext4 --logical
    pmt -c /dev/block/platform/bootdevice/by-name --list
 
 Report bugs to <t.me/ShawkTeam | Topics | pmt>
