@@ -77,7 +77,7 @@ cd "${NDK_PROJECT_PATH}" \
                      |
      ________________|________________
      |         |            |        |
-   src/      build/        obj/    libs/
+   jni/      build/        obj/    libs/
                                      |
                            __________|__________
                            |                   |
