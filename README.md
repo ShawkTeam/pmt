@@ -53,13 +53,19 @@ cd pmt
  - Set the NDK working directory variable.
 ```
 make gen-ndk-makefiles
+# If you fail the audit, etc., use FORCE_GEN.
+# Example:
+    make gen-ndk-makefiles FORCE_GEN=true
+
+# Required by Android NDK
 export NDK_PROJECT_PATH="${PWD}"
 ```
  - Go to the NDK directory and start the build
 ```
 # Required for creating clang version information and directory access
 export NDK_ROOT_DIR="${PWD}"
-cd "${NDK_PROJECT_PATH}" && bash build/bash/gen-header \
+cd "${NDK_PROJECT_PATH}" \
+&& bash build/bash/gen-header \
 && cd "${NDK_ROOT_DIR}"
 
 # Start build
@@ -85,6 +91,12 @@ cd "${NDK_PROJECT_PATH}" && bash build/bash/gen-header \
 ```
 make
 
+# To specify clang, just use CC=<clang> next to the command (and same logic in AR)
+# Example:
+    make CC=${PWD}/../toolchain/bin/clang-18
+    make AR=${PWD}/../toolchain/bin/ar
+    make CC=${PWD}/../toolchain/bin/clang-18 AR=${PWD}/../toolchain/bin/ar
+
 # Use termux :D
 ```
  - For the make installable debian package:
@@ -93,8 +105,8 @@ make
 make deb <ARCH_NUM>
 
 # Examples
-make deb FOR_THIS=64
-make deb FOR_THIS=32
+    make deb FOR_THIS=64
+    make deb FOR_THIS=32
 ```
 
 ### Notes
