@@ -1,5 +1,7 @@
 ## Partition Manager (pmt)
 
+[![Commit reviewed](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml/badge.svg)](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml)
+
 This binary, written in C, is for writing/reading and formatting on Android partitions.
 
 #### Presented arguments (options)
