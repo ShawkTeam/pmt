@@ -31,6 +31,14 @@ else ifeq ($(FOR_THIS),32)
 	DEB_ARCH_NAME := armeabi-v7a
 endif
 
+ifneq ($(wildcard /dev/block/by-name),)
+	SUDO := su
+else ifeq ($(wildcard /system/build.prop),)
+	SUDO := sudo
+else
+	SUDO := 
+endif
+
 # controls the presence of file/directory. usage: $(call check_local,<FILE_OR_DIRECTORY_PATH>,<PACKAGE_STAT: 1, NULL>)
 define check_local
 	# the first argument is taken and controlled by the file/directory with -e option
@@ -90,7 +98,7 @@ all:
 	cp $(BINARY_DIR)/$(TARGET) $(DEBTERMUX_USR)/bin || abort; \
 	printf " - Starting dpkg-deb...\n"; \
 	sleep 2; \
-	chmod -R 755 *; \
+	$(SUDO) chmod -R 755 *; \
 	dpkg-deb -b $(TEMP_DIR) $(DEB_DIR)/$(TARGET)-$(DEB_ARCH_NAME).deb || abort; \
 	# cleanup template directory
 	rm -rf $(TEMP_DIR); \

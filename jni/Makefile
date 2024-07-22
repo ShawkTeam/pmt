@@ -134,10 +134,10 @@ all:
 	mv *.a $(STATICLIB_DIR) || abort_build; \
 	printf "\n - Generating package...\n"; \
 	cp $(BINARY_DIR)/$(TARGET) $(PACKAGE_DIR) || abort_build; \
-	printf "   XZ  $(OUT_DIRNAME)/package/$(TARGET)-$(ARCH).xz"
+	printf "   XZ  $(OUT_DIRNAME)/package/$(TARGET)-`date +%Y%m%d`.xz"
 	xz $(PACKAGE_DIR)/$(TARGET) || abort_build; \
 	sleep 1; \
-	mv $(PACKAGE_DIR)/$(TARGET).xz $(PACKAGE_DIR)/$(TARGET)-$(ARCH).xz || abort_build; \
+	mv $(PACKAGE_DIR)/$(TARGET).xz $(PACKAGE_DIR)/$(TARGET)-`date +%Y%m%d`.xz || abort_build; \
 	printf "\n - Success"; \
 	sleep 1; \
 	printf "\n\n ----------------------------------- \n"
