@@ -26,121 +26,149 @@ ifeq ($(INC_OLDENV),true)
 	include $(BUILD)/config/oldenv.mk
 endif
 
-# make objects. Usage $(call make_obj,<SRCFILE>)
-define make_obj
-	$(eval OBJ := $(1:.c=.o))
-	$(call m_stat,CC,`basename $(SOURCE_DIR)`/`basename $(OBJ)`,n)
-	$(CC) $(CFLAGS) -c "$1" || exit 1;
-	$(hide)printf "\n"
-endef
+INCLUDE_DIR := $(realpath ../include)
+PMT_INCDIR := $(INCLUDE_DIR)/pmt
 
-# make executable file with using static libraries and objects. Usage: $(call make_executable)
-define make_executable
-	printf " - Making executable file...\n"; \
-	printf "   LD  $(TARGET)"; \
-	$(CC) $(CFLAGS) -L$(SOURCE_DIR) \
-	$(foreach s_obj_b, \
-	$(shell basename -a $(STATICLIB_OBJS)), \
-	$(eval s_obj_t_b = $(s_obj_b:.o=)) \
-	$(shell echo -lpmt_$(s_obj_t_b)) \
-	) \
-	-o $(TARGET) $(OBJS_EXEC) || exit 1;
-endef
+# the presence of all source files that are on this list will be checked
+SRCS_REQ := \
+	place-holder/debugging.c \
+	place-holder/help.c \
+	place-holder/get_stat.c \
+	place-holder/lang_tools.c \
+	place-holder/languages.c \
+	place-holder/partitiontool.c \
+	place-holder/pmt.c \
+	place-holder/root.c \
+	place-holder/tools.c \
+	place-holder/versioning.c
 
-# make static library. Usage $(call make_staticlib,<LIBRARY_NAME>,<OBJECT(S)>)
-define make_staticlib
-	echo -n "   AR  $1"; \
-	$(AR) rcs "$1" "$2" || exit 1; \
-	echo;
-endef
+# objects to be used when executable file is created
+OBJS_EXEC := \
+	$(SOURCE_DIR)/$(TARGET).o \
+	$(SOURCE_DIR)/help.o \
+	$(SOURCE_DIR)/versioning.o \
+	$(SOURCE_DIR)/get_stat.o \
+	$(SOURCE_DIR)/tools.o \
+	$(SOURCE_DIR)/lang_tools.o \
+	$(SOURCE_DIR)/languages.o
 
-# controls the presence of source file. usage: $(call check_cfile,<SOURCE_FILE>)
-define check_cfile
-	# the first argument is taken and controlled by the file with -f option
-	printf "   CHK $(SOURCE_DIRNAME)/`basename $1`\n"; \
-	if [ ! -f $1 ]; then \
-		printf "   ==> Couldn't found required source file: $(SOURCE_DIRNAME)/`basename $1`\n"; \
-		if [ -d "$(TEMP_DIR)" ]; then \
-			rm -rf $(TEMP_DIR); \
-		fi; \
-		exit 1; \
-	fi;
-endef
+HEADERS_REQ := \
+	$(PMT_INCDIR)/pmt/deprecates.h \
+	$(PMT_INCDIR)/pmt/help_msgs.h \
+	$(PMT_INCDIR)/pmt/pmt.h \
+	$(PMT_INCDIR)/pmt/stringkeys.h \
+	$(PMT_INCDIR)/pmt/versioning.h
 
-# controls the presence of header file. usage: $(call check_hfile,<SOURCE_FILE>)
-define check_hfile
-	# the first argument is taken and controlled by the file with -f option
-	printf "   CHK include/pmt/`basename $1`\n"; \
-	if [ ! -f $1 ]; then \
-		printf "   ==> Couldn't found required header file: include/pmt/`basename $1`\n"; \
-		if [ -d "$(TEMP_DIR)" ]; then \
-			rm -rf $(TEMP_DIR); \
-		fi; \
-		exit 1; \
-	fi;
+PROGRESS_LIST := \
+	welcome \
+	$(SRCS_REQ) \
+	$(HEADERS_REQ) \
+	pr_obj \
+	$(OBJS) \
+	make_outdirs \
+	$(STATIC_LIBS) \
+	make_executable \
+	end_progress
+
+define check_hf
+	@ [ ! -f "$1" ] \
+	&& $(E_NS) "   ==> Couldn't found required header file: include/pmt/`basename $1`" \
+	&& exit 1
 endef
 
 # all target for building
-all:
-	$(hide)rm -f $(BUILD)/config/oldenv.mk
-	$(hide)printf " ---- Partition Manager Builder ---- \n\n"
-	$(hide)printf " - Version: $(VERSION)\n"
-	$(hide)printf " - Version code: $(VERSION_CODE)\n\n"
-	$(hide)printf "   --------------------------------   \n\n"
-	$(hide)if [ -f $(SOURCE_DIR)/debugging.o ]; then \
-		printf " - Please clean up before you build it.\n\n"; \
-		printf " ----------------------------------- \n"; \
+all: $(PROGRESS_LIST)
+
+welcome:
+	@ rm -f $(BUILD)/config/oldenv.mk
+	@ echo " ---- Partition Manager Builder ---- " \
+	&& $(E_NS)
+	$(E) " - Version: $(VERSION)"
+	$(E) " - Version code: $(VERSION_CODE)" \
+	&& $(E_NS)
+	$(E) "   -------------------------------- " \
+	&& $(E_NS)
+	@ if [ -f $(SOURCE_DIR)/debugging.o ]; then \
+		$(E_NS) " - Please clean up before you build it." && echo; \
+		$(E_NS) " ----------------------------------- "; \
 		exit 1; \
 	fi
-	$(hide)printf " - Checking required source files...\n"
-	$(hide)sleep 1
-	$(foreach src_cf, \
-	$(SRCS_REQ), \
-	$(call check_cfile,$(src_cf)) \
-	)
-	$(foreach src_hf, \
-	$(HEADERS_REQ), \
-	$(call check_hfile,$(src_hf)) \
-	)
-	$(hide)printf " - Building objects...\n"
-	$(hide)sleep 2
-	$(foreach csrc, \
-	$(SRCS), \
-	$(call make_obj,$(csrc)) \
-	)
-	$(foreach reqdir,$(IN_OUT_DIR),$(call mdir,$(reqdir)))
-	$(hide)printf " - Making static libraries...\n"
-	$(foreach s_obj, \
-	$(shell basename -a $(STATICLIB_OBJS)), \
-	$(eval s_obj_t = $(s_obj:.o=.a)) \
-	$(call make_staticlib,libpmt_$(s_obj_t),$(s_obj)) \
-	)
-	$(hide)sleep 1
-	$(call make_executable)
-	$(hide)sleep 1
-	$(hide)abort_build() { \
-		if [ -d "$(PACKAGE_DIR)" ]; then \
-			rm -rf "$(PACKAGE_DIR)"; \
-		fi; \
-		if [ -d "$(BINARY_DIR)" ]; then \
-			rm -rf "$(BINARY_DIR)"; \
-		fi; \
-		if [ -d "$(STATICLIB_DIR)" ]; then \
-			rm -rf "$(STATICLIB_DIR)"; \
-		fi; \
+	$(E) " - Checking required source files..."
+	@ sleep 1
+
+pr_obj:
+	$(E) " - Building objects..."
+
+make_outdirs:
+	@ rm -rf $(IN_OUT_DIR)
+	@ mkdir $(BINARY_DIR)
+	@ mkdir $(PACKAGE_DIR)
+	@ mkdir $(STATICLIB_DIR)
+
+place-holder/%.c:
+	$(E) "   CHK $(SOURCE_DIRNAME)/`basename $@`"
+	@ if [ ! -f "$(SOURCE_DIR)/`basename $@`" ]; then \
+		$(E_NS) "   ==> Couldn't found required source file: $(SOURCE_DIRNAME)/`basename $@`"; \
+		exit 1; \
+	fi
+
+$(PMT_INCDIR)/%.h:
+	$(E) "   CHK include/pmt/`basename $@`"
+	@ if [ ! -f "$(INCLUDE_DIR)/pmt/`basename $@`" ]; then \
+		$(E_NS) "   ==> Couldn't found required header file: include/pmt/`basename $@`"; \
+		exit 1; \
+	fi
+
+$(SOURCE_DIR)/%.o: $(SOURCE_DIR)/%.c
+	$(E) "   CC  $(SOURCE_DIRNAME)/`basename $@`"
+	@ $(CC) $(CFLAGS) -c "$<" || exit 1
+	$(eval GEN_OBJS_MSG = )
+
+lib$(TARGET)_root.a:
+	$(E) " - Making static libraries..."
+	$(E) "   AR  $@"
+	@ $(AR) rcs "$@" "$(SOURCE_DIR)/root.o" || exit 1
+
+lib$(TARGET)_debugging.a:
+	$(E) "   AR  $@"
+	@ $(AR) rcs "$@" "$(SOURCE_DIR)/debugging.o"
+
+lib$(TARGET)_listpart.a:
+	$(E) "   AR  $@"
+	@ $(AR) rcs "$@" "$(SOURCE_DIR)/listpart.o"
+
+lib$(TARGET)_partitiontool.a:
+	$(E) "   AR  $@"
+	@ $(AR) rcs "$@" "$(SOURCE_DIR)/partitiontool.o"
+	@ sleep 1
+
+make_executable:
+	$(E) " - Making executable file..."
+	$(E) "   LD  $(TARGET)"
+	@ $(CC) $(CFLAGS) -L$(SOURCE_DIR) -l$(TARGET)_root -l$(TARGET)_debugging -l$(TARGET)_listpart -l$(TARGET)_partitiontool -o $(TARGET) $(OBJS_EXEC) || exit 1
+	@ sleep 1
+
+end_progress:
+	@ abort_build() { \
+		[ -d "$(PACKAGE_DIR)" ] \
+		&& rm -rf "$(PACKAGE_DIR)"; \
+		[ -d "$(BINARY_DIR)" ] \
+		&& rm -rf "$(BINARY_DIR)"; \
+		[ -d "$(STATICLIB_DIR)" ] \
+		&& rm -rf "$(STATICLIB_DIR)"; \
 		exit 1; \
 	}; \
 	mv $(TARGET) $(BINARY_DIR) || abort_build; \
 	mv *.a $(STATICLIB_DIR) || abort_build; \
-	printf "\n - Generating package...\n"; \
+	$(E_NS) " - Generating package..."; \
 	cp $(BINARY_DIR)/$(TARGET) $(PACKAGE_DIR) || abort_build; \
-	printf "   XZ  $(OUT_DIRNAME)/package/$(TARGET)-`date +%Y%m%d`.xz"
+	$(E_NS) "   XZ  $(OUT_DIRNAME)/package/$(TARGET)-`date +%Y%m%d`.xz"
 	xz $(PACKAGE_DIR)/$(TARGET) || abort_build; \
 	sleep 1; \
-	mv $(PACKAGE_DIR)/$(TARGET).xz $(PACKAGE_DIR)/$(TARGET)-`date +%Y%m%d`.xz || abort_build; \
-	printf "\n - Success"; \
-	sleep 1; \
-	printf "\n\n ----------------------------------- \n"
+	mv $(PACKAGE_DIR)/$(TARGET).xz $(PACKAGE_DIR)/$(TARGET)-`date +%Y%m%d`.xz || abort_build
+	$(E) " - Success" && $(E_NS)
+	@ sleep 1
+	$(E) " ----------------------------------- "
 
 .PHONY: clean
 clean:

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 ########
-# 2.5.0
+# 2.6.0
 ########
 
 LOCAL_PATH := $(call my-dir)
@@ -35,7 +35,7 @@ PMT_CFLAGS = \
     $(EXTRA_COMPILER_FLAGS)
 
 ifneq ($(PMT_ENABLE_DEBUG),)
-    PMT_CFLAGS += -gdwarf-5 -fsanitize=address
+    PMT_CFLAGS += -gdwarf-5 -fsanitize=address -fsanitize=undefined
 endif
 
 include $(CLEAR_VARS)
@@ -79,12 +79,12 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := pmt
 LOCAL_SRC_FILES := \
     pmt.c \
-    versioner.c \
+    versioning.c \
     get_stat.c \
     tools.c \
     lang_tools.c \
     languages.c \
-    docs.c
+    help.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
 LOCAL_STATIC_LIBRARIES := \
     libpmt_root \

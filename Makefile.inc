@@ -15,25 +15,23 @@
 # limitations under the License.
 
 # speficy
-VERSION := 2.5.0
-VERSION_CODE := 250
+VERSION := 2.6.0
+VERSION_CODE := 260
 TARGET := pmt
 
 # device arch info
 ARCH := $(shell uname -m)
 
 # current directory
-CUR_DIR = $(shell pwd)
 OUT_DIRNAME ?= out
 SOURCE_DIRNAME ?= jni
 
 # others needed important variables
 ifeq ($(THIS_IS),src)
 	BUILD := ../build
-	SOURCE_DIR := $(CUR_DIR)
+	SOURCE_DIR := $(CURDIR)
 	OUT_DIR := ../$(OUT_DIRNAME)
 	DEBUTILS_DIR := $(BUILD)/deb
-	INCLUDE_DIR := ../include
 else ifeq ($(THIS_IS),debutils)
 	BUILD := ..
 	SOURCE_DIR := ../../$(SOURCE_DIRNAME)
@@ -42,12 +40,12 @@ else ifeq ($(THIS_IS),debutils)
 else ifeq ($(THIS_IS),out)
 	BUILD := ../build
 	SOURCE_DIR := ../$(SOURCE_DIRNAME)
-	OUT_DIR := $(CUR_DIR)
+	OUT_DIR := $(CURDIR)
 	DEBUTILS_DIR := $(BÜILD)/deb
 else ifeq ($(THIS_IS),main)
-	BUILD := $(CUR_DIR)/build
-	SOURCE_DIR := $(CUR_DIR)/$(SOURCE_DIRNAME)
-	OUT_DIR := $(CUR_DIR)/$(OUT_DIRNAME)
+	BUILD := $(CURDIR)/build
+	SOURCE_DIR := $(CURDIR)/$(SOURCE_DIRNAME)
+	OUT_DIR := $(CURDIR)/$(OUT_DIRNAME)
 	DEBUTILS_DIR := $(BUILD)/deb
 endif
 
@@ -84,44 +82,11 @@ endif
 SRCS := $(wildcard $(SOURCE_DIR)/*.c)
 OBJS = $(SRCS:.c=.o)
 
-# the presence of all source files that are on this list will be checked
-SRCS_REQ := \
-	$(SOURCE_DIR)/debugging.c \
-	$(SOURCE_DIR)/docs.c \
-	$(SOURCE_DIR)/get_stat.c \
-	$(SOURCE_DIR)/lang_tools.c \
-	$(SOURCE_DIR)/languages.c \
-	$(SOURCE_DIR)/partitiontool.c \
-	$(SOURCE_DIR)/pmt.c \
-	$(SOURCE_DIR)/root.c \
-	$(SOURCE_DIR)/tools.c \
-	$(SOURCE_DIR)/versioner.c
-
-ifeq ($(THIS_IS),src)
-	HEADERS_REQ := \
-		$(INCLUDE_DIR)/pmt/deprecates.h \
-		$(INCLUDE_DIR)/pmt/docs.h \
-		$(INCLUDE_DIR)/pmt/pmt.h \
-		$(INCLUDE_DIR)/pmt/stringkeys.h \
-		$(INCLUDE_DIR)/pmt/versioning.h
-endif
-
-# objects to be used wgen static library files is created
-STATICLIB_OBJS := \
-	$(SOURCE_DIR)/root.o \
-	$(SOURCE_DIR)/debugging.o \
-	$(SOURCE_DIR)/listpart.o \
-	$(SOURCE_DIR)/partitiontool.o
-
-# objects to be used when executable file is created
-OBJS_EXEC := \
-	$(SOURCE_DIR)/$(TARGET).o \
-	$(SOURCE_DIR)/docs.o \
-	$(SOURCE_DIR)/versioner.o \
-	$(SOURCE_DIR)/get_stat.o \
-	$(SOURCE_DIR)/tools.o \
-	$(SOURCE_DIR)/lang_tools.o \
-	$(SOURCE_DIR)/languages.o
+STATIC_LIBS := \
+	lib$(TARGET)_root.a \
+	lib$(TARGET)_debugging.a \
+	lib$(TARGET)_listpart.a \
+	lib$(TARGET)_partitiontool.a
 
 # other directories in the out directory
 IN_OUT_DIR := \
@@ -131,7 +96,7 @@ IN_OUT_DIR := \
 
 # list of file/directory to be checked when the deb pack is created
 DEB_CHECKS := \
-	$(DEBUTILS_DIR) \
+	$(DEBUTILS_DIR)/ \
 	$(DEBUTILS_DIR)/DEBIAN \
 	$(DEBUTILS_DIR)/DEBIAN/control_32 \
 	$(DEBUTILS_DIR)/DEBIAN/control_64 \
@@ -148,9 +113,11 @@ DEB_CHECKS := \
 	$(DEBUTILS_DIR)/data/data/com.termux/files/usr/share/man/man8
 
 # for running make with silent mode
-hide := @
-MAKE_HIDE := $(hide)$(MAKE)
+MAKE_HIDE := @ $(MAKE)
 SILENT := -s
+E := @ echo
+E_NS := echo
+P := printf
 
 # color definations
 RESET := \033[0m

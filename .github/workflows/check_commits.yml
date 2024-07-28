@@ -17,17 +17,17 @@ jobs:
           COMM_MSG=$(git log -1 --pretty=%B)
           if [ "${GITHUB_EVENT_NAME}" == "push" ]; then
               if [[ "${COMM_MSG}" == *"initial"* ]]; then
-                  echo "build_and_release=true" >> $GITHUB_ENV
+                  echo "run_builder=true" >> $GITHUB_ENV
               else
-                  echo "build_and_release=false" >> $GITHUB_ENV
+                  echo "run_builder=false" >> $GITHUB_ENV
               fi
           elif [ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]; then
-              echo "build_and_release=true" >> $GITHUB_ENV
+              echo "run_builder=true" >> $GITHUB_ENV
           fi
 
       - name: Run release workflow
         id: run-rel-workflow
-        if: env.build_and_release == 'true'
+        if: env.run_builder == 'true'
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: 'build.yml'

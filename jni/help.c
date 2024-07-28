@@ -21,10 +21,11 @@ extern "C" {
 #endif
 
 #define INC_MAIN_LIBS
+#define HELP
 
 #include <pmt/pmt.h>
 #include <pmt/stringkeys.h>
-#include <pmt/docs.h>
+#include <pmt/help_msgs.h>
 
 extern char* bin_name;
 extern char* curr_lang;

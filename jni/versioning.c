@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 #define INC_MAIN_LIBS
+#define VERSIONING
 
 #include <pmt/pmt.h>
 #include <pmt/stringkeys.h>
@@ -40,7 +41,7 @@ void version(void)
 
     #if defined(__clang__) && !defined(__NDK_BUILD)
         LOGD("%s: clang %d.%d.%d\n", current->compiler_str, __clang_major__, __clang_minor__, __clang_patchlevel__);
-    #elif defined(__clang__) && defined(__NDK_BUILD)
+    #elif defined(__NDK_BUILD)
         LOGD("%s\n", __NDK_CC_VERSION__);
     #endif
 }

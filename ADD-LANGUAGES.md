@@ -28,7 +28,6 @@ On this page, I will tell you how to add languages to pmt. This is not a difficu
           ~ $ echo -n "$missing_operand\n" # for more detail I used the -n argument
           missing operand
           ~ $ 
-          
 
  C / C++
      const char* _Nonnull missing_operand = "missing operand.";
@@ -51,9 +50,9 @@ On this page, I will tell you how to add languages to pmt. This is not a difficu
  Code pieces (C)
       struct pmt_langdb_general en = {
           // other translations
-          .missing_operand = "missing operand";
-          .try_h = "Try";
-          .for_more = "for more information";
+          .missing_operand = "missing operand",
+          .try_h = "Try",
+          .for_more = "for more information",
           // other translations
       }
 
@@ -68,12 +67,12 @@ In short, there are variables for texts. And I made these dynamic by using [stru
  - Let's open our jni/languages.c source file.
  - Now, let's create the translation with the ready-made struct structure (see jni/include/pmt-stringkeys.h for the structure).
  ```
- // main
+ // Main
  struct pmt_langdb_general <LANGUAGE_PREFIX> = { // LANGUAGE_PREFIX must be the corresponding abbreviation of the language in English. For example, it's like en in English.
       // translations
  }
 
- // example
+ // Example
  struct pmt_langdb_general en = {
       // translation
  }
@@ -87,15 +86,16 @@ In short, there are variables for texts. And I made these dynamic by using [stru
       // other translations
  }
 
- // example
+ // Example
  struct pmt_langdb_general en = {
-      .lang_by_s = "YZBruh & r0manas";
-      .language = "English";
-      .lang_prefix = "en";
+      .lang_by_s = "YZBruh & r0manas",
+      .language = "English",
+      .lang_prefix = "en",
       // other translations
+      .by_str = "By" // Example for end translate
  }
 
- // CRITIC WARNING: Do not add ';' to the end of the last translation text. But others always
+ // CRITIC WARNING: Do not add ',' to the end of the last translation text. But others always...
  ```
  - Now do the others :)
  - Now let me explain the documentation...
@@ -109,10 +109,12 @@ In short, there are variables for texts. And I made these dynamic by using [stru
       // translations
  }
 
- // example
+ // Example
  struct pmt_langdb_docs en_docs = {
       // translations
  }
+
+ // CRITIC WARNING: Do not add ',' to the end of the last translation text. But others always...
  ```
  - Make translations by taking examples from existing ones. And definitely do it regularly by getting help message from pmt :D
 
@@ -124,8 +126,18 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 struct pmt_langdb_langs lang[] = {
     {"en"},
     {"tr"},
+    // language prefix. {"<LANGUAGE_PREFIX>"},
     {NULL} // PLEASE DO NOT ADD IT UNDER 'NULL'!
 };
+
+// Example
+struct pmt_langdb_langs lang[] = {
+    {"en"},
+    {"tr"},
+    {"az"},
+    {NULL}
+};
+
 // Add the language you are translating into these existing language prefixes. I will fix the errors here (if there is an error)
 ```
 

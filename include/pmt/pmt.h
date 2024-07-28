@@ -16,6 +16,10 @@
  * limitations under the License.
  */
 
+#if !defined(__clang__) && !defined(__NDK_BUILD)
+  #error "Your compiler is NOT clang. Please build with LLVM clang."
+#endif
+
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
@@ -28,11 +32,13 @@ __BEGIN_DECLS
 #ifdef INC_MAIN_LIBS
   #include <stdio.h>
   #include <stdbool.h>
-  #include <unistd.h>
-  #include <fcntl.h>
-  #include <stdlib.h>
   #include <stdarg.h>
   #include <string.h>
+
+  #if !defined(HELP) || !defined(VERSIONING)
+    #include <stdlib.h>
+    #include <unistd.h>
+  #endif
 #endif
 
 #ifdef INC_GETOPT

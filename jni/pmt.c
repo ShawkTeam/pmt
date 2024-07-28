@@ -29,7 +29,9 @@ extern "C" {
 #include <pmt/pmt.h>
 #include <pmt/stringkeys.h>
 #include <pmt/deprecates.h>
-#include <pmt/docs.h>
+#include <pmt/help_msgs.h>
+
+#define opt_symbol "-"
 
 /* add value to variables that are added globally and are not worth */
 char* out = NULL;
@@ -51,7 +53,6 @@ bool pmt_force_mode = false;
 bool pmt_inst_on_termux = false;
 
 /* variable for use in control of '-' expression */
-static const char* opt_symbol = "-";
 static char common_symbol_rule[350];
 
 #if !defined(__clang__)

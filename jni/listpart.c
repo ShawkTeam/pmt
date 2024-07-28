@@ -86,30 +86,22 @@ list(const char* operation, const char* target_dir)
 /* list existing partitions */
 int listpart(void)
 {
+    static char acc_cxt[350];
+
     if (pmt_use_cust_cxt)
+        sprintf(acc_cxt, "%s", cust_cxt);
+    else
+        sprintf(acc_cxt, "%s", CUR_DEV_CNTX);
+
+    if (list("access", acc_cxt) != 0)
     {
-        if (list("access", cust_cxt) != 0)
-        {
-            if (!pmt_force_mode)
-                LOGE("%s: `%s': %s\n", current->not_open, cust_cxt, strerror(errno));
-            else
-                return 1;
-        }
+        if (!pmt_force_mode)
+            LOGE("%s: `%s': %s\n", current->not_open, acc_cxt, strerror(errno));
         else
-            list("print", cust_cxt);
+            return 1;
     }
     else
-    {
-        if (list("access", CUR_DEV_CNTX) != 0)
-        {
-            if (!pmt_force_mode)
-                LOGE("%s: `%s': %s\n", current->not_open, CUR_DEV_CNTX, strerror(errno));
-            else
-                return 1;
-        }
-        else
-            list("print", CUR_DEV_CNTX);
-    }
+        list("print", acc_cxt);
 
     if (pmt_logical)
     {

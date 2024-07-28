@@ -8,6 +8,7 @@ jobs:
 
     steps:
       - name: Checkout
+        id: checkout
         uses: actions/checkout@v4
 
       - name: Cleanup
@@ -25,7 +26,7 @@ jobs:
           && sudo apt install gh -y
 
       - name: Update and setup packages
-        id: setup-packages
+        id: general-packages-progress
         run: |
           sudo apt update \
           && sudo apt upgrade -y \
@@ -83,18 +84,18 @@ jobs:
           . ${{ env.PMT_SRCDIR }}/build/workflow/relnotes > /home/pmt/release_body.txt
           cd ${{ env.PMT_SRCDIR }}
           zip -rq pmt-objs-local.zip obj/local/arm64-v8a obj/local/armeabi-v7a
-          xz libs/arm64-v8a/pmt
-          mv libs/arm64-v8a/pmt.xz ${PWD}/pmt-arm64-v8a.xz
-          xz libs/armeabi-v7a/pmt
-          mv libs/armeabi-v7a/pmt.xz ${PWD}/pmt-armeabi-v7a.xz
-          make CC="${CC_64}" AR="${AR}"
-          make deb FOR_THIS=64
-          mv out/debpackage/*.deb .
-          make clean
-          make CC="${CC_32}" AR="${AR}"
-          make deb FOR_THIS=32
-          mv out/debpackage/*.deb .
-          make clean
+          for arch in arm64-v8a armeabi-v7a; do
+              xz libs/${arch}/pmt
+              mv libs/${arch}/pmt.xz ${PWD}/pmt-${arch}-$(date +%Y%m%d).xz
+          done
+          for CC_COMP in ${CC_64} ${CC_32}; do
+              make clean
+              make CC="${CC_COMP}" AR="${AR}"
+              [[ "${CC_COMP}" == *"arm64-v8a"* ]] && make deb FOR_THIS=64
+              [[ "${CC_COMP}" == *"armeabi-v7a"* ]] && make deb FOR_THIS=32
+              mv out/debpackage/*.deb .
+              make clean
+          done
         working-directory: ${{ env.NDK_DIR }}
 
       - name: Upload to release

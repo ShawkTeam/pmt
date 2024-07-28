@@ -47,6 +47,6 @@ endif
 
 # write current env configuration to oldenv.mk
 all:
-	@echo "CC := $(CC)" > oldenv.mk; \
-	echo "AR := $(AR)" >> oldenv.mk; \
-	echo "CFLAGS := $(CFLAGS)" >> oldenv.mk
+	@ echo "CC := $(CC)" > oldenv.mk
+	@ echo "AR := $(AR)" >> oldenv.mk
+	@ echo "CFLAGS := $(CFLAGS)" >> oldenv.mk

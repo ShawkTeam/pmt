@@ -17,74 +17,67 @@
 UPDATE_MAKEFILES = false
 
 all:
-	$(hide)# To save configuration, the makefile in the config directory
 	$(MAKE_HIDE) $(SILENT) -C $(BUILD)/config || exit 1
-	$(hide)# start the main build process
 	$(MAKE_HIDE) $(SILENT) -C $(SOURCE_DIRNAME) INC_OLDENV=true || exit 1
 
 # cleaner functions
 .PHONY: clean
 clean:
-	$(hide)printf "Cleaning directories...\n"; \
-	# cleanup out/binary
-	$(hide)if [ -d $(BINARY_DIR) ]; then \
-		printf "==> $(OUT_DIRNAME)/`basename $(BINARY_DIR)`\n"; \
-		rm -rf "$(BINARY_DIR)"; \
-	fi; \
-	# cleanup out/package
-	$(hide)if [ -d $(PACKAGE_DIR) ]; then \
-		printf "==> $(OUT_DIRNAME)/`basename $(PACKAGE_DIR)`\n"; \
-		rm -rf "$(PACKAGE_DIR)"; \
-	fi; \
-	# cleanup out/static_libs
-	$(hide)if [ -d $(STATICLIB_DIR) ]; then \
-		printf "==> $(OUT_DIRNAME)/`basename $(STATICLIB_DIR)`\n"; \
-		rm -rf "$(STATICLIB_DIR)"; \
-	fi; \
-	# cleanup out/debpackage
-	$(hide)if [ -d $(DEB_DIR) ]; then \
-		printf "==> $(OUT_DIRNAME)/`basename $(DEB_DIR)`\n"; \
-		rm -rf "$(DEB_DIR)"; \
-	fi; \
-	sleep 2; \
-	# clean the objects by calling the receipt in the source directory
+	$(E) "Cleaning directories..."
+	@ if [ -d $(BINARY_DIR) ]; then \
+		$(E_NS) "==> $(OUT_DIRNAME)/`basename $(BINARY_DIR)`"; \
+	fi
+	@ if [ -d $(PACKAGE_DIR) ]; then \
+		$(E_NS) "==> $(OUT_DIRNAME)/`basename $(PACKAGE_DIR)`"; \
+	fi
+	@ if [ -d $(STATICLIB_DIR) ]; then \
+		$(E_NS) "==> $(OUT_DIRNAME)/`basename $(STATICLIB_DIR)`"; \
+	fi
+	@ if [ -d $(DEB_DIR) ]; then \
+		$(E_NS) "==> $(OUT_DIRNAME)/`basename $(DEB_DIR)`"; \
+	fi
+	@ rm -rf $(IN_OUT_DIR)
+	@ rm -rf $(DEB_DIR)
+	@ sleep 2
 	$(MAKE_HIDE) $(SILENT) -C $(SOURCE_DIRNAME) clean INC_OLDENV=false || exit 1
-	$(hide)sleep 1
-	$(hide)printf "Success.\n"
+	@ sleep 1
+	$(E) "Success."
 
 # helper function
 .PHONY: help
 help:
-	$(hide)printf " ------- Partition Manager help -------\n\n"
-	$(hide)printf " Commands:\n"
-	$(hide)printf "    $(MAKE)                       ==>  Build Partition Manager.\n"
-	$(hide)printf "    $(MAKE) deb                   ==>  Generate debian package for termux.\n"
-	$(hide)printf "    $(MAKE) clean                 ==>  Clear builded binary.\n"
-	$(hide)printf "    $(MAKE) install               ==>  It installs $(TARGET) into termux.\n"
-	$(hide)printf "    $(MAKE) uninstall             ==>  It uninstalls $(TARGET) into termux.\n"
-	$(hide)printf "    $(MAKE) gen-makefiles         ==>  Generate makefiles for build.\n"
-	$(hide)printf "    $(MAKE) gen-ndk-makefiles     ==>  Generate NDK makefiles for build.\n"
-	$(hide)printf "    $(MAKE) clean-makefiles       ==>  Cleanup makefiles.\n"
-	$(hide)printf "    $(MAKE) clean-ndk-makefiles   ==>  Cleanup NDK makefiles.\n"
-	$(hide)printf "    $(MAKE) update-makefiles      ==>  Re-generate makefiles.\n"
-	$(hide)printf "    $(MAKE) update-ndk-makefiles  ==>  Re-generate NDK makefiles.\n"
-	$(hide)printf "    $(MAKE) help                  ==>  Display this help message.\n\n"
+	$(E) " ------- Partition Manager help ------- " && $(E_NS)
+	$(E) " Commands:"
+	$(E) "    $(MAKE)                       ==>  Build Partition Manager."
+	$(E) "    $(MAKE) deb                   ==>  Generate debian package for termux."
+	$(E) "    $(MAKE) clean                 ==>  Clear builded binary."
+	$(E) "    $(MAKE) install               ==>  It installs $(TARGET) into termux."
+	$(E) "    $(MAKE) uninstall             ==>  It uninstalls $(TARGET) into termux."
+	$(E) "    $(MAKE) gen-makefiles         ==>  Generate makefiles for build."
+	$(E) "    $(MAKE) gen-ndk-makefiles     ==>  Generate NDK makefiles for build."
+	$(E) "    $(MAKE) clean-makefiles       ==>  Cleanup makefiles."
+	$(E) "    $(MAKE) clean-ndk-makefiles   ==>  Cleanup NDK makefiles."
+	$(E) "    $(MAKE) update-makefiles      ==>  Re-generate makefiles."
+	$(E) "    $(MAKE) update-ndk-makefiles  ==>  Re-generate NDK makefiles."
+	$(E) "    $(MAKE) help                  ==>  Display this help message." && $(E_NS)
 
 # deb maker
 .PHONY: deb
 deb:
 	$(MAKE_HIDE) $(SILENT) -C $(DEBUTILS_DIR) -f deb.mk FOR_THIS=$(FOR_THIS) || exit 1
-	$(hide)printf ""
+	$(P) ""
 
 # install pmt in to termux
 .PHONY: install
 install:
-	$(MAKE_HIDE) $(SILENT) -C $(OUT_DIRNAME) install || exit 1
+	$(eval PROG := $@)
+	$(MAKE_HIDE) $(SILENT) -C $(OUT_DIRNAME) install PROG=$(PROG) || exit 1
 
 # uninstall pmt in to termux
 .PHONY: uninstall
 uninstall:
-	$(MAKE_HIDE) $(SILENT) -C $(OUT_DIRNAME) uninstall || exit 1
+	$(eval PROG := $@)
+	$(MAKE_HIDE) $(SILENT) -C $(OUT_DIRNAME) uninstall PROG=$(PROG) || exit 1
 
 # clean ndk makefiles
 .PHONY: gen-ndk-makefiles
@@ -92,44 +85,42 @@ gen-ndk-makefiles:
 	$(eval NDK_PROG = true)
 	$(call save-gen-vars)
 	$(call gen-ndk-mfiles)
-	$(hide)printf ""
+	$(P) ""
 
 .PHONY: gen-makefiles
 gen-makefiles:
 	$(call save-gen-vars)
 	$(call gen-mfiles)
-	$(hide)printf ""
+	$(P) ""
 
 .PHONY: update-ndk-makefiles
 update-ndk-makefiles:
-	$(hide)printf " ------ Updating NDK makefiles ------ \n"
+	$(E) " ------ Updating NDK makefiles ------ "
 	$(eval NDK_PROG = true)
 	$(eval UPDATE_MAKEFILES = true)
 	$(call save-gen-vars)
 	$(call clean-ndk-mfiles)
 	$(call gen-ndk-mfiles)
-	$(hide)printf ""
 
 .PHONY: update-makefiles
 update-makefiles:
-	$(hide)printf " ------ Updating makefiles ------ \n"
+	$(E) " ------ Updating makefiles ------ "
 	$(eval UPDATE_MAKEFILES = true)
 	$(call save-gen-vars)
 	$(call clean-ndk-mfiles)
 	$(call gen-mfiles)
-	$(hide)printf ""
 
 .PHONY: clean-ndk-makefiles
 clean-ndk-makefiles:
 	$(eval NDK_PROG = true)
 	$(call save-gen-vars)
 	$(call clean-ndk-mfiles)
-	$(hide)printf ""
+	$(P) ""
 
 .PHONY: clean-makefiles
 clean-makefiles:
 	$(call save-gen-vars)
 	$(call clean-mfiles)
-	$(hide)printf ""
+	$(P) ""
 
 # end

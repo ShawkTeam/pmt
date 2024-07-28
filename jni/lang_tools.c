@@ -54,7 +54,7 @@ langctrl(const char* _Nonnull lang_)
 
 int loadlang(void)
 {
-    static char lang_fpr[10] = "en";
+    static char lang_fpr[3] = "en";
     langconf = NULL;
 
     if (get_stat(TERMUX_PMT_MANDOC, "file") == 0)

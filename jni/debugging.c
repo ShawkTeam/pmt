@@ -27,8 +27,6 @@ extern "C" {
 
 void debug(LogLevel status, const char* _Nullable fmt, ...)
 {
-    if (fmt == NULL) exit(1);
-
     va_list args;
     va_start(args, fmt);
 

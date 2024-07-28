@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#ifndef __PMT_DOCS_H
-#define __PMT_DOCS_H
+#ifndef __PMT_HELP_MSGS_H
+#define __PMT_HELP_MSGS_H
 
 __BEGIN_DECLS
 
