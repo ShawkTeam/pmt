@@ -38,6 +38,7 @@ __BEGIN_DECLS
   #if !defined(HELP) || !defined(VERSIONING)
     #include <stdlib.h>
     #include <unistd.h>
+    #include <fcntl.h>
   #endif
 #endif
 
