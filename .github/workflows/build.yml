@@ -91,8 +91,8 @@ jobs:
           for CC_COMP in ${CC_64} ${CC_32}; do
               make clean
               make CC="${CC_COMP}" AR="${AR}"
-              [[ "${CC_COMP}" == *"arm64-v8a"* ]] && make deb FOR_THIS=64
-              [[ "${CC_COMP}" == *"armeabi-v7a"* ]] && make deb FOR_THIS=32
+              [[ "${CC_COMP}" == *"aarch64"* ]] && make deb FOR_THIS=64
+              [[ "${CC_COMP}" == *"armv7a"* ]] && make deb FOR_THIS=32
               mv out/debpackage/*.deb .
               make clean
           done
