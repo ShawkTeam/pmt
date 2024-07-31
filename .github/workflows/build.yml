@@ -90,7 +90,7 @@ jobs:
           done
           for CC_COMP in ${CC_64} ${CC_32}; do
               make clean
-              make CC="${CC_COMP}" AR="${AR}"
+              make CC="${CC_COMP}" AR="${AR}" PMT_EXTRA_CFLAGS="-D__NDK_BUILD"
               [[ "${CC_COMP}" == *"aarch64"* ]] && make deb FOR_THIS=64
               [[ "${CC_COMP}" == *"armv7a"* ]] && make deb FOR_THIS=32
               mv out/debpackage/*.deb .
