@@ -15,7 +15,7 @@
 # limitations under the License.
 
 UPDATE_MAKEFILES = false
-CLS_ADTS := "rm -f $(BUILD)/bash/additional-vars"
+CLS_ADTS := rm -f $(BUILD)/bash/additional-vars
 
 all:
 	$(MAKE_HIDE) $(SILENT) -C $(BUILD)/config || exit 1
