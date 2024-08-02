@@ -32,12 +32,12 @@ Report bugs to <t.me/ShawkTeam | Topics | pmt>
 
 #### Some notes
 
-- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.6.0/LANGUAGES.md)
-- [Add language.](https://github.com/ShawkTeam/pmt/blob/2.6.0/ADD-LANGUAGES.md)
+- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.7.0/LANGUAGES.md)
+- [Add language.](https://github.com/ShawkTeam/pmt/blob/2.7.0/ADD-LANGUAGES.md)
 - Feel free to ask any questions you want.
 - Packages are available in publications.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
-- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.6.0/CHANGELOG.md)
+- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.7.0/CHANGELOG.md)
 - We are always open to your suggestions and support (developing)!
 
 ### How is it built?
@@ -47,7 +47,7 @@ Make or Android NDK is required to build.
  - [Download Android NDK](https://developer.android.com/ndk/downloads) and extract the NDK package.
  - Clone this repository. And get access to it.
 ```
-git clone https://github.com/ShawkTeam/pmt -b 2.6.0
+git clone https://github.com/ShawkTeam/pmt -b 2.7.0
 cd pmt
 ```
  - Set the NDK working directory variable.
