@@ -16,8 +16,8 @@
 
 # generate any text based empty file. Usage: $(call touch,<PATH>)
 define touch
-	$(hide)[ ! "$(FORCE_GEN)" = "true" ] || rm -f "$1"
-	$(hide)touch "$1" || exit 1
+	@ [ ! "$(FORCE_GEN)" = "true" ] || rm -f "$1"
+	@ touch "$1" || exit 1
 endef
 
 # copy files. Usage: $(call copy,<SOURCE>,<COPY_PATH>)
