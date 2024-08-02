@@ -15,12 +15,12 @@
 # limitations under the License.
 
 define save-gen-vars
-	$(hide)rm -f $(BASH_DIR)/additional-vars
+	@ rm -f $(BASH_DIR)/additional-vars
 	$(call touch,$(BASH_DIR)/additional-vars)
-	$(hide)echo "NDK_PROG=$(NDK_PROG)" >> $(BASH_DIR)/additional-vars
-	$(hide)echo "FORCE_GEN=$(FORCE_GEN)" >> $(BASH_DIR)/additional-vars
-	$(hide)echo "THIS_IS=$(THIS_IS)" >> $(BASH_DIR)/additional-vars
-	$(hide)echo "UPDATE_MAKEFILES=$(UPDATE_MAKEFILES)" >> $(BASH_DIR)/additional-vars
-	$(hide)echo "SOURCE_DIRNAME=$(SOURCE_DIRNAME)" >> $(BASH_DIR)/additional-vars
-	$(hide)echo "OUT_DIRNAME=$(OUT_DIRNAME)" >> $(BASH_DIR)/additional-vars
+	@ echo "NDK_PROG=$(NDK_PROG)" >> $(BASH_DIR)/additional-vars
+	@ echo "FORCE_GEN=$(FORCE_GEN)" >> $(BASH_DIR)/additional-vars
+	@ echo "THIS_IS=$(THIS_IS)" >> $(BASH_DIR)/additional-vars
+	@ echo "UPDATE_MAKEFILES=$(UPDATE_MAKEFILES)" >> $(BASH_DIR)/additional-vars
+	@ echo "SOURCE_DIRNAME=$(SOURCE_DIRNAME)" >> $(BASH_DIR)/additional-vars
+	@ echo "OUT_DIRNAME=$(OUT_DIRNAME)" >> $(BASH_DIR)/additional-vars
 endef

@@ -21,11 +21,11 @@
 include $(TOOLS)/save-gen-vars.mk
 
 define  gen-ndk-mfiles
-	$(hide)[ "$(UPDATE_MAKEFILES)" = "true" ] || printf " ------ Generating NDK Makefiles ------ \n"
-	$(hide)cat $(BASH_DIR)/gen-makefiles | $(BIN)/bash
+	@ [ "$(UPDATE_MAKEFILES)" = "true" ] || printf " ------ Generating NDK Makefiles ------ \n"
+	@ cat $(BASH_DIR)/gen-makefiles | $(BIN)/bash
 endef
 
 define gen-mfiles
-	$(hide)[ "$(UPDATE_MAKEFILES)" = "true" ] || printf " ------ Generating Makefiles ------ \n"
-	$(hide)cat $(BASH_DIR)/gen-makefiles | $(BIN)/bash
+	@ [ "$(UPDATE_MAKEFILES)" = "true" ] || printf " ------ Generating Makefiles ------ \n"
+	@ cat $(BASH_DIR)/gen-makefiles | $(BIN)/bash
 endef

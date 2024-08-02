@@ -21,11 +21,11 @@
 include $(TOOLS)/save-gen-vars.mk
 
 define clean-ndk-mfiles
-	$(hide)[ "$(UPDATE_MAKEFILES)" = "true" ] || printf " ------ Cleaning NDK Makefiles ------ \n"
-	$(hide)cat $(BASH_DIR)/clean-makefiles | $(BIN)/bash
+	@ [ "$(UPDATE_MAKEFILES)" = "true" ] || printf " ------ Cleaning NDK Makefiles ------ \n"
+	@ cat $(BASH_DIR)/clean-makefiles | $(BIN)/bash
 endef
 
 define clean-mfiles
-	$(hide)[ "$(UPDATE_MAKEFILES)" = "true" ] || printf " ------ Cleaning Makefiles ------ \n"
-	$(hide)cat $(BASH_DIR)/clean-makefiles | $(BIN)/bash
+	@ [ "$(UPDATE_MAKEFILES)" = "true" ] || printf " ------ Cleaning Makefiles ------ \n"
+	@ cat $(BASH_DIR)/clean-makefiles | $(BIN)/bash
 endef

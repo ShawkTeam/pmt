@@ -85,13 +85,13 @@ gen-ndk-makefiles:
 	$(eval NDK_PROG = true)
 	$(call save-gen-vars)
 	$(call gen-ndk-mfiles)
-	$(P) ""
+	@ $(P) ""
 
 .PHONY: gen-makefiles
 gen-makefiles:
 	$(call save-gen-vars)
 	$(call gen-mfiles)
-	$(P) ""
+	@ $(P) ""
 
 .PHONY: update-ndk-makefiles
 update-ndk-makefiles:
@@ -115,12 +115,12 @@ clean-ndk-makefiles:
 	$(eval NDK_PROG = true)
 	$(call save-gen-vars)
 	$(call clean-ndk-mfiles)
-	$(P) ""
+	@ $(P) ""
 
 .PHONY: clean-makefiles
 clean-makefiles:
 	$(call save-gen-vars)
 	$(call clean-mfiles)
-	$(P) ""
+	@ $(P) ""
 
 # end
