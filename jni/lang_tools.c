@@ -24,8 +24,8 @@ extern "C" {
 #define INC_DEBUGERS
 #define INC_STAT
 
-#include <pmt/pmt.h>
-#include <pmt/stringkeys.h>
+#include <pmt/PartitionManager.h>
+#include <pmt/StringKeys.h>
 
 /* pmt's man doc file path on termux */
 #define TERMUX_PMT_MANDOC "/data/data/com.termux/files/usr/share/man/man8/pmt.8.gz"

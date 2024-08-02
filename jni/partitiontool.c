@@ -22,7 +22,7 @@ extern "C" {
 
 #define INC_MAIN_LIBS
 
-#include <pmt/pmt.h>
+#include <pmt/PartitionManager.h>
 
 static int
 accf(const char* _Nonnull target) { return access(target, F_OK); }

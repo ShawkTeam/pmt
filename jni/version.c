@@ -23,9 +23,9 @@ extern "C" {
 #define INC_MAIN_LIBS
 #define VERSIONING
 
-#include <pmt/pmt.h>
-#include <pmt/stringkeys.h>
-#include <pmt/versioning.h>
+#include <pmt/PartitionManager.h>
+#include <pmt/StringKeys.h>
+#include <pmt/VersionVars.h>
 
 void version(void)
 {

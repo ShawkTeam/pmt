@@ -15,6 +15,7 @@
 # limitations under the License.
 
 UPDATE_MAKEFILES = false
+CLS_ADTS := "rm -f $(BUILD)/bash/additional-vars"
 
 all:
 	$(MAKE_HIDE) $(SILENT) -C $(BUILD)/config || exit 1
@@ -46,7 +47,8 @@ clean:
 # helper function
 .PHONY: help
 help:
-	$(E) " ------- Partition Manager help ------- " && $(E_NS)
+	$(E) " ------- Partition Manager help ------- " \
+	&& $(E_NS)
 	$(E) " Commands:"
 	$(E) "    $(MAKE)                       ==>  Build Partition Manager."
 	$(E) "    $(MAKE) deb                   ==>  Generate debian package for termux."
@@ -85,13 +87,13 @@ gen-ndk-makefiles:
 	$(eval NDK_PROG = true)
 	$(call save-gen-vars)
 	$(call gen-ndk-mfiles)
-	@ $(P) ""
+	@ $(CLS_ADTS)
 
 .PHONY: gen-makefiles
 gen-makefiles:
 	$(call save-gen-vars)
 	$(call gen-mfiles)
-	@ $(P) ""
+	@ $(CLS_ADTS)
 
 .PHONY: update-ndk-makefiles
 update-ndk-makefiles:
@@ -101,6 +103,7 @@ update-ndk-makefiles:
 	$(call save-gen-vars)
 	$(call clean-ndk-mfiles)
 	$(call gen-ndk-mfiles)
+	@ $(CLS_ADTS)
 
 .PHONY: update-makefiles
 update-makefiles:
@@ -109,18 +112,19 @@ update-makefiles:
 	$(call save-gen-vars)
 	$(call clean-ndk-mfiles)
 	$(call gen-mfiles)
+	@ $(CLS_ADTS)
 
 .PHONY: clean-ndk-makefiles
 clean-ndk-makefiles:
 	$(eval NDK_PROG = true)
 	$(call save-gen-vars)
 	$(call clean-ndk-mfiles)
-	@ $(P) ""
+	@ $(CLS_ADTS)
 
 .PHONY: clean-makefiles
 clean-makefiles:
 	$(call save-gen-vars)
 	$(call clean-mfiles)
-	@ $(P) ""
+	@ $(CLS_ADTS)
 
 # end

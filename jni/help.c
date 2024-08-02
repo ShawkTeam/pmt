@@ -23,9 +23,9 @@ extern "C" {
 #define INC_MAIN_LIBS
 #define HELP
 
-#include <pmt/pmt.h>
-#include <pmt/stringkeys.h>
-#include <pmt/help_msgs.h>
+#include <pmt/PartitionManager.h>
+#include <pmt/StringKeys.h>
+#include <pmt/HelpMessages.h>
 
 extern char* bin_name;
 extern char* curr_lang;

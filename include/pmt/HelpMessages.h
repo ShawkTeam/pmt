@@ -19,11 +19,13 @@
 #ifndef __PMT_HELP_MSGS_H
 #define __PMT_HELP_MSGS_H
 
-__BEGIN_DECLS
+#include <pmt/ExternC.h>
+
+PMT_EXTERN_C_BEGIN
 
 void help(void);
 
-__END_DECLS
+PMT_EXTERN_C_END
 
 #endif
 

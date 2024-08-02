@@ -14,13 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[ -z ${NDK_ROOT_DIR} ] && \
-echo "Please set NDK_ROOT_DIR variable!" && \
-exit 1
+[ -z ${NDK_ROOT_DIR} ] \
+&& echo "Please set NDK_ROOT_DIR variable!" \
+&& exit 1
 
-[ -z ${NDK_PROJECT_PATH} ] && \
-echo "Please set NDK_PROJECT_PATH variable!" && \
-exit 1
+[ -z ${NDK_PROJECT_PATH} ] \
+&& echo "Please set NDK_PROJECT_PATH variable!" \
+&& exit 1
 
 CC_IS="${NDK_ROOT_DIR}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
 CC_VERS=$(${CC_IS} --version | head -n 1)

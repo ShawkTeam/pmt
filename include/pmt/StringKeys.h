@@ -19,7 +19,9 @@
 #ifndef __PMT_STRINGKEYS_
 #define __PMT_STRINGKEYS_
 
-__BEGIN_DECLS
+#include <pmt/ExternC.h>
+
+PMT_EXTERN_C_BEGIN
 
 /* The struct is a very good option for setting the languages of texts etc. */
 struct pmt_langdb_general {
@@ -112,7 +114,7 @@ struct pmt_langdb_langs {
     const char* _Nullable lang_pr;
 };
 
-__END_DECLS
+PMT_EXTERN_C_END
 
 #endif /* __PMT_STRINGKEYS_ */
 

@@ -26,8 +26,8 @@ extern "C" {
 #define INC_DEBUGERS
 #define INC_TOOLS_REQS
 
-#include <pmt/pmt.h>
-#include <pmt/stringkeys.h>
+#include <pmt/PartitionManager.h>
+#include <pmt/StringKeys.h>
 
 #define count (1024 * 1024 * 1024)
 

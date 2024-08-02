@@ -24,7 +24,7 @@ extern "C" {
 #define INC_DEBUGERS
 #define INC_DIRENT
 
-#include <pmt/pmt.h>
+#include <pmt/PartitionManager.h>
 #include <pmt/stringkeys.h>
 
 /* current /dev context */

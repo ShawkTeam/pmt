@@ -22,8 +22,8 @@ extern "C" {
 
 #define INC_MAIN_LIBS
 
-#include <pmt/pmt.h>
-#include <pmt/stringkeys.h>
+#include <pmt/PartitionManager.h>
+#include <pmt/StringKeys.h>
 
 struct pmt_langdb_general en = {
     .lang_by_s = "YZBruh & r0manas",

@@ -23,8 +23,8 @@ extern "C" {
 #define INC_MAIN_LIBS
 #define INC_STAT
 
-#include <pmt/pmt.h>
-#include <pmt/stringkeys.h>
+#include <pmt/PartitionManager.h>
+#include <pmt/StringKeys.h>
 
 /**
  * The target file is controlled by the stat function. 

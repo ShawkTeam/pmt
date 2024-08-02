@@ -1,6 +1,6 @@
 /* By YZBruh */
 
-/*
+/**
  * Copyright 2024 Partition Manager
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,23 +16,15 @@
  * limitations under the License.
  */
 
-#ifndef __PMT_VERSIONING_H
-#define __PMT_VERSIONING_H
+#ifndef __PMT_EXTERN_C_H_
+#define __PMT_EXTERN_C_H_
 
-__BEGIN_DECLS
-
-#ifdef __NDK_BUILD
-  #include <android/ndk-version.h>
-  #include <pmt/generated/clang-version.h>
+#ifdef __cplusplus
+  #define PMT_EXTERN_C_BEGIN extern "C" {
+  #define PMT_EXTERN_C_END   }
+#else
+  #define PMT_EXTERN_C_BEGIN
+  #define PMT_EXTERN_C_END
 #endif
 
-/* versioning */
-#define PMT_MAJOR            2
-#define PMT_MINOR            6
-#define PMT_PATCHLEVEL       0
-
-__END_DECLS
-
 #endif
-
-/* end */

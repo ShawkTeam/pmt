@@ -26,10 +26,10 @@ extern "C" {
 #define INC_STAT
 #define INC_GETOPT
 
-#include <pmt/pmt.h>
-#include <pmt/stringkeys.h>
-#include <pmt/deprecates.h>
-#include <pmt/help_msgs.h>
+#include <pmt/PartitionManager.h>
+#include <pmt/StringKeys.h>
+#include <pmt/Deprecates.h>
+#include <pmt/HelpMessages.h>
 
 #define opt_symbol "-"
 
@@ -55,21 +55,6 @@ bool pmt_inst_on_termux = false;
 /* variable for use in control of '-' expression */
 static char common_symbol_rule[350];
 
-#if !defined(__clang__)
-
-static char*
-strdup(const char* s)
-{
-    size_t len = strlen(s) + 1;
-    char* copy = malloc(len);
-    if (copy) {
-        memcpy(copy, s, len);
-    }
-    return copy;
-}
-
-#endif
-
 /**
  * He controls whether the '-' sign at 
  * the beginning of the given word
@@ -94,9 +79,31 @@ ctrl_arg(const char* _Nullable argv_holder)
 }
 
 /* classic main function (C binary here xd) */
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
     bin_name = argv[0];
+
+    int argc_n = argc;
+    char buf[256];
+    char** args = malloc((argc + 1) * sizeof(char *));
+
+    /* copy original arguments */
+    for (int i = 0; i < argc; i++)
+        args[i] = argv[i];
+
+    if (!isatty(fileno(stdin)))
+    {
+        while (fgets(buf, sizeof(buf), stdin) != NULL)
+        {
+            buf[strcspn(buf, "\n")] = 0;
+
+            args = realloc(args, (argc_n + 1) * sizeof(char *));
+            args[argc_n] = strdup(buf);
+            argc_n++;
+        }
+    }
+
+    argc = argc_n;
 
     /* load language */
     if (loadlang() != 0)
@@ -117,7 +124,7 @@ int main(int argc, char* argv[])
 
     /* check argument total */
     if (argc < 2)
-        LOGE("%s.\n%s `%s --help' %s.\n", current->missing_operand, current->try_h, argv[0], current->for_more);
+        LOGE("%s.\n%s `%s --help' %s.\n", current->missing_operand, current->try_h, args[0], current->for_more);
 
     /* a structure for long arguments */
     struct option option_table[] = {
@@ -148,27 +155,27 @@ int main(int argc, char* argv[])
     static int search_result = 3;
     static int opt;
 
-    if (strcmp(argv[1], "backup") == 0)
+    if (strcmp(args[1], "backup") == 0)
     {
         if (argc <= 2)
             LOGE("%s 0.\n", current->expected_backup_arg);
 
-        if (ctrl_arg(argv[2]))
-            target_partition = argv[2];
+        if (ctrl_arg(args[2]))
+            target_partition = args[2];
         else
             LOGE("%s.\n", current->not_spec_opt);
 
         out = target_partition;
 
-        if (argc > 3 && ctrl_arg(argv[3]))
-            out = argv[3];
+        if (argc > 3 && ctrl_arg(args[3]))
+            out = args[3];
 
         check_optsym(target_partition);
         check_optsym(out);
 
         pmt_backup = true;
     }
-    else if (strcmp(argv[1], "flash") == 0)
+    else if (strcmp(args[1], "flash") == 0)
     {
         if (argc <= 2)
                 LOGE("%s 0.\n", current->expected_flash_arg);
@@ -176,13 +183,13 @@ int main(int argc, char* argv[])
         if (argc <= 3)
                 LOGE("%s 1.\n", current->expected_flash_arg);
 
-        if (ctrl_arg(argv[2]))
-            target_partition = argv[2];
+        if (ctrl_arg(args[2]))
+            target_partition = args[2];
         else
             LOGE("%s.\n", current->not_spec_opt);
 
-        if (ctrl_arg(argv[3]))
-            target_flash_file = argv[3];
+        if (ctrl_arg(args[3]))
+            target_flash_file = args[3];
         else
             LOGE("%s.\n", current->not_spec_opt);
 
@@ -191,7 +198,7 @@ int main(int argc, char* argv[])
 
         pmt_flash = true;
     }
-    else if (strcmp(argv[1], "format") == 0)
+    else if (strcmp(args[1], "format") == 0)
     {
 
         if (argc <= 2)
@@ -200,13 +207,13 @@ int main(int argc, char* argv[])
         if (argc <= 3)
                 LOGE("%s 1.\n", current->expected_format_arg);
 
-        if (ctrl_arg(argv[2]))
-            target_partition = argv[2];
+        if (ctrl_arg(args[2]))
+            target_partition = args[2];
         else
             LOGE("%s.\n", current->not_spec_opt);
 
-        if (ctrl_arg(argv[3]))
-            format_fs = argv[3];
+        if (ctrl_arg(args[3]))
+            format_fs = args[3];
         else
             LOGE("%s.\n", current->not_spec_opt);
 
@@ -217,7 +224,7 @@ int main(int argc, char* argv[])
     }
 
     /* control for each argument */
-    while ((opt = getopt_long(argc, argv, "bFrDlc:psfS:vL", option_table, NULL)) != -1)
+    while ((opt = getopt_long(argc, args, "bFrDlc:psfS:vL", option_table, NULL)) != -1)
     {
         /* process arguments */
         switch (opt)
@@ -286,11 +293,11 @@ int main(int argc, char* argv[])
                 break;
             /* for invalid options */
             case '?':
-                LOGD("%s `%s --help' %s\n", current->try_h, argv[0], current->for_more);
+                LOGD("%s `%s --help' %s\n", current->try_h, args[0], current->for_more);
                 return 1;
                 break;
             default:
-                LOGD("%s: %s [backup] [flash] [format] [-l | --logical] [-c | --context] [-p | --list] [-s | --silent] [-v | --version] [--help]\n", current->usage_head, argv[0]);
+                LOGD("%s: %s [backup] [flash] [format] [-l | --logical] [-c | --context] [-p | --list] [-s | --silent] [-v | --version] [--help]\n", current->usage_head, args[0]);
                 return 1;
         }
     }
@@ -318,15 +325,15 @@ int main(int argc, char* argv[])
 
     if (pmt_setlang)
     {
-        LOGD("%s: %s\n", argv[0], current->switching_lang);
+        LOGD("%s: %s\n", args[0], current->switching_lang);
         setlang(langpr, 0);
         sleep(2);
-        LOGD("%s: %s.\n", argv[0], current->please_rerun);
+        LOGD("%s: %s.\n", args[0], current->please_rerun);
         return 0;
     }
 
     if (!pmt_backup && !pmt_flash && !pmt_format)
-        LOGE("%s.\n%s `%s --help` %s\n", current->no_target, current->try_h, argv[0], current->for_more);
+        LOGE("%s.\n%s `%s --help` %s\n", current->no_target, current->try_h, args[0], current->for_more);
 
     if (pmt_format)
     {
@@ -373,7 +380,7 @@ int main(int argc, char* argv[])
     if (target_partition == NULL)
     {
         if (!pmt_force_mode)
-            LOGE("%s\n%s `%s --help' %s\n", current->req_part_name, current->try_h, argv[0], current->for_more);
+            LOGE("%s\n%s `%s --help' %s\n", current->req_part_name, current->try_h, args[0], current->for_more);
     }
     else
     {

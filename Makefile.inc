@@ -15,8 +15,8 @@
 # limitations under the License.
 
 # speficy
-VERSION := 2.6.0
-VERSION_CODE := 260
+VERSION := 2.7.0
+VERSION_CODE := 270
 TARGET := pmt
 
 # device arch info
@@ -83,10 +83,10 @@ SRCS := $(wildcard $(SOURCE_DIR)/*.c)
 OBJS = $(SRCS:.c=.o)
 
 STATIC_LIBS := \
-	lib$(TARGET)_root.a \
-	lib$(TARGET)_debugging.a \
-	lib$(TARGET)_listpart.a \
-	lib$(TARGET)_partitiontool.a
+	$(TARGET)_root \
+	$(TARGET)_debug \
+	$(TARGET)_listpart \
+	$(TARGET)_partitiontool
 
 # other directories in the out directory
 IN_OUT_DIR := \

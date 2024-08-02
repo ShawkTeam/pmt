@@ -17,8 +17,10 @@
 . build/bash/vars
 . build/bash/functions
 
-[ ! "${UPDATE_MAKEFILES}" = "true" ] && . build/bash/check-makefiles
-[ ! "${THIS_IS}" = "main" ] && abort "The caller is not the main makefile. Something's wrong."
+[ ! "${UPDATE_MAKEFILES}" = "true" ] \
+&& . build/bash/check-makefiles
+[ ! "${THIS_IS}" = "main" ] \
+&& abort "The caller is not the main makefile. Something's wrong."
 
 if [ "${UPDATE_MAKEFILES}" = "true" ]; then
     GENR="Re-generating"

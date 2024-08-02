@@ -19,9 +19,9 @@
 #ifndef __PMT_DEPRECATED_H
 #define __PMT_DEPRECATED_H
 
-#include <sys/cdefs.h>
+#include <pmt/ExternC.h>
 
-__BEGIN_DECLS
+PMT_EXTERN_C_BEGIN
 
 #define deprecated_opt   1
 #define changed_opt      2
@@ -41,6 +41,8 @@ __BEGIN_DECLS
 #define v230 "2.3.0"
 #define v240 "2.4.0"
 #define v250 "2.5.0"
+#define v260 "2.6.0"
+#define v270 "2.7.0"
 #define vUNK NULL
 
 struct pmt_deprecates {
@@ -92,7 +94,7 @@ __deprecated_opt_handle(int opt, const char* opt_long, const char* depr_msg)
 
 #define DEPR_HANDLE(x, y, z) __deprecated_opt_handle(x, y, z)
 
-__END_DECLS
+PMT_EXTERN_C_END
 
 #endif
 

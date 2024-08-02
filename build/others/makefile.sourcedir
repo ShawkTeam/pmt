@@ -31,7 +31,7 @@ PMT_INCDIR := $(INCLUDE_DIR)/pmt
 
 # the presence of all source files that are on this list will be checked
 SRCS_REQ := \
-	place-holder/debugging.c \
+	place-holder/debug.c \
 	place-holder/help.c \
 	place-holder/get_stat.c \
 	place-holder/lang_tools.c \
@@ -40,34 +40,38 @@ SRCS_REQ := \
 	place-holder/pmt.c \
 	place-holder/root.c \
 	place-holder/tools.c \
-	place-holder/versioning.c
+	place-holder/version.c
 
 # objects to be used when executable file is created
 OBJS_EXEC := \
 	$(SOURCE_DIR)/$(TARGET).o \
 	$(SOURCE_DIR)/help.o \
-	$(SOURCE_DIR)/versioning.o \
+	$(SOURCE_DIR)/version.o \
 	$(SOURCE_DIR)/get_stat.o \
 	$(SOURCE_DIR)/tools.o \
 	$(SOURCE_DIR)/lang_tools.o \
 	$(SOURCE_DIR)/languages.o
 
 HEADERS_REQ := \
-	$(PMT_INCDIR)/pmt/deprecates.h \
-	$(PMT_INCDIR)/pmt/help_msgs.h \
+	$(PMT_INCDIR)/pmt/ExternC.h \
+	$(PMT_INCDIR)/pmt/Deprecates.h \
+	$(PMT_INCDIR)/pmt/HelpMessages.h \
 	$(PMT_INCDIR)/pmt/pmt.h \
-	$(PMT_INCDIR)/pmt/stringkeys.h \
-	$(PMT_INCDIR)/pmt/versioning.h
+	$(PMT_INCDIR)/pmt/StringKeys.h \
+	$(PMT_INCDIR)/pmt/VersionVars.h
 
 PROGRESS_LIST := \
 	welcome \
+	wait \
 	$(SRCS_REQ) \
 	$(HEADERS_REQ) \
 	pr_obj \
 	$(OBJS) \
 	make_outdirs \
+	pr_sts \
 	$(STATIC_LIBS) \
 	make_executable \
+	wait \
 	end_progress
 
 define check_hf
@@ -88,16 +92,21 @@ welcome:
 	&& $(E_NS)
 	$(E) "   -------------------------------- " \
 	&& $(E_NS)
-	@ if [ -f $(SOURCE_DIR)/debugging.o ]; then \
+	@ if [ -f $(SOURCE_DIR)/debug.o ]; then \
 		$(E_NS) " - Please clean up before you build it." && echo; \
 		$(E_NS) " ----------------------------------- "; \
 		exit 1; \
 	fi
 	$(E) " - Checking required source files..."
-	@ sleep 1
 
 pr_obj:
 	$(E) " - Building objects..."
+
+pr_sts:
+	$(E) " - Making static libraries..."
+
+wait:
+	@ sleep 2
 
 make_outdirs:
 	@ rm -rf $(IN_OUT_DIR)
@@ -122,31 +131,15 @@ $(PMT_INCDIR)/%.h:
 $(SOURCE_DIR)/%.o: $(SOURCE_DIR)/%.c
 	$(E) "   CC  $(SOURCE_DIRNAME)/`basename $@`"
 	@ $(CC) $(CFLAGS) -c "$<" || exit 1
-	$(eval GEN_OBJS_MSG = )
 
-lib$(TARGET)_root.a:
-	$(E) " - Making static libraries..."
-	$(E) "   AR  $@"
-	@ $(AR) rcs "$@" "$(SOURCE_DIR)/root.o" || exit 1
-
-lib$(TARGET)_debugging.a:
-	$(E) "   AR  $@"
-	@ $(AR) rcs "$@" "$(SOURCE_DIR)/debugging.o"
-
-lib$(TARGET)_listpart.a:
-	$(E) "   AR  $@"
-	@ $(AR) rcs "$@" "$(SOURCE_DIR)/listpart.o"
-
-lib$(TARGET)_partitiontool.a:
-	$(E) "   AR  $@"
-	@ $(AR) rcs "$@" "$(SOURCE_DIR)/partitiontool.o"
-	@ sleep 1
+$(TARGET)_%:
+	$(E) "   AR  lib$@.a"
+	@ $(AR) rcs "lib$@.a" "$(SOURCE_DIR)/$$(echo "$@" | cut -d'_' -f2).o"
 
 make_executable:
 	$(E) " - Making executable file..."
 	$(E) "   LD  $(TARGET)"
-	@ $(CC) $(CFLAGS) -L$(SOURCE_DIR) -l$(TARGET)_root -l$(TARGET)_debugging -l$(TARGET)_listpart -l$(TARGET)_partitiontool -o $(TARGET) $(OBJS_EXEC) || exit 1
-	@ sleep 1
+	@ $(CC) $(CFLAGS) -L$(SOURCE_DIR) $(foreach st,$(STATIC_LIBS),$(shell echo -n -l$(st) )) -o $(TARGET) $(OBJS_EXEC) || exit 1
 
 end_progress:
 	@ abort_build() { \

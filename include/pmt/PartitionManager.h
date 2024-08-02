@@ -20,14 +20,12 @@
   #error "Your compiler is NOT clang. Please build with LLVM clang."
 #endif
 
-#include <sys/cdefs.h>
+#include <pmt/ExternC.h>
 
-__BEGIN_DECLS
+PMT_EXTERN_C_BEGIN
 
 #ifndef __PMT_H_
 #define __PMT_H_
-
-#define PMT_PACKAGE_NAME "Partition Manager"
 
 #ifdef INC_MAIN_LIBS
   #include <stdio.h>
@@ -118,6 +116,6 @@ void debug(LogLevel status, const char* _Nullable fmt, ...);
 
 #endif
 
-__END_DECLS
+PMT_EXTERN_C_END
 
 /* end of code */

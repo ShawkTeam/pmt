@@ -16,22 +16,22 @@
 
 function abort()
 {
-    [ -n "$1" ] && echo -e " - ${RED}${BOLD}Error:${BOLD_RESET}${RESET} $1"
+    [ -n "${1}" ] \
+    && echo -e " - ${RED}${BOLD}Error:${BOLD_RESET}${RESET} ${1}"
     exit 1
 }
 
 function read_file()
 {
-    cat "$1" >> "$2" || abort "failed to read/write $1/$2"
+    cat "${1}" >> "${2}" \
+    || abort "failed to read/write ${1}/${2}"
 }
 
 function gen()
 {
-    [ "${FORCE_GEN}" = "true" -a "${UPDATE_MAKEFILES}" = "true" ] && rm -f "$1"
-    touch "$1" || abort "failed to generate: $1"
+    [ "${FORCE_GEN}" = "true" -a "${UPDATE_MAKEFILES}" = "true" ] \
+    && rm -f "${1}"
+    touch "${1}" || abort "failed to generate: ${1}"
 }
 
-function print()
-{
-    echo -e "$1"
-}
+function print() { echo -e "${1}"; }
