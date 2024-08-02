@@ -25,7 +25,7 @@ extern "C" {
 #define INC_DIRENT
 
 #include <pmt/PartitionManager.h>
-#include <pmt/stringkeys.h>
+#include <pmt/StringKeys.h>
 
 /* current /dev context */
 #define CUR_DEV_CNTX "/dev/block/by-name"
