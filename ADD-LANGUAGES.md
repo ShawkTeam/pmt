@@ -65,7 +65,7 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 ##### Translating main program texts (relevant part)
 
  - Let's open our jni/languages.c source file.
- - Now, let's create the translation with the ready-made struct structure (see jni/include/pmt-stringkeys.h for the structure).
+ - Now, let's create the translation with the ready-made struct structure (see jni/include/StringKeys.h for the structure).
  ```
  // Main
  struct pmt_langdb_general <LANGUAGE_PREFIX> = { // LANGUAGE_PREFIX must be the corresponding abbreviation of the language in English. For example, it's like en in English.
@@ -103,7 +103,7 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 ##### Document texts translation (relevant part)
 
  - Let's open our jni/languages.c source file.
- - Now, let's create the translation with the ready-made struct structure (see jni/include/pmt-stringkeys.h for the structure).
+ - Now, let's create the translation with the ready-made struct structure (see jni/include/StringKeys.h for the structure).
  ```
  struct pmt_langdb_docs <LANGUAGE_PREFIX>_docs = {
       // translations
