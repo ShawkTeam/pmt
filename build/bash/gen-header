@@ -24,6 +24,11 @@
 
 CC_IS="${NDK_ROOT_DIR}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
 CC_VERS=$(${CC_IS} --version | head -n 1)
+HEADER="${NDK_PROJECT_PATH}/include/pmt/generated/clang-version.h
 
-mkdir -p ${NDK_PROJECT_PATH}/include/pmt/generated
-echo -e "#define __NDK_CC_VERSION__ \"${CC_VERS}\"" > ${NDK_PROJECT_PATH}/include/pmt/generated/clang-version.h
+mkdir -p "${NDK_PROJECT_PATH}/include/pmt/generated"
+touch "${HEADER}"
+echo "/*" >> "${HEADER}"
+cat "${NDK_PROJECT_PATH}/NOTICE" >> "${HEADER}"
+echo -e "\n  *\n*/" >> "${HEADER}"
+echo -e "\n\n#define __NDK_CC_VERSION__ \"${CC_VERS}\"" >> "${HEADER}"
