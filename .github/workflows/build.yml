@@ -51,6 +51,7 @@ jobs:
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: ${{ env.NDK_VERSION }}
+          local-cache: false
           add-to-path: false
         env:
           ANDROID_NDK_HOME: ${{ env.NDK_DIR }}
