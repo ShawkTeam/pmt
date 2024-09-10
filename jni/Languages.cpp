@@ -3,7 +3,7 @@
 /**
  * Copyright 2024 Partition Manager
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License";
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -16,16 +16,15 @@
  * limitations under the License.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define INC_MAIN_LIBS
+#define INC_STRINGKEYS
 
-#include <pmt/PartitionManager.h>
-#include <pmt/StringKeys.h>
+#include <PartitionManager/PartitionManager.h>
 
-struct pmt_langdb_general en = {
+namespace PartitionManager {
+namespace Display {
+
+struct langdb_general LangEn = {
     .lang_by_s = "YZBruh & r0manas",
     .language = "English",
     .lang_prefix = "en",
@@ -34,13 +33,12 @@ struct pmt_langdb_general en = {
     .not_dir = "is not a directory.",
     .not_in_dev = "Nothing found in /dev. Use force mode to avoid this error.",
     .not_open = "Couldn't open",
-    .not_block = "The specified partition is not recognized as a block device.",
+    .not_block = "The specified partition is not recognized as a block device. Use force mode to avoid this error.",
     .not_read = "Couldn't read",
     .not_readdir = "Couldn't read directory",
     .not_write = "Couldn't write",
     .not_gen = "Couldn't generate",
     .no_root = "Root access could not be detected! Please run this with root permissions.",
-    .no_target = "No target specified (backup, flash, or format)",
     .expected_backup_arg = "Expected backup argument 2 (1 of them are not mandatory), retrieved",
     .expected_flash_arg = "Expected flash argument 2, retrieved",
     .expected_format_arg = "Expected format argument 2, retrieved",
@@ -48,10 +46,10 @@ struct pmt_langdb_general en = {
     .multiple_wiewers = "Multiple viewers can't be used on the same line.",
     .common_symbol_rule = "When specifying arguments for an option, ensure they do not begin with '-'. Each argument must correspond correctly to its respective option.",
     .req_part_name = "Partition name required.",
-    .part_not_found = "Partition not found!",
+    .part_not_found = "Partition not found! Maybe a logical partition?",
     .unsupported_fs = "Formatter: unsupported filesystem",
     .cannot_stat = "Can't retrieve file status",
-    .ffile_more_part = "Flash file size exceeds partition capacity.",
+    .ffile_more_part = "Flash file size exceeds partition capacity. Use force mode to avoid this error (not recommended, riscy!).",
     .cannot_get_bsz = "Failed to retrieve partition block size.",
     .format_fail = "Formatting failed! There is a possibility of data damage.",
     .depr_backup_opt = "These options for the backup are unavailable.",
@@ -60,24 +58,32 @@ struct pmt_langdb_general en = {
     .depr_Vlicense_opt = "No memory for unnecessary options!",
     .depr_ch_list_opt = "Use -p argument for listing partitions.",
     .not_spec_opt = "Specify the necessary arguments, not option",
+    .some_spec = "You may have indicated options, but they don't work much unless you speficy a main transaction",
     .logical_warn = "This device uses logical partitions.",
     .ab_warn = "This device uses A/B partition style.",
-    .out_not_spec = "Output file name not specified. Using default name",
+    .out_not_spec = "Output file name not specified. Using created name",
     .please_rerun = "Please rerun the command.",
-    .part_disk_sz = "Partition disk size",
+    .part_disk_sz = "Partition (backup) size",
     .flash_file_sz = "Flash file size",
     .part_disk_sz_fail = "Failed to retrieve partition disk size.",
     .flash_file_sz_fail = "Failed to retrieve flash file size.",
     .unknown_opr = "Unknown operand",
-    .list_of_dir = "Directory listing",
+    .req_an_arg = "option requires an argument",
+    .list_of_general = "List of general partitions",
+    .list_of_logc = "List of logical partitions",
     .success_backup = "Backup successful. Output",
     .success_flash = "Flash successful",
+    .success_format = "Format successful",
+    .formatting = "Formatting",
     .warn = "WARNING",
     .fatal = "FATAL ERROR",
+    .is_requires_arg = "requires an argument",
+    .unknw_arg = "unknown option",
     .switching_lang = "Switching language...",
     .welcome = "language!",
     .welcome_ = "Welcome to ",
     .for_more = "for more information",
+    .s_and_v = "Silent and verbose mode cannot be used together!",
     .try_h = "Try",
     .usage_head = "Usage",
     .depr_opt_str = "DEPRECATED OPTION",
@@ -86,26 +92,26 @@ struct pmt_langdb_general en = {
     .compiler_str = "Compiler",
     .version_str = "version",
     .bin_str = "binary",
+    .fs_str = "Filesystem",
     .unknw_str = "unknown",
     .by_str = "By"
 };
 
-struct pmt_langdb_general tr = {
+struct langdb_general LangTr = {
     .lang_by_s = "YZBruh",
     .language = "Türkçe",
     .lang_prefix = "tr",
     .not_logical = "Bu cihaz mantıksal (logical) bölümlere sahip değil!",
     .not_file = "Bu bir dosya değil",
     .not_dir = "Bu bir dizin değil",
-    .not_in_dev = "Bu bir şakamı? Bunun /dev dizini ile bi r ilgisi yok (içermiyor). Bu hatayla karşılaşmak istemiyorsanız zorlama (force) modu kullanın.",
+    .not_in_dev = "Bu bir şakamı? Bunun /dev dizini ile bir ilgisi yok (içermiyor). Bu hatayla karşılaşmak istemiyorsanız zorlama (force) modu kullanın.",
     .not_open = "Açılamıyor",
-    .not_block = "Belirtilen bölüm bir blok değil. Yani aslında bu bir bölüm bile değil (disk). Bu hatayı almak için şanslı olmak gerek..!",
+    .not_block = "Belirtilen bölüm bir blok değil. Yani aslında bu bir bölüm bile değil (disk). Bu hatayı almak için şanslı olmak gerek..! Bu hatayla karşılaşmak istemiyorsanız zorlama (force) modu kullanın.",
     .not_read = "Veri okunamıyor",
     .not_readdir = "Dizin verisi okunamıyor",
     .not_write = "Veri yazılamıyor",
     .not_gen = "Oluşturulamıyor",
     .no_root = "Root erişimi tespit edilemedi! Lütfen root erişimi ile çalıştırın.",
-    .no_target = "Hedef işlem yok (yedek, flaş veya format).",
     .expected_backup_arg = "Beklenen yedekleme argümanı 2 (bir tanesi zorunlu değil), alınan",
     .expected_flash_arg = "Beklenen flaş argümanı 2, alınan",
     .expected_format_arg = "Beklenen format argümanı 2, alınan",
@@ -113,10 +119,10 @@ struct pmt_langdb_general tr = {
     .multiple_wiewers = "Birden fazla görüntüleme işlemi yapan fonksiyonlar bir arada kullanılamaz. Aynı anda sadece bir tanesi kullanılabilir.",
     .common_symbol_rule = "Bir seçeneğin argümanını verirken argüman önüne '-' sembolü getirilemez. Sembolü kaldırın ve tekrar deneyin.",
     .req_part_name = "Bölüm adı gereklidir.",
-    .part_not_found = "Bölüm bulunamadı!",
+    .part_not_found = "Bölüm bulunamadı! Belki mantıksal (logical) bir bölümdür?",
     .unsupported_fs = "Formatlayıcı: desteklenmeyen dosya sistemi:",
     .cannot_stat = "Durumu tespit edilemedi",
-    .ffile_more_part = "Flaşlanacak dosyanın boyutu mevcut bölüm boyutundan fazla.",
+    .ffile_more_part = "Flaşlanacak dosyanın boyutu mevcut bölüm boyutundan fazla. Bu hatayla karşılaşmak istemiyorsanız zorlama (force) modu kullanın (bunu yapmanız asla önerilmez).",
     .cannot_get_bsz = "Bölüm blok boyutu tespit edilemedi!",
     .format_fail = "Formatlama başarısız oldu. Bazı şeyler zarar görmüş olabilir!",
     .depr_backup_opt = "Yedek için artık bu seçeneği kullanamazsınız.",
@@ -124,25 +130,33 @@ struct pmt_langdb_general tr = {
     .depr_format_opt = "Formatlama için artıi bu seçeneği kullanamazsınız.",
     .depr_Vlicense_opt = "Gereksiz seçeneklere bellek yok!",
     .depr_ch_list_opt = "Listeleme için -p seçeneğini kullanabilirsiniz.",
-    .logical_warn = "Uyarı: bu cihaz mantıksal (logical) bölümlere sahip.",
-    .not_spec_opt = "Seçenek değil, gerekli argümanları belirtin",
-    .ab_warn = "Uyarı: bu cihazın bazı bölümleri A/B kullanıyor.",
-    .out_not_spec = "Uyarı: çıktı dosya belirtilmedi. Çıktı dosya adı bölüm adına göre belirlenecek.",
+    .logical_warn = "Bu cihaz mantıksal (logical) bölümlere sahip.",
+    .not_spec_opt = "Seçenek değil, gerekli argümanları verin",
+    .some_spec = "Seçenek belirtmiş olabilirsiniz fakat, ana işlem belirtmedikçe pek işe yaramazlar",
+    .ab_warn = "Bu cihazın bazı bölümleri A/B kullanıyor.",
+    .out_not_spec = "Çıktı dosya adı belirtilmedi. Oluşturulan çıktı adı",
     .please_rerun = "Lütfen yeniden çalıştırın",
-    .part_disk_sz = "Bölümün disk boyutu",
+    .part_disk_sz = "Bölümün (yedek) boyutu",
     .flash_file_sz = "Flaşlanacak dosyanın boyutu",
     .flash_file_sz_fail = "Uyarı: flaşlanacak dosyanın boyutu tespit edilemedi.",
     .part_disk_sz_fail = "Uyarı: bölüm boyutunun boyutu tespit edilemedi.",
     .unknown_opr = "Bilinmeyen işlem",
-    .list_of_dir = "Dizin içeriğinin listesi",
+    .req_an_arg = "bu seçenek argüman gerektirir",
+    .list_of_general = "Genel bölümlerin listesi",
+    .list_of_logc = "Mantıksal (logical) bölümlerin listesi",
     .success_backup = "Başarılı. Çıktı",
     .success_flash = "Başarılı.",
+    .success_format = "Formatlama başarılı",
+    .formatting = "Formatlanıyor",
     .warn = "UYARI",
     .fatal = "KRİTİK HATA",
+    .is_requires_arg = "bir argüman gereklidir",
+    .unknw_arg = "bilinmeyen seçenek",
     .switching_lang = "Dil değiştiriliyor...",
     .welcome = "diline hoş geldiniz!",
     .welcome_ = NULL,
     .for_more = "komutunu kullanabilirsiniz",
+    .s_and_v = "Sessiz ve ayrıntılı günlüklenme aynı anda kullanılamaz!",
     .try_h = "Daha fazla bilgi",
     .usage_head = "Kullanımı",
     .depr_opt_str = "KALDIRILMIŞ SEÇENEK",
@@ -151,56 +165,52 @@ struct pmt_langdb_general tr = {
     .compiler_str = "Derleyici",
     .version_str = "versiyon",
     .bin_str = "yapı",
+    .fs_str = "Dosya sistemi",
     .unknw_str = "bilinmeyen",
     .by_str = "Çeviriyi yapan(lar):"
 };
 
-struct pmt_langdb_docs en_docs = {
-    .docs_strs_l1 = "backup PARTITION [OUTPUT] [OPTIONS]...",
-    .docs_strs_l2 = "flash PARTITION FILE [OPTIONS]...",
-    .docs_strs_l3 = "format PARTITION FILE_SYSTEM[ext/2/3/4] [OPTIONS]...",
+struct langdb_docs LangDocEn = {
+    .docs_strs_l1 = "[OPTIONS] backup PARTITION [OUTPUT] [OPTIONS]...",
+    .docs_strs_l2 = "[OPTIONS] flash PARTITION FILE [OPTIONS]...",
+    .docs_strs_l3 = "[OPTIONS] format PARTITION FILE_SYSTEM[ext/2/3/4] [OPTIONS]...",
     .docs_strs_l4 = "Options",
     .docs_strs_l5 = "It is meant to determine whether the target partition is logical.",
-    .docs_strs_l6 = "It is meant to specify a custom /dev context. Only classic partitions (default: /dev/block/by-name).",
+    .docs_strs_l6 = "It is meant to specify a custom /dev context. Only normal partitions (default: /dev/block/by-name).",
     .docs_strs_l7 = "List partitions.",
     .docs_strs_l8 = "Information and warning messages are silenced in normal work.",
     .docs_strs_l9 = "Force mode. Some things are ignored.",
-    .docs_strs_l10 = "Set current language.",
-    .docs_strs_l11 = "See version.",
-    .docs_strs_l12 = "See this help message.",
-    .docs_strs_l13 = "Examples",
-    .docs_strs_l14 = "Report bugs to",
+    .docs_strs_l10 = "Verbose mode. Print detailed informations etc.",
+    .docs_strs_l11 = "Set current language.",
+    .docs_strs_l12 = "See version.",
+    .docs_strs_l13 = "See this help message.",
+    .docs_strs_l14 = "Examples",
+    .docs_strs_l15 = "Report bugs and suggestions to",
     .or_str = "or",
     .usage_docstr = "Usage"
 };
 
-struct pmt_langdb_docs tr_docs = {
-    .docs_strs_l1 = "backup BÖLÜM [ÇIKTI] [SEÇENEKLER]...",
-    .docs_strs_l2 = "flash BÖLÜM DOSYA [SEÇENEKLER]...",
-    .docs_strs_l3 = "format BÖLÜM DOSYA_SİSTEMİ[ext/2/3/4] [SEÇENEKLER]...",
+struct langdb_docs LangDocTr = {
+    .docs_strs_l1 = "[SEÇENEKLER] backup BÖLÜM [ÇIKTI] [SEÇENEKLER]...",
+    .docs_strs_l2 = "[SEÇENEKLER] flash BÖLÜM DOSYA [SEÇENEKLER]...",
+    .docs_strs_l3 = "[SEÇENEKLER] format BÖLÜM DOSYA_SİSTEMİ[ext/2/3/4] [SEÇENEKLER]...",
     .docs_strs_l4 = "Seçenekler",
     .docs_strs_l5 = "Mantıksal (logical) bölüm ile işlem yapın.",
     .docs_strs_l6 = "Özel /dev bağlamı belirtin. Sadece normal bölümler içindir (Varsayılan: /dev/block/by-name).",
     .docs_strs_l7 = "Bölümler listelenir.",
     .docs_strs_l8 = "Bilgi ve uyarı mesajları susturulur.",
     .docs_strs_l9 = "Zorlama modu. Bazı şeyler göz ardı edilir.",
-    .docs_strs_l10 = "Mevcut dili ayarlayın.",
-    .docs_strs_l11 = "Sürümü görüntüleyin.",
-    .docs_strs_l12 = "Bu yardım mesajını görüntüleyin.",
-    .docs_strs_l13 = "Örnekler",
-    .docs_strs_l14 = "Sorunları şu adrese bildirin:",
+    .docs_strs_l10 = "Ayrıntılı bilgi modu. Daha fazla bilgi mesajı verilir.",
+    .docs_strs_l11 = "Mevcut dili ayarlayın.",
+    .docs_strs_l12 = "Sürümü görüntüleyin.",
+    .docs_strs_l13 = "Bu yardım mesajını görüntüleyin.",
+    .docs_strs_l14 = "Örnekler",
+    .docs_strs_l15 = "Sorunları ve önerileri şuraya bildirin:",
     .or_str = "yada",
     .usage_docstr = "Kullanımı"
 };
 
-struct pmt_langdb_langs lang[] = {
-    {"en"},
-    {"tr"},
-    {NULL}
-};
-
-#ifdef __cplusplus
-}
-#endif
+} /* namespace Display */
+} /* namespace PartitionManager */
 
 /* end of code */

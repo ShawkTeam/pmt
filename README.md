@@ -2,14 +2,14 @@
 
 [![Commit reviewed](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml/badge.svg)](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml)
 
-This binary, written in C, is for writing/reading and formatting on Android partitions.
+This binary, written with C++, is for writing/reading and formatting on Android partitions.
 
 #### Presented arguments (options)
 
 ```
-Usage:  pmt backup PARTITION [OUTPUT] [OPTIONS]...
-  or:   pmt flash PARTITION FILE [OPTIONS]...
-  or:   pmt format PARTITION FILE_SYSTEM[ext/2/3/4] [OPTIONS]...
+Usage:  pmt [OPTIONS] backup PARTITION [OUTPUT] [OPTIONS]...
+  or:   pmt [OPTIONS] flash PARTITION FILE [OPTIONS]...
+  or:   pmt [OPTIONS] format PARTITION FILE_SYSTEM[ext/2/3/4] [OPTIONS]...
 
 Options:
    -l, --logical     It is meant to determine whether the target partition is logical.
@@ -17,6 +17,7 @@ Options:
    -p, --list        List partitions.
    -s, --silent      Information and warning messages are silenced in normal work.
    -f, --force       Force mode. Some things are ignored.
+   -V, --verbose     Verbose mode. Print detailed informations etc.
    -S, --set-lang    Set current language.
    -v, --version     See version.
        --help        See this help message.
@@ -27,17 +28,17 @@ Examples:
    pmt format system_a ext4 --logical
    pmt -c /dev/block/platform/bootdevice/by-name --list
 
-Report bugs to <t.me/ShawkTeam | Topics | pmt>
+Report bugs and suggestions to <t.me/ShawkTeam | Topics | pmt>
 ```
 
 #### Some notes
 
-- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.7.0/LANGUAGES.md)
-- [Add language.](https://github.com/ShawkTeam/pmt/blob/2.7.0/ADD-LANGUAGES.md)
+- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.8.0/LANGUAGES.md)
+- [Add language.](https://github.com/ShawkTeam/pmt/blob/2.8.0/ADD-LANGUAGES.md)
 - Feel free to ask any questions you want.
 - Packages are available in publications.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
-- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.7.0/CHANGELOG.md)
+- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.8.0/CHANGELOG.md)
 - We are always open to your suggestions and support (developing)!
 
 ### How is it built?
@@ -47,13 +48,13 @@ Make or Android NDK is required to build.
  - [Download Android NDK](https://developer.android.com/ndk/downloads) and extract the NDK package.
  - Clone this repository. And get access to it.
 ```
-git clone https://github.com/ShawkTeam/pmt -b 2.7.0
+git clone https://github.com/ShawkTeam/pmt -b 2.8.0
 cd pmt
 ```
  - Set the NDK working directory variable.
 ```
 make gen-ndk-makefiles
-# If you fail the audit, etc., use FORCE_GEN.
+# If you fail the audit etc, use FORCE_GEN.
 # Example:
     make gen-ndk-makefiles FORCE_GEN=true
 
@@ -89,15 +90,39 @@ cd "${NDK_PROJECT_PATH}" \
 ##### Build with Makefiles
 
 ```
+# Setup environment
+pkg update \
+&& pkg upgrade -y \
+&& pkg install make clang binutils xz-utils -y
+
+# Start build
 make
 
-# To specify clang, just use CC=<clang> next to the command (and same logic in AR)
+# To specify clang, just use PMT_CXX=<clang++> next to the command (and same logic in AR)
 # Example:
-    make CC=${PWD}/../toolchain/bin/clang-18
-    make AR=${PWD}/../toolchain/bin/ar
-    make CC=${PWD}/../toolchain/bin/clang-18 AR=${PWD}/../toolchain/bin/ar
+    make PMT_CXX=${PWD}/../toolchain/bin/clang-18
+    make PMT_AR=${PWD}/../toolchain/bin/ar
+    make PMT_CXX=${PWD}/../toolchain/bin/clang-18 PMT_AR=${PWD}/../toolchain/bin/ar
+
+# Speficying extra compiler flags on cmd. Example:
+    make PMT_EXTRA_CXXFLAGS="-O2"
 
 # Use termux :D
+
+# Cleaning working directory
+make clean
+
+# Rebuild
+make rebuild
+
+# Install
+make install
+
+# Uninstall
+make uninstall
+
+# Re-install (install & uninstall)
+make reinstall
 ```
  - For the make installable debian package:
 
@@ -107,6 +132,22 @@ make deb <ARCH_NUM>
 # Examples
     make deb FOR_THIS=64
     make deb FOR_THIS=32
+```
+
+### How to use
+```
+# Run
+/system/bin/su
+```
+
+- If you have installed the deb package of pmt, installed it with a makefile, or installed it to `$PATH` using any path, just the name of the pmt is enough (or the file name if you did it manually)
+```
+pmt <...>
+```
+
+- If you have not done this type of institution, pmt is in the directory where you are present you can run with `./`.
+```
+./pmt <...> # or whatever the file name is
 ```
 
 ### Notes

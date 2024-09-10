@@ -68,7 +68,8 @@ install_binary:
 	fi; \
 	$(P) " - Success.\n\n"; \
 	$(E_NS) "INSTALL_SUCCESS := true" > $(BUILD)/config/INS_STAT.mk; \
-	$(E_NS) "UNINSTALLED_SUCCESS := " > $(BUILD)/config/UNINS_STAT.mk; \
+	$(E_NS) "UNINSTALLED_SUCCESS := " > $(BUILD)/config/UNINS_STAT.mk
+	@ exit 0
 
 uninstall_$(TARGET):
 	if [ -f $(TERMUX_USR)/share/man/man8/$(TARGET).8.gz ]; then \

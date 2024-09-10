@@ -1,6 +1,6 @@
 /* By YZBruh */
 
-/**
+/*
  * Copyright 2024 Partition Manager
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,26 +16,25 @@
  * limitations under the License.
  */
 
-#ifdef __cplusplus
-extern "C" {
+#ifndef __PMT_VERSIONING_H
+#define __PMT_VERSIONING_H
+
+#ifdef __NDK_BUILD
+  #include <android/ndk-version.h>
+  #include <PartitionManager/generated/clang-version.h>
 #endif
 
-#define INC_MAIN_LIBS
-#define INC_DEBUGERS
+/* versioning */
+#define PMT_MAJOR            2
+#define PMT_MINOR            8
+#define PMT_PATCHLEVEL       0
 
-#include <pmt/PartitionManager.h>
-#include <pmt/StringKeys.h>
-
-/* root checker function */
-void check_root(void)
-{
-    /* a quick, easy method for verifying root */
-    if (getuid() != 0)
-        LOGE("%s\n", current->no_root);
+namespace PartitionManager {
+    namespace Functions {
+        void DisplayVersion(void);
+    }
 }
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+#endif
 
-/* end of code */
+/* end */

@@ -22,17 +22,17 @@
 #                                       #
 #########################################
 
-# speficy c compiler (cc)
-PMT_CC ?= 
+# speficy c++ compiler (cxx)
+PMT_CXX ?= 
 
 # speficy ar
 PMT_AR ?= 
 
 # addionital compiler flags
-PMT_EXTRA_CFLAGS ?= 
+PMT_EXTRA_CXXFLAGS ?= 
 
 # debugging mode (binary). it's enabling address sanitizer and source level debug information with dwarf version 5
-PMT_ENABLE_DEBUG ?= 
+PMT_ENABLE_DEBUG ?= true
 
 #########################################
 #########################################

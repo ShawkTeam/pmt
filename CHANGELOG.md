@@ -1,10 +1,15 @@
-### Version 2.7.0 Changelog
+### Version 2.8.0 Changelog
 
-    - Operation support with pipe (|) operator has been added.
-    - Build system has been made dynamic.
-    - Minor changes were made to the layout of bash scripts.
-    - Header names have been changed.
+    - Base switched to C++
+    - Static libraries deprecated
+    - A certain size-change replacement failure problem has been fixed
+    - Flash problem corrected in sizes under 1KB
+    - Unrelated ones were filtered while logical sections list
+    - Some memory leaks were fixed
+    - More properly code
+    - Some small fixes
+    - Some tiny additions
 
 ```
-END OF 2.7.0 UPDATE CHANGELOG
+END OF 2.8.0 UPDATE CHANGELOG
 ```

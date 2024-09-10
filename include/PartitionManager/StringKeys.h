@@ -19,12 +19,8 @@
 #ifndef __PMT_STRINGKEYS_
 #define __PMT_STRINGKEYS_
 
-#include <pmt/ExternC.h>
-
-PMT_EXTERN_C_BEGIN
-
 /* The struct is a very good option for setting the languages of texts etc. */
-struct pmt_langdb_general {
+struct langdb_general {
     const char* _Nonnull lang_by_s;
     const char* _Nonnull language;
     const char* _Nonnull lang_prefix;
@@ -39,7 +35,6 @@ struct pmt_langdb_general {
     const char* _Nonnull not_write;
     const char* _Nonnull not_gen;
     const char* _Nonnull no_root;
-    const char* _Nonnull no_target;
     const char* _Nonnull expected_backup_arg;
     const char* _Nonnull expected_flash_arg;
     const char* _Nonnull expected_format_arg;
@@ -59,6 +54,7 @@ struct pmt_langdb_general {
     const char* _Nonnull depr_Vlicense_opt;
     const char* _Nonnull depr_ch_list_opt;
     const char* _Nonnull not_spec_opt;
+    const char* _Nonnull some_spec;
     const char* _Nonnull logical_warn;
     const char* _Nonnull ab_warn;
     const char* _Nonnull out_not_spec;
@@ -68,15 +64,22 @@ struct pmt_langdb_general {
     const char* _Nonnull part_disk_sz_fail;
     const char* _Nonnull flash_file_sz_fail;
     const char* _Nonnull unknown_opr;
-    const char* _Nonnull list_of_dir;
+    const char* _Nonnull req_an_arg;
+    const char* _Nonnull list_of_general;
+    const char* _Nonnull list_of_logc;
     const char* _Nonnull success_backup;
     const char* _Nonnull success_flash;
+    const char* _Nonnull success_format;
+    const char* _Nonnull formatting;
     const char* _Nonnull warn;
     const char* _Nonnull fatal;
+    const char* _Nonnull is_requires_arg;
+    const char* _Nonnull unknw_arg;
     const char* _Nonnull switching_lang;
     const char* _Nonnull welcome;
     const char* _Nullable welcome_;
     const char* _Nonnull for_more;
+    const char* _Nonnull s_and_v;
     const char* _Nonnull try_h;
     const char* _Nonnull usage_head;
     const char* _Nonnull depr_opt_str;
@@ -85,12 +88,13 @@ struct pmt_langdb_general {
     const char* _Nonnull compiler_str;
     const char* _Nonnull version_str;
     const char* _Nonnull bin_str;
+    const char* _Nonnull fs_str;
     const char* _Nonnull unknw_str;
     const char* _Nonnull by_str;
 };
 
 /* docs etc. */
-struct pmt_langdb_docs {
+struct langdb_docs {
     const char* _Nonnull docs_strs_l1;
     const char* _Nonnull docs_strs_l2;
     const char* _Nonnull docs_strs_l3;
@@ -105,16 +109,10 @@ struct pmt_langdb_docs {
     const char* _Nonnull docs_strs_l12;
     const char* _Nonnull docs_strs_l13;
     const char* _Nonnull docs_strs_l14;
+    const char* _Nonnull docs_strs_l15;
     const char* _Nonnull or_str;
     const char* _Nonnull usage_docstr;
 };
-
-/* for checks etc */
-struct pmt_langdb_langs {
-    const char* _Nullable lang_pr;
-};
-
-PMT_EXTERN_C_END
 
 #endif /* __PMT_STRINGKEYS_ */
 

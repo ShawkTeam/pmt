@@ -24,29 +24,43 @@ include env.mk
 #                                       #
 #########################################
 
-CC = clang
-CFLAGS ?= "-O3 -I../include -std=c11 -pedantic -Wall -Wextra -Werror -Wno-nullability-extension -Wno-gnu-zero-variadic-macro-arguments $(PMT_EXTRA_CFLAGS)"
+CXX = clang++
+AR = ar
+CXXFLAGS ?= \
+	-O3 \
+	-I../include \
+	-std=c++20 \
+	-Wall \
+	-Wextra \
+	-Werror \
+	-Wno-vla-cxx-extension \
+	-Wno-nullability-completeness \
+	-Wno-writable-strings \
+	-Wno-unused-parameter \
+	-Wno-unused-command-line-argument \
+	-Wno-nullability-extension \
+	-Wno-reorder-init-list \
+	-Wno-gnu-zero-variadic-macro-arguments \
+	$(PMT_EXTRA_CXXFLAGS)
 
-# set compiler setting (clang-gcc and ar)
-ifneq ($(PMT_CC),)
-	CC ?= $(PMT_CC)
-else
-	CC ?= clang
+# set compiler setting (clang and ar)
+ifneq ($(PMT_CXX),)
+	CXX ?= $(PMT_CXX)
 endif
 
 ifneq ($(PMT_AR),)
 	AR ?= $(PMT_AR)
-else
-	AR ?= ar
 endif
 
 # compiler flags settings
-ifneq ($(PMT_ENABLE_DEBUG),)
-	CFLAGS += -gdwarf-5 -fsanitize=address
+ifeq ($(PMT_ENABLE_DEBUG),true)
+	CXXFLAGS += \
+		-gdwarf-5 \
+		-fsanitize=address
 endif
 
 # write current env configuration to oldenv.mk
 all:
-	@ echo "CC := $(CC)" > oldenv.mk
+	@ echo "CXX := $(CXX)" > oldenv.mk
 	@ echo "AR := $(AR)" >> oldenv.mk
-	@ echo "CFLAGS := $(CFLAGS)" >> oldenv.mk
+	@ echo "CXXFLAGS := $(CXXFLAGS)" >> oldenv.mk

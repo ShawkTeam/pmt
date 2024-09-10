@@ -19,13 +19,11 @@
 #ifndef __PMT_HELP_MSGS_H
 #define __PMT_HELP_MSGS_H
 
-#include <pmt/ExternC.h>
-
-PMT_EXTERN_C_BEGIN
-
-void help(void);
-
-PMT_EXTERN_C_END
+namespace PartitionManager {
+    namespace Functions {
+        void DisplayHelp(void);
+    }
+}
 
 #endif
 

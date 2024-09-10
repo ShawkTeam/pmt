@@ -39,26 +39,21 @@ jobs:
           echo "PMT_VERSION=${PMT_VERSION}" >> $GITHUB_ENV
           echo "PMT_VERSION_CODE=${PMT_VERSION_CODE}" >> $GITHUB_ENV
           echo "NDK_VERSION=${NDK_VERSION}" >> $GITHUB_ENV
-          echo "NDK_LINK=${NDK_LINK}" >> $GITHUB_ENV
-          echo "NDK_IS=${NDK_IS}" >> $GITHUB_ENV
           cd /home
           sudo git clone https://github.com/ShawkTeam/pmt -b ${PMT_VERSION}
-          sudo chmod 777 pmt
+          sudo chmod -R 777 pmt
           echo "PMT_SRCDIR=/home/pmt" >> $GITHUB_ENV
           echo "NDK_DIR=/home/ndk/android-ndk" >> $GITHUB_ENV
-          echo "NDK_IN_DIR=/home/ndk" >> $GITHUB_ENV
           sudo mkdir -p "/home/ndk" && cd "/home/ndk" && sudo chmod 777 "/home/ndk"
 
-      - name: Download and extract NDK
+      - name: Setup Android NDK
         id: setup-ndk
-        run: |
-          echo "Downloading NDK ${{ env.NDK_VERSION }}..."
-          aria2c "${{ env.NDK_LINK }}"
-          echo "Extracting..."
-          unzip -q *.zip && rm *.zip
-          mv * "${{ env.NDK_IS }}"
-          sudo chmod -R 777 *
-        working-directory: ${{ env.NDK_IN_DIR }}
+        uses: nttld/setup-ndk@v1
+          with:
+            ndk-version: ${{ env.NDK_VERSION }}
+            add-to-path: false
+        env:
+          ANDROID_NDK_HOME: ${{ env.NDK_DIR }}
 
       - name: Build pmt
         id: build-pmt
@@ -75,11 +70,11 @@ jobs:
       - name: Last small transactions
         id: small-transactions
         run: |
-          export CC_64="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
-          export CC_32="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang"
+          export CXX_64="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++"
+          export CXX_32="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang++"
           export AR="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
-          export CC_VERSION=$(${CC_64} --version | head -n 1)
-          echo "CC_VERSION=${CC_VERSION}" >> $GITHUB_ENV
+          export CXX_VERSION=$(${CXX_64} --version | head -n 1)
+          echo "CXX_VERSION=${CXX_VERSION}" >> $GITHUB_ENV
           . ${{ env.PMT_SRCDIR }}/build/workflow/build.config
           . ${{ env.PMT_SRCDIR }}/build/workflow/relnotes > /home/pmt/release_body.txt
           cd ${{ env.PMT_SRCDIR }}
@@ -88,11 +83,11 @@ jobs:
               xz libs/${arch}/pmt
               mv libs/${arch}/pmt.xz ${PWD}/pmt-${arch}-$(date +%Y%m%d).xz
           done
-          for CC_COMP in ${CC_64} ${CC_32}; do
+          for CXX_COMP in ${CXX_64} ${CXX_32}; do
               make clean
-              make CC="${CC_COMP}" AR="${AR}" PMT_EXTRA_CFLAGS="-D__NDK_BUILD"
-              [[ "${CC_COMP}" == *"aarch64"* ]] && make deb FOR_THIS=64
-              [[ "${CC_COMP}" == *"armv7a"* ]] && make deb FOR_THIS=32
+              make PMT_CXX="${CXX_COMP}" PMT_AR="${AR}" PMT_EXTRA_CFLAGS="-D__NDK_BUILD"
+              [[ "${CXX_COMP}" == *"aarch64"* ]] && make deb FOR_THIS=64
+              [[ "${CXX_COMP}" == *"armv7a"* ]] && make deb FOR_THIS=32
               mv out/debpackage/*.deb .
               make clean
           done

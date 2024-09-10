@@ -31,34 +31,37 @@ PMT_INCDIR := $(INCLUDE_DIR)/pmt
 
 # the presence of all source files that are on this list will be checked
 SRCS_REQ := \
-	place-holder/debug.c \
-	place-holder/help.c \
-	place-holder/get_stat.c \
-	place-holder/lang_tools.c \
-	place-holder/languages.c \
-	place-holder/partitiontool.c \
-	place-holder/pmt.c \
-	place-holder/root.c \
-	place-holder/tools.c \
-	place-holder/version.c
+	place-holder/Debug.cpp \
+	place-holder/Help.cpp \
+	place-holder/GetState.cpp \
+	place-holder/LanguageTools.cpp \
+	place-holder/Languages.cpp \
+	place-holder/PartitionTool.cpp \
+	place-holder/PartitionManager.cpp \
+	place-holder/Root.cpp \
+	place-holder/Tools.cpp \
+	place-holder/Version.cpp
 
 # objects to be used when executable file is created
 OBJS_EXEC := \
-	$(SOURCE_DIR)/$(TARGET).o \
-	$(SOURCE_DIR)/help.o \
-	$(SOURCE_DIR)/version.o \
-	$(SOURCE_DIR)/get_stat.o \
-	$(SOURCE_DIR)/tools.o \
-	$(SOURCE_DIR)/lang_tools.o \
-	$(SOURCE_DIR)/languages.o
+	$(SOURCE_DIR)/Debug.o \
+	$(SOURCE_DIR)/Root.o \
+	$(SOURCE_DIR)/PartitionManager.o \
+	$(SOURCE_DIR)/PartitionTool.o \
+	$(SOURCE_DIR)/ListPartitions.o \
+	$(SOURCE_DIR)/Help.o \
+	$(SOURCE_DIR)/Version.o \
+	$(SOURCE_DIR)/GetState.o \
+	$(SOURCE_DIR)/Tools.o \
+	$(SOURCE_DIR)/Languages.o \
+	$(SOURCE_DIR)/LanguageTools.o
 
 HEADERS_REQ := \
-	$(PMT_INCDIR)/pmt/ExternC.h \
-	$(PMT_INCDIR)/pmt/Deprecates.h \
-	$(PMT_INCDIR)/pmt/HelpMessages.h \
-	$(PMT_INCDIR)/pmt/PartitionManager.h \
-	$(PMT_INCDIR)/pmt/StringKeys.h \
-	$(PMT_INCDIR)/pmt/VersionVars.h
+	$(PMT_INCDIR)/PartitionManager/Deprecates.h \
+	$(PMT_INCDIR)/PartitionManager/HelpFn.h \
+	$(PMT_INCDIR)/PartitionManager/PartitionManager.h \
+	$(PMT_INCDIR)/PartitionManager/StringKeys.h \
+	$(PMT_INCDIR)/PartitionManager/VersionFnVars.h
 
 PROGRESS_LIST := \
 	welcome \
@@ -68,17 +71,9 @@ PROGRESS_LIST := \
 	pr_obj \
 	$(OBJS) \
 	make_outdirs \
-	pr_sts \
-	$(STATIC_LIBS) \
 	make_executable \
 	wait \
 	end_progress
-
-define check_hf
-	@ [ ! -f "$1" ] \
-	&& $(E_NS) "   ==> Couldn't found required header file: include/pmt/`basename $1`" \
-	&& exit 1
-endef
 
 # all target for building
 all: $(PROGRESS_LIST)
@@ -92,29 +87,20 @@ welcome:
 	&& $(E_NS)
 	$(E) "   -------------------------------- " \
 	&& $(E_NS)
-	@ if [ -f $(SOURCE_DIR)/debug.o ]; then \
-		$(E_NS) " - Please clean up before you build it." && echo; \
-		$(E_NS) " ----------------------------------- "; \
-		exit 1; \
-	fi
 	$(E) " - Checking required source files..."
 
 pr_obj:
 	$(E) " - Building objects..."
-
-pr_sts:
-	$(E) " - Making static libraries..."
 
 wait:
 	@ sleep 2
 
 make_outdirs:
 	@ rm -rf $(IN_OUT_DIR)
-	@ mkdir $(BINARY_DIR)
-	@ mkdir $(PACKAGE_DIR)
-	@ mkdir $(STATICLIB_DIR)
+	@ mkdir -p $(BINARY_DIR)
+	@ mkdir -p $(PACKAGE_DIR)
 
-place-holder/%.c:
+place-holder/%.cpp:
 	$(E) "   CHK $(SOURCE_DIRNAME)/`basename $@`"
 	@ if [ ! -f "$(SOURCE_DIR)/`basename $@`" ]; then \
 		$(E_NS) "   ==> Couldn't found required source file: $(SOURCE_DIRNAME)/`basename $@`"; \
@@ -122,24 +108,20 @@ place-holder/%.c:
 	fi
 
 $(PMT_INCDIR)/%.h:
-	$(E) "   CHK include/pmt/`basename $@`"
-	@ if [ ! -f "$(INCLUDE_DIR)/pmt/`basename $@`" ]; then \
-		$(E_NS) "   ==> Couldn't found required header file: include/pmt/`basename $@`"; \
+	$(E) "   CHK include/PartitionManager/`basename $@`"
+	@ if [ ! -f "$(INCLUDE_DIR)/PartitionManager/`basename $@`" ]; then \
+		$(E_NS) "   ==> Couldn't found required header file: include/PartitionManager/`basename $@`"; \
 		exit 1; \
 	fi
 
-$(SOURCE_DIR)/%.o: $(SOURCE_DIR)/%.c
-	$(E) "   CC  $(SOURCE_DIRNAME)/`basename $@`"
-	@ $(CC) $(CFLAGS) -c "$<" || exit 1
-
-$(TARGET)_%:
-	$(E) "   AR  lib$@.a"
-	@ $(AR) rcs "lib$@.a" "$(SOURCE_DIR)/$$(echo "$@" | cut -d'_' -f2).o"
+$(SOURCE_DIR)/%.o: $(SOURCE_DIR)/%.cpp
+	$(E) "   CXX $(SOURCE_DIRNAME)/`basename $@`"
+	@ $(CXX) -x c++ $(CXXFLAGS) -c "$<" || exit 1
 
 make_executable:
 	$(E) " - Making executable file..."
 	$(E) "   LD  $(TARGET)"
-	@ $(CC) $(CFLAGS) -L$(SOURCE_DIR) $(foreach st,$(STATIC_LIBS),$(shell echo -n -l$(st) )) -o $(TARGET) $(OBJS_EXEC) || exit 1
+	@ $(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS_EXEC) || exit 1
 
 end_progress:
 	@ abort_build() { \
@@ -152,7 +134,6 @@ end_progress:
 		exit 1; \
 	}; \
 	mv $(TARGET) $(BINARY_DIR) || abort_build; \
-	mv *.a $(STATICLIB_DIR) || abort_build; \
 	$(E_NS) " - Generating package..."; \
 	cp $(BINARY_DIR)/$(TARGET) $(PACKAGE_DIR) || abort_build; \
 	$(E_NS) "   XZ  $(OUT_DIRNAME)/package/$(TARGET)-`date +%Y%m%d`.xz"
@@ -165,18 +146,12 @@ end_progress:
 
 .PHONY: clean
 clean:
-	$(eval STATICLIBS = $(wildcard $(SOURCE_DIR)/*.a))
 	$(eval OBJS = $(wildcard $(SOURCE_DIR)/*.o))
 	$(info Cleaning files...)
 	$(foreach obj, \
 	$(OBJS), \
 	$(call m_stat_nn,$(SOURCE_DIRNAME)/$(shell basename $(obj))) \
 	$(call erase,$(obj)) \
-	)
-	$(foreach lib, \
-	$(STATICLIBS), \
-	$(call m_stat_nn,$(SOURCE_DIRNAME)/$(shell basename $(lib))) \
-	$(call erase,$(lib)) \
 	)
 
 # end

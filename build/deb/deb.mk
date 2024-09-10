@@ -62,8 +62,8 @@ prepare:
 	@ mkdir $(TEMP_DIR)/DEBIAN
 
 check_binary:
-	@ if [ ! -f "$(BINARY_DIR)/pmt" ]; then \
-		$(E_NS) " - pmt not builded! Please build and retry."; \
+	@ if [ ! -f "$(BINARY_DIR)/$(TARGET)" ]; then \
+		$(E_NS) " - $(TARGET) not builded! Please build and retry."; \
 		exit 1; \
 	fi
 	$(E) " - Generating template directory..."

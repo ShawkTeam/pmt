@@ -15,8 +15,8 @@
 # limitations under the License.
 
 # speficy
-VERSION := 2.7.0
-VERSION_CODE := 270
+VERSION := 2.8.0
+VERSION_CODE := 280
 TARGET := pmt
 
 # device arch info
@@ -51,7 +51,6 @@ endif
 
 BINARY_DIR := $(OUT_DIR)/binary
 PACKAGE_DIR := $(OUT_DIR)/package
-STATICLIB_DIR := $(OUT_DIR)/static_libs
 DEB_DIR := $(OUT_DIR)/debpackage
 TOOLS := $(BUILD)/tools
 UTILS := $(BUILD)/util
@@ -79,14 +78,8 @@ ifneq ($(shell basename $(OUT_DIR)),$(OUT_DIRNAME))
 endif
 
 # sources
-SRCS := $(wildcard $(SOURCE_DIR)/*.c)
-OBJS = $(SRCS:.c=.o)
-
-STATIC_LIBS := \
-	$(TARGET)_root \
-	$(TARGET)_debug \
-	$(TARGET)_listpart \
-	$(TARGET)_partitiontool
+SRCS := $(wildcard $(SOURCE_DIR)/*.cpp)
+OBJS = $(SRCS:.cpp=.o)
 
 # other directories in the out directory
 IN_OUT_DIR := \

@@ -15,11 +15,24 @@
 # limitations under the License.
 
 UPDATE_MAKEFILES = false
-CLS_ADTS := rm -f $(BUILD)/bash/additional-vars
+CLS_ADTS := "rm -f $(BUILD)/bash/additional-vars"
 
-all:
-	$(MAKE_HIDE) $(SILENT) -C $(BUILD)/config || exit 1
+all: getvars
+	$(MAKE_HIDE) $(SILENT) -C $(BUILD)/config $$(cat $(BUILD)/goals.txt) || exit 1
+	@ rm -f $(BUILD)/goals.txt
 	$(MAKE_HIDE) $(SILENT) -C $(SOURCE_DIRNAME) INC_OLDENV=true || exit 1
+
+getvars:
+	@ touch $(BUILD)/goals.txt
+	@ $(foreach var,$(sort $(.VARIABLES)),\
+		$(if $(filter command line,$(origin $(var))), \
+		echo "$(var)=$($(var))" >> goals.txt;))
+
+.PHONY: rebuild
+rebuild:
+	$(MAKE_HIDE) $(SILENT) clean
+	$(E)
+	$(MAKE_HIDE) $(SILENT)
 
 # cleaner functions
 .PHONY: clean
@@ -30,9 +43,6 @@ clean:
 	fi
 	@ if [ -d $(PACKAGE_DIR) ]; then \
 		$(E_NS) "==> $(OUT_DIRNAME)/`basename $(PACKAGE_DIR)`"; \
-	fi
-	@ if [ -d $(STATICLIB_DIR) ]; then \
-		$(E_NS) "==> $(OUT_DIRNAME)/`basename $(STATICLIB_DIR)`"; \
 	fi
 	@ if [ -d $(DEB_DIR) ]; then \
 		$(E_NS) "==> $(OUT_DIRNAME)/`basename $(DEB_DIR)`"; \
@@ -53,8 +63,10 @@ help:
 	$(E) "    $(MAKE)                       ==>  Build Partition Manager."
 	$(E) "    $(MAKE) deb                   ==>  Generate debian package for termux."
 	$(E) "    $(MAKE) clean                 ==>  Clear builded binary."
+	$(E) "    $(MAKE) rebuild               ==>  Re-build Partition Manager (clean and make)."
 	$(E) "    $(MAKE) install               ==>  It installs $(TARGET) into termux."
 	$(E) "    $(MAKE) uninstall             ==>  It uninstalls $(TARGET) into termux."
+	$(E) "    $(MAKE) reinstall             ==>  It uninstall and reinstalls $(TARGET)."
 	$(E) "    $(MAKE) gen-makefiles         ==>  Generate makefiles for build."
 	$(E) "    $(MAKE) gen-ndk-makefiles     ==>  Generate NDK makefiles for build."
 	$(E) "    $(MAKE) clean-makefiles       ==>  Cleanup makefiles."
@@ -67,7 +79,7 @@ help:
 .PHONY: deb
 deb:
 	$(MAKE_HIDE) $(SILENT) -C $(DEBUTILS_DIR) -f deb.mk FOR_THIS=$(FOR_THIS) || exit 1
-	$(P) ""
+	@ $(P) ""
 
 # install pmt in to termux
 .PHONY: install
@@ -80,6 +92,11 @@ install:
 uninstall:
 	$(eval PROG := $@)
 	$(MAKE_HIDE) $(SILENT) -C $(OUT_DIRNAME) uninstall PROG=$(PROG) || exit 1
+
+.PHONY: reinstall
+reinstall:
+	$(MAKE_HIDE) $(SILENT) uninstall
+	$(MAKE_HIDE) $(SILENT) install
 
 # clean ndk makefiles
 .PHONY: gen-ndk-makefiles

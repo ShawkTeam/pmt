@@ -14,7 +14,7 @@ jobs:
         id: check-commit-type
         run: |
           echo "BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-          COMM_MSG=$(git log -1 --pretty=%B)
+          readonly COMM_MSG=$(git log -1 --pretty=%B)
           if [ "${GITHUB_EVENT_NAME}" == "push" ]; then
               if [[ "${COMM_MSG}" == *"initial"* ]]; then
                   echo "run_builder=true" >> $GITHUB_ENV

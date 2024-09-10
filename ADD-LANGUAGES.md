@@ -12,7 +12,7 @@ On this page, I will tell you how to add languages to pmt. This is not a difficu
 ##### Little important notes
  - You don't have to be a professional to do this thing.
  - There will be only one place you need to pay attention to, I will explain it.
- - There is no need to know C.
+ - There is no need to know C/C++.
  - You can edit existing translations.
  - You may need ready pmt to understand some things.
  - If you are on an x86 PC, you can compile and use it, but the functions will never work.
@@ -47,7 +47,7 @@ On this page, I will tell you how to add languages to pmt. This is not a difficu
       Try `pmt --help' for more information.
       ~ $
 
- Code pieces (C)
+ Code pieces (C++)
       struct pmt_langdb_general en = {
           // other translations
           .missing_operand = "missing operand",
@@ -57,29 +57,31 @@ On this page, I will tell you how to add languages to pmt. This is not a difficu
       }
 
       // pmt code functions [ logging ]
-      LOGE("%s\n%s `%s --help' %s.\n, missing_operand, try_h, argv[0], for_more); // LOGE is error logger (pmt). argv[0] = execution name
+      LOGE("%s\n%s `%s --help' %s.\n, missing_operand, try_h, args[0], for_more); // LOGE is error logger (pmt). args[0] = execution name
  ```
 
-In short, there are variables for texts. And I made these dynamic by using [struct](https://chatgpt.com/share/a798b57c-7e29-4b17-8887-f230414e57bd) method in C. You just need to add translation :)
+In short, there are variables for texts. And I made these dynamic by using [struct](https://chatgpt.com/share/a798b57c-7e29-4b17-8887-f230414e57bd) method in C (but C++ is being used. And, it didn't change much about that). You just need to add translation :)
 
 ##### Translating main program texts (relevant part)
 
- - Let's open our jni/languages.c source file.
- - Now, let's create the translation with the ready-made struct structure (see jni/include/StringKeys.h for the structure).
+ - Let's open our jni/Languages.cpp source file.
+ - Now, let's create the translation with the ready-made struct structure (see include/pmt/StringKeys.h for the structure).
  ```
  // Main
- struct pmt_langdb_general <LANGUAGE_PREFIX> = { // LANGUAGE_PREFIX must be the corresponding abbreviation of the language in English. For example, it's like en in English.
+ struct langdb_general Lang<LANGUAGE_PREFIX> = { // LANGUAGE_PREFIX must be the corresponding abbreviation of the language in English. For example, it's like En in English.
       // translations
  }
 
  // Example
- struct pmt_langdb_general en = {
+ struct langdb_general LangEn = {
       // translation
  }
  ```
  - We need to add some information about the language.
  ```
- struct pmt_langdb_general <LANGUAGE_PREFIX> = {
+ VERY IMPORTANT NOTE: You should do your translations from within the function called WCHAR_T!
+ 
+ struct langdb_general Lang<LANGUAGE_PREFIX> = {
       .lang_by_s = // Names of those who made the translation. It's up to you. Do you use & between more than one person?
       .language = // Language name. For example English
       .lang_prefix = // Language prefix. For example en
@@ -87,12 +89,12 @@ In short, there are variables for texts. And I made these dynamic by using [stru
  }
 
  // Example
- struct pmt_langdb_general en = {
-      .lang_by_s = "YZBruh & r0manas",
-      .language = "English",
-      .lang_prefix = "en",
+ struct langdb_general LangEn = {
+      .lang_by_s = WCHAR_T("YZBruh & r0manas"),
+      .language = WCHAR_T("English"),
+      .lang_prefix = WCHAR_T("en"),
       // other translations
-      .by_str = "By" // Example for end translate
+      .by_str = WCHAR_T("By") // Example for end translate
  }
 
  // CRITIC WARNING: Do not add ',' to the end of the last translation text. But others always...
@@ -102,15 +104,15 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 
 ##### Document texts translation (relevant part)
 
- - Let's open our jni/languages.c source file.
- - Now, let's create the translation with the ready-made struct structure (see jni/include/StringKeys.h for the structure).
+ - Let's open our jni/Languages.cpp source file.
+ - Now, let's create the translation with the ready-made struct structure (see include/pmt/StringKeys.h for the structure).
  ```
- struct pmt_langdb_docs <LANGUAGE_PREFIX>_docs = {
+ struct langdb_docs LangDoc<LANGUAGE_PREFIX> = {
       // translations
  }
 
  // Example
- struct pmt_langdb_docs en_docs = {
+ struct pmt_langdb_docs LangDocEn = {
       // translations
  }
 
@@ -120,22 +122,21 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 
 ##### General things to do in translation
 
- - Open jni/languages.c
- - Go down a bit...
+ - Open jni/LanguageTools.cpp
 ```
-struct pmt_langdb_langs lang[] = {
-    {"en"},
-    {"tr"},
-    // language prefix. {"<LANGUAGE_PREFIX>"},
-    {NULL} // PLEASE DO NOT ADD IT UNDER 'NULL'!
+string supp_langs[] = {
+    "en",
+    "tr",
+    // language prefix. "<LANGUAGE_PREFIX>",
+    "" // PLEASE DO NOT ADD IT UNDER `""`!
 };
 
 // Example
-struct pmt_langdb_langs lang[] = {
-    {"en"},
-    {"tr"},
-    {"az"},
-    {NULL}
+string supp_langs[] = {
+    "en",
+    "tr",
+    "az",
+    ""
 };
 
 // Add the language you are translating into these existing language prefixes. I will fix the errors here (if there is an error)

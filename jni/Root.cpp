@@ -16,15 +16,22 @@
  * limitations under the License.
  */
 
-#ifndef __PMT_EXTERN_C_H_
-#define __PMT_EXTERN_C_H_
+#define INC_MAIN_LIBS
+#define INC_DEBUGERS
+#define INC_STRINGKEYS
 
-#ifdef __cplusplus
-  #define PMT_EXTERN_C_BEGIN extern "C" {
-  #define PMT_EXTERN_C_END   }
-#else
-  #define PMT_EXTERN_C_BEGIN
-  #define PMT_EXTERN_C_END
-#endif
+#include <PartitionManager/PartitionManager.h>
 
-#endif
+/* root checker function */
+void PartitionManager::Functions::CheckRoot(void)
+{
+    VLOGD("CheckRoot: trying to get UID with 'getuid <unistd.h>'\n");
+
+    if (getuid() != 0)
+    {
+        VLOGE("CheckRoot: cannot get UID. Not executed with root!\n");
+        LOGE("%s\n", PartitionManager::Display::UsingDispString->no_root);
+    }
+}
+
+/* end of code */
