@@ -49,9 +49,9 @@ jobs:
       - name: Setup Android NDK
         id: setup-ndk
         uses: nttld/setup-ndk@v1
-          with:
-            ndk-version: ${{ env.NDK_VERSION }}
-            add-to-path: false
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          add-to-path: false
         env:
           ANDROID_NDK_HOME: ${{ env.NDK_DIR }}
 
