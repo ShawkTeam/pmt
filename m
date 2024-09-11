@@ -56,7 +56,7 @@ function view_help()
     printc "Install, uninstall, install status checker for Partition Manager binary.\n"
     printc "Options:"
     printc "    install,   -i [OPTS]        Download and install Partition Manager."
-    printc "    uninstall, -u [OPTS]        Uninstall Partition Manager."
+    printc "    uninstall, -u               Uninstall Partition Manager."
     printc "    status,    -s               Display install/uninstall status."
     printc "    --setup,   -S               Setup required packages."
     printc "    --package <FILE>            If you already have a debug package, make\n                                  setup by specifying this way."
@@ -136,10 +136,10 @@ function download()
 
     print "Downloading: \`${URL}'"
 
-    curl "${URL}" -o "${LOCAL_TMPDIR}" &>/dev/null \
+    curl -L "${URL}" -o "${LOCAL_TMPDIR}/pmt-${LOCAL_ARCH}.deb" &>/dev/null \
     || abort "Download failed!"
 
-    chmod 777 "${LOCAL_TMPDIR}/*" \
+    chmod -R 777 "${LOCAL_TMPDIR}" \
     || warning "Cannot set mode '777' on installed sources."
 }
 
@@ -166,7 +166,7 @@ function setup_packages()
 function install_fn()
 {
     local mydir="$(pwd)"
-    local bname=$(basename ${LOCAL_PACKAGE})
+    [ "${LOCAL_PACKAGE}" = "" ] || local bname=$(basename ${LOCAL_PACKAGE})
 
     [ "${PACKAGE}" = 1 ] && \
     if [ ! -f "${LOCAL_PACKAGE}" ]; then
@@ -209,7 +209,7 @@ function install_fn()
     fi
 
     print "Installing Partition Manager with APT..."
-    if ! apt -y install ./pmt-${LOCAL_ARCH}.deb &>/dev/null; then
+    if ! apt -y install ./pmt-${LOCAL_ARCH}.deb; then
         warning "Installing failed with APT. Trying installing with dpkg..."
 
         dpkg install pmt-${LOCAL_ARCH}.deb &>/dev/null \
