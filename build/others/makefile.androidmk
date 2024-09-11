@@ -25,7 +25,6 @@ include $(LOCAL_PATH)/../build/config/env.mk
 PMT_CXXFLAGS = \
     -O3 \
     -std=c++14 \
-    -lstdc++ \
     -Wall \
     -Wextra \
     -Werror \
@@ -61,6 +60,6 @@ LOCAL_SRC_FILES := \
     Help.cpp
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
 LOCAL_CFLAGS := $(PMT_CXXFLAGS)
-LOCAL_STL := c++_shared
+LOCAL_STL := c++_static
 
 include $(BUILD_EXECUTABLE)
