@@ -89,7 +89,7 @@ make_debian_pack:
 	$(E_NS) " - Starting dpkg-deb..."; \
 	sleep 2; \
 	$(SUDO) chmod -R 755 *; \
-	dpkg-deb -b $(TEMP_DIR) $(DEB_DIR)/$(TARGET)-$(DEB_ARCH_NAME).deb || abort; \
+	dpkg-deb -Z xz-b $(TEMP_DIR) $(DEB_DIR)/$(TARGET)-$(DEB_ARCH_NAME).deb || abort; \
 	rm -rf $(TEMP_DIR); \
 	$(E_NS) " - Done!"
 
