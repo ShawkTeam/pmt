@@ -25,5 +25,5 @@
 CXX_IS="${NDK_ROOT_DIR}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++"
 CXX_VERS=$(${CXX_IS} --version | head -n 1)
 
-mkdir -p ${NDK_PROJECT_PATH}/include/pmt/generated
-echo -e "#define __NDK_CXX_VERSION__ \"${CXX_VERS}\"" > ${NDK_PROJECT_PATH}/include/pmt/generated/clang-version.h
+mkdir -p ${NDK_PROJECT_PATH}/include/PartitionManager/generated
+echo -e "#define __NDK_CXX_VERSION__ \"${CXX_VERS}\"" > ${NDK_PROJECT_PATH}/include/PartitionManager/generated/clang-version.h
