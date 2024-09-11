@@ -24,7 +24,7 @@ include $(LOCAL_PATH)/../build/config/env.mk
 
 PMT_CXXFLAGS = \
     -O3 \
-    -std=c++20 \
+    -std=c++14 \
     -Wall \
     -Wextra \
     -Werror \
