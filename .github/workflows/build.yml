@@ -39,6 +39,8 @@ jobs:
           echo "PMT_VERSION=${PMT_VERSION}" >> $GITHUB_ENV
           echo "PMT_VERSION_CODE=${PMT_VERSION_CODE}" >> $GITHUB_ENV
           echo "NDK_VERSION=${NDK_VERSION}" >> $GITHUB_ENV
+          echo "NDK_LINK=${NDK_LINK}" >> $GITHUB_ENV
+          echo "NDK_IS=${NDK_IS}" >> $GITHUB_ENV
           cd /home
           sudo git clone https://github.com/ShawkTeam/pmt -b ${PMT_VERSION}
           sudo chmod -R 777 pmt
@@ -48,13 +50,14 @@ jobs:
 
       - name: Setup Android NDK
         id: setup-ndk
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: ${{ env.NDK_VERSION }}
-          local-cache: false
-          add-to-path: false
-        env:
-          ANDROID_NDK_HOME: ${{ env.NDK_DIR }}
+        run: |
+          echo "Downloading NDK ${{ env.NDK_VERSION }}..."
+          aria2c "${{ env.NDK_LINK }}"
+          echo "Extracting..."
+          unzip -q *.zip && rm *.zip
+          mv * "${{ env.NDK_IS }}"
+          sudo chmod -R 777 *
+        working-directory: ${{ env.NDK_IN_DIR }}
 
       - name: Build pmt
         id: build-pmt
