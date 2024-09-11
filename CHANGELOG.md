@@ -9,6 +9,7 @@
     - More properly code
     - Some small fixes
     - Some tiny additions
+    - Writed script for managing binary
 
 ```
 END OF 2.8.0 UPDATE CHANGELOG
