@@ -76,6 +76,8 @@ jobs:
         id: small-transactions
         run: |
           curdate="$(date +%Y%m%d)"
+          export CC_64="${{ env.NDK_DIR }}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
+          export CC_VERSION=$(${CC_64} --version | head -n 1)
           . build/workflow/build.config
           . build/workflow/relnotes > /home/pmt/release_body.txt
           zip -rq pmt-objs-local.zip obj/local/arm64-v8a obj/local/armeabi-v7a
