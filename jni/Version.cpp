@@ -47,7 +47,7 @@ void Functions::DisplayVersion(void)
 #elif defined(__NDK_BUILD)
     if (Booleans::VerboseMode)
         printf("NDK.\n");
-    LOGD("%s\n", __NDK_CXX_VERSION__);
+    LOGD("\n%s\n", __NDK_CXX_VERSION__);
 #endif
 }
 
