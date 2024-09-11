@@ -84,7 +84,8 @@ jobs:
               mv libs/${arch}/pmt out/binary
               [[ "${arch}" == "arm64-v8a" ]] && make deb FOR_THIS=64
               [[ "${arch}" == "armeabi-v7a" ]] && make deb FOR_THIS=32
-              mv out/debpackage/*.deb .
+              mv out/debpackage/*.deb ${PWD}
+              rm -rf out/debpackage
               xz out/binary/pmt
               mv out/binary/pmt.xz ${PWD}/pmt-${arch}-${curdate}.xz
           done
