@@ -46,6 +46,7 @@ jobs:
           sudo chmod -R 777 pmt
           echo "PMT_SRCDIR=/home/pmt" >> $GITHUB_ENV
           echo "NDK_DIR=/home/ndk/android-ndk" >> $GITHUB_ENV
+          echo "NDK_IN_DIR=/home/ndk" >> $GITHUB_ENV
           sudo mkdir -p "/home/ndk" && cd "/home/ndk" && sudo chmod 777 "/home/ndk"
 
       - name: Setup Android NDK
