@@ -75,28 +75,20 @@ jobs:
       - name: Last small transactions
         id: small-transactions
         run: |
-          export CXX_64="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++"
-          export CXX_32="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang++"
-          export AR="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
-          export CXX_VERSION=$(${CXX_64} --version | head -n 1)
-          echo "CXX_VERSION=${CXX_VERSION}" >> $GITHUB_ENV
-          . ${{ env.PMT_SRCDIR }}/build/workflow/build.config
-          . ${{ env.PMT_SRCDIR }}/build/workflow/relnotes > /home/pmt/release_body.txt
-          cd ${{ env.PMT_SRCDIR }}
+          curdate="$(date +%Y%m%d)"
+          . build/workflow/build.config
+          . build/workflow/relnotes > /home/pmt/release_body.txt
           zip -rq pmt-objs-local.zip obj/local/arm64-v8a obj/local/armeabi-v7a
           for arch in arm64-v8a armeabi-v7a; do
-              xz libs/${arch}/pmt
-              mv libs/${arch}/pmt.xz ${PWD}/pmt-${arch}-$(date +%Y%m%d).xz
-          done
-          for CXX_COMP in ${CXX_64} ${CXX_32}; do
-              make clean
-              make PMT_CXX="${CXX_COMP}" PMT_AR="${AR}" PMT_EXTRA_CFLAGS="-D__NDK_BUILD"
-              [[ "${CXX_COMP}" == *"aarch64"* ]] && make deb FOR_THIS=64
-              [[ "${CXX_COMP}" == *"armv7a"* ]] && make deb FOR_THIS=32
+              mkdir -p out/binary
+              mv ${{ env.NDK_DIR }}/libs/${arch}/pmt out/binary
+              [[ "${arch}" == "arm64-v8a" ]] && make deb FOR_THIS=64
+              [[ "${arch}" == "armeabi-v7a" ]] && make deb FOR_THIS=32
               mv out/debpackage/*.deb .
-              make clean
+              xz out/binary/pmt
+              mv out/binary/pmt.xz ${PWD}/pmt-${arch}-${curdate}.xz
           done
-        working-directory: ${{ env.NDK_DIR }}
+        working-directory: ${{ env.PMT_SRCDIR }}
 
       - name: Upload to release
         id: upload-to-rels

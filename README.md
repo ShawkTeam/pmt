@@ -123,6 +123,16 @@ make uninstall
 
 # Re-install (install & uninstall)
 make reinstall
+
+# Manage pmt with termux script
+## Download script
+curl -LSs https://github.com/ShawkTeam/pmt/raw/2.8.0/pmt-termux.sh > pmt-termux.sh
+
+## View script help
+bash pmt-termux.sh # --help (optional)
+
+## The commands will be told to you anyway. Ask your questions from the telegram group.
+
 ```
  - For the make installable debian package:
 
