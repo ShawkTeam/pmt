@@ -81,7 +81,7 @@ jobs:
           zip -rq pmt-objs-local.zip obj/local/arm64-v8a obj/local/armeabi-v7a
           for arch in arm64-v8a armeabi-v7a; do
               mkdir -p out/binary
-              mv ${{ env.NDK_DIR }}/libs/${arch}/pmt out/binary
+              mv libs/${arch}/pmt out/binary
               [[ "${arch}" == "arm64-v8a" ]] && make deb FOR_THIS=64
               [[ "${arch}" == "armeabi-v7a" ]] && make deb FOR_THIS=32
               mv out/debpackage/*.deb .
