@@ -61,5 +61,6 @@ LOCAL_SRC_FILES := \
     Help.cpp
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
 LOCAL_CFLAGS := $(PMT_CXXFLAGS)
+LOCAL_SHARED_LIBRARIES := libc++_shared
 
 include $(BUILD_EXECUTABLE)
