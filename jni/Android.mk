@@ -24,21 +24,16 @@ include $(LOCAL_PATH)/../build/config/env.mk
 
 PMT_CXXFLAGS = \
     -O3 \
-    -Wall \
     -Wextra \
-    -Werror \
     -Wno-vla-cxx-extension \
     -Wno-nullability-completeness \
     -Wno-writable-strings \
-    -Wno-unused-parameter \
-    -Wno-unused-command-line-argument \
     -Wno-nullability-extension \
     -Wno-reorder-init-list \
     -Wno-gnu-zero-variadic-macro-arguments \
     -D__NDK_BUILD \
     $(PMT_EXTRA_CXXFLAGS)
 E2FSPROGS_DEFAULT_CFLAGS = \
-    -std=c17 \
     -Wall \
     -Werror \
     -Wno-pointer-arith \
@@ -46,9 +41,7 @@ E2FSPROGS_DEFAULT_CFLAGS = \
     -Wno-type-limits \
     -Wno-typedef-redefinition \
     -Wno-unused-parameter \
-    -Wno-unused-command-line-argument \
-    -fPIC \
-    -pthread
+    -Wno-unused-command-line-argument
 
 ifneq ($(PMT_ENABLE_DEBUG),)
     PMT_CXXFLAGS += -gdwarf-5 -fsanitize=address
@@ -64,7 +57,7 @@ LIBEXT2_QUOTA := $(LIB)/support
 LIBEXT2_MISC := $(LIB)/misc
 LIBEXT2_COM_ERR := $(LIB)/et
 LIBEXT2_BLKID := $(LIB)/blkid
-INC_DIR := ../include/e2fsprogs
+INC_DIR := $(LOCAL_PATH)/../include/e2fsprogs
 E2FSPROGS_INCLUDES := \
     $(INC_DIR)/misc \
     $(INC_DIR)/blkid \
@@ -167,7 +160,9 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES := $(E2FSPROGS_INCLUDES)
 LOCAL_CFLAGS := \
     $(E2FSPROGS_DEFAULT_CFLAGS) \
-    -Wno-unused-but-set-variable
+    -Wno-unused-but-set-variable \
+    -fPIC \
+    -pthread
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -193,7 +188,9 @@ LOCAL_CFLAGS := \
     -Wno-error=attributes \
     -Wno-error=pointer-sign \
     -Wno-unused-but-set-variable \
-    -fno-strict-aliasing
+    -fno-strict-aliasing \
+    -fPIC \
+    -pthread
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -212,7 +209,10 @@ LOCAL_SRC_FILES := \
     $(LIBEXT2_UUID)/unparse.c \
     $(LIBEXT2_UUID)/uuid_time.c
 LOCAL_C_INCLUDES := $(E2FSPROGS_INCLUDES)
-LOCAL_CFLAGS := $(E2FSPROGS_DEFAULT_CFLAGS)
+LOCAL_CFLAGS := \
+    $(E2FSPROGS_DEFAULT_CFLAGS) \
+    -fPIC \
+    -pthread
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -249,7 +249,9 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES := $(E2FSPROGS_INCLUDES)
 LOCAL_CFLAGS := \
     $(E2FSPROGS_DEFAULT_CFLAGS) \
-    -Wno-error=attributes
+    -Wno-error=attributes \
+    -fPIC \
+    -pthread
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -268,7 +270,10 @@ LOCAL_SRC_FILES := \
     $(LIBEXT2_QUOTA)/quotaio_tree.c \
     $(LIBEXT2_QUOTA)/quotaio_v2.c
 LOCAL_C_INCLUDES := $(E2FSPROGS_INCLUDES)
-LOCAL_CFLAGS := $(E2FSPROGS_DEFAULT_CFLAGS)
+LOCAL_CFLAGS := \
+    $(E2FSPROGS_DEFAULT_CFLAGS) \
+    -fPIC \
+    -pthread
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -279,7 +284,9 @@ LOCAL_SRC_FILES := $(LIBEXT2_MISC)/create_inode.c
 LOCAL_C_INCLUDES := $(E2FSPROGS_INCLUDES)
 LOCAL_CFLAGS := \
     $(E2FSPROGS_DEFAULT_CFLAGS) \
-    -Wno-error=format-extra-args
+    -Wno-error=format-extra-args \
+    -fPIC \
+    -pthread
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -293,7 +300,10 @@ LOCAL_SRC_FILES := \
     $(LIBEXT2_COM_ERR)/et_name.c \
     $(LIBEXT2_COM_ERR)/init_et.c
 LOCAL_C_INCLUDES := $(E2FSPROGS_INCLUDES)
-LOCAL_CFLAGS := $(E2FSPROGS_DEFAULT_CFLAGS)
+LOCAL_CFLAGS := \
+    $(E2FSPROGS_DEFAULT_CFLAGS) \
+    -fPIC \
+    -pthread
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -320,7 +330,9 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/../include \
     $(LOCAL_PATH)/../include/PartitionManager \
     $(E2FSPROGS_INCLUDES)
-LOCAL_CFLAGS := $(PMT_CXXFLAGS)
+LOCAL_CFLAGS := \
+    $(PMT_CXXFLAGS) \
+    $(E2FSPROGS_DEFAULT_CFLAGS)
 LOCAL_STATIC_LIBRARIES := \
     libext2fs \
     libext2_blkid \
