@@ -16,8 +16,7 @@
  * limitations under the License.
  */
 
-#ifndef __PMT_DEPRECATES_H
-#define __PMT_DEPRECATES_H
+#pragma once
 
 #define deprecated_opt   1
 #define changed_opt      2
@@ -40,7 +39,8 @@
 #define v260 "2.6.0"
 #define v270 "2.7.0"
 #define v280 "2.8.0"
-#define vUNK NULL
+#define v290 "2.9.0"
+#define vUNK nullptr
 
 struct pmt_deprecates {
     int depr_type;
@@ -57,15 +57,16 @@ static struct pmt_deprecates depr_table[] = {
     {deprecated_opt, 'r', not_changed, "format", not_changed_long, v210},
     {deprecated_opt, 'L', not_changed, "license", not_changed_long, v250},
     {changed_opt, 'D', 'p', "list", not_changed_long, v210},
+    {changed_opt, 'c', 'P', "context", "search-path", v290},
     {end_depr_pointer, not_changed, not_changed, not_changed_long, not_changed_long, vUNK}
 };
 
 static void
-__deprecated_opt_handle(int opt, const string opt_long, const char* depr_msg)
+__process_deprecated_opts(int opt, const string& opt_long, const char* depr_msg)
 {
     static string long_e_msg;
 
-    if (opt_long == "")
+    if (opt_long.empty())
         long_e_msg = PartitionManager::Display::UsingDispString->not_changed_opt;
     else
         long_e_msg = opt_long;
@@ -91,12 +92,10 @@ __deprecated_opt_handle(int opt, const string opt_long, const char* depr_msg)
             }
 
         }
-
     }
 }
 
-#define DEPR_HANDLE(x, y, z) __deprecated_opt_handle(x, y, z)
-
-#endif /* __PMT_DEPRECATES_H */
+#define DEPR_HANDLE(x, y, z) \
+    __process_deprecated_opts(x, y, z)
 
 /* end of code */

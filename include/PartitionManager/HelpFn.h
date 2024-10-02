@@ -16,15 +16,12 @@
  * limitations under the License.
  */
 
-#ifndef __PMT_HELP_MSGS_H
-#define __PMT_HELP_MSGS_H
+#pragma once
 
 namespace PartitionManager {
     namespace Functions {
         void DisplayHelp(void);
     }
 }
-
-#endif
 
 /* end */

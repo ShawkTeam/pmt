@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-#if !defined(__clang__) && !defined(__NDK_BUILD)
-  #error "Your compiler is NOT clang. Please build with LLVM clang."
-#endif
+#pragma once
 
-#ifndef __PMT_H_
-#define __PMT_H_
+#if !defined(__clang__) && !defined(__NDK_BUILD)
+  #error "Your compiler is NOT clang. Please build with (LLVM) clang."
+#endif
 
 #ifdef INC_MAIN_LIBS
   #include <iostream>
@@ -30,8 +29,10 @@
   #include <string>
   #include <cstring>
   #include <cstdarg>
-  #include <clocale>
 
+  #ifdef IS_MAIN
+    #include <clocale>
+  #endif
   #if !defined(HELP) || !defined(VERSIONING)
     #include <cstdlib>
     #include <unistd.h>
@@ -52,7 +53,9 @@
   #include <cerrno>
 #endif
 #ifdef INC_TOOLS_REQS
-  #include <sys/statvfs.h>
+  #include <sys/vfs.h>
+
+  typedef unsigned short ushort_t;
 #endif
 #ifdef INC_LIBGEN
   #include <libgen.h>
@@ -68,16 +71,17 @@ typedef enum {
     LOG_LEVEL_DEBUG
 } LogLevel;
 
-/* fast error processing without errno entry 
+/**
+ * Fast error processing without errno entry 
  * but errno can be given in the entrance
  */
-char* strqerror(int errno_macro = errno);
+extern "C" char* strqerror(int errno_macro = errno);
 
 /* create a special namespace */
 namespace PartitionManager {
     namespace Strings {
         extern string OutputName;
-        extern string CustomContext;
+        extern string CustomSearchPath;
         extern string TargetPartition;
         extern string TargetFlashFile;
         extern string TargetFormatFS;
@@ -86,19 +90,24 @@ namespace PartitionManager {
         extern string CurrentLanguage;
     } /* namespace Strings */
 
+    namespace Integers {
+        extern int PartSizeViewType;
+    } /* namespace Integers */
+
     namespace Booleans {
         extern bool UseLogical;
-        extern bool UseCustomContext;
+        extern bool UseCustomSearchPath;
         extern bool UsesSlots;
         extern bool UsesLogical;
+        extern bool OnlyViewSize;
         extern bool SilentEnabled;
         extern bool FlashMode;
         extern bool BackupMode;
         extern bool FormatMode;
+        extern bool PartSizeViewMode;
         extern bool ForceMode;
         extern bool VerboseMode;
         extern bool InstalledOnTermux;
-        extern bool ActivateRoot;
     } /* namespace Booleans */
 
     namespace Display {
@@ -135,6 +144,7 @@ namespace PartitionManager {
 #define LOGD(fmt, ...) \
     PartitionManager::Functions::DisplayLog(LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
 
+/* verbose logging macros */
 #define VLOGF(fmt, ...) \
     PartitionManager::Functions::DisplayVerboseLog(LOG_LEVEL_FATAL, fmt, ##__VA_ARGS__)
 #define VLOGE(fmt, ...) \
@@ -143,7 +153,5 @@ namespace PartitionManager {
     PartitionManager::Functions::DisplayVerboseLog(LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
 #define VLOGD(fmt, ...) \
     PartitionManager::Functions::DisplayVerboseLog(LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
-
-#endif
 
 /* end of code */

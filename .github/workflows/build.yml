@@ -15,22 +15,16 @@ jobs:
         id: cleanup
         uses: rokibhasansagar/slimhub_actions@main
 
-      - name: Setup GitHub CLI
-        id: setup-gh
+      - name: Update and setup packages
+        id: general-packages-progress
         run: |
           type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
           curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
           && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
           && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
           && sudo apt update \
-          && sudo apt install gh -y
-
-      - name: Update and setup packages
-        id: general-packages-progress
-        run: |
-          sudo apt update \
           && sudo apt upgrade -y \
-          && sudo apt install make xz-utils aria2 gawk -y
+          && sudo apt install make xz-utils aria2 gawk gh -y
 
       - name: Save spefic version variables
         id: save-vars
@@ -46,7 +40,6 @@ jobs:
           sudo chmod -R 777 pmt
           echo "PMT_SRCDIR=/home/pmt" >> $GITHUB_ENV
           echo "NDK_DIR=/home/ndk/android-ndk" >> $GITHUB_ENV
-          echo "NDK_IN_DIR=/home/ndk" >> $GITHUB_ENV
           sudo mkdir -p "/home/ndk" && cd "/home/ndk" && sudo chmod 777 "/home/ndk"
 
       - name: Setup Android NDK
@@ -65,9 +58,6 @@ jobs:
         run: |
           make gen-ndk-makefiles
           export NDK_PROJECT_PATH=${PWD}
-          export NDK_ROOT_DIR=${{ env.NDK_DIR }}
-          echo "NDK_ROOT_DIR=${NDK_ROOT_DIR}" >> $GITHUB_ENV
-          bash build/bash/gen-header
           cd ${{ env.NDK_DIR }}
           ./ndk-build
         working-directory: ${{ env.PMT_SRCDIR }}
@@ -75,23 +65,19 @@ jobs:
       - name: Last small transactions
         id: small-transactions
         run: |
-          curdate="$(date +%Y%m%d)"
-          export CC_64="${{ env.NDK_DIR }}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
-          export CC_VERSION=$(${CC_64} --version | head -n 1)
-          . build/workflow/build.config
-          . build/workflow/relnotes > /home/pmt/release_body.txt
+          export CXX_VERSION=$(${CXX_64} --version | head -n 1)
+          echo "CXX_VERSION=${CXX_VERSION}" >> $GITHUB_ENV
+          . ${{ env.PMT_SRCDIR }}/build/workflow/build.config
+          . ${{ env.PMT_SRCDIR }}/build/workflow/relnotes > /home/pmt/release_body.txt
+          cd ${{ env.PMT_SRCDIR }}
           zip -rq pmt-objs-local.zip obj/local/arm64-v8a obj/local/armeabi-v7a
-          for arch in arm64-v8a armeabi-v7a; do
-              mkdir -p out/binary
-              mv libs/${arch}/pmt out/binary
-              [[ "${arch}" == "arm64-v8a" ]] && make deb FOR_THIS=64
-              [[ "${arch}" == "armeabi-v7a" ]] && make deb FOR_THIS=32
-              mv out/debpackage/*.deb ${PWD}
-              rm -rf out/debpackage
-              xz out/binary/pmt
-              mv out/binary/pmt.xz ${PWD}/pmt-${arch}-${curdate}.xz
-          done
-        working-directory: ${{ env.PMT_SRCDIR }}
+          xz libs/arm64-v8a/pmt
+          xz libs/armeabi-v7a/pmt
+          mv libs/arm64-v8a/pmt.xz ${PWD}/pmt-arm64-v8a-$(date +%Y%m%d).xz
+          mv libs/armeabi-v7a/pmt.xz ${PWD}/pmt-armeabi-v7a-$(date +%Y%m%d).xz
+          cp build/mandoc/mandoc pmt.8
+          gzip -c pmt.8 > mandoc.gz
+        working-directory: ${{ env.NDK_DIR }}
 
       - name: Upload to release
         id: upload-to-rels
@@ -101,6 +87,7 @@ jobs:
             /home/pmt/pmt*.xz
             /home/pmt/pmt*.deb
             /home/pmt/pmt-objs-local.zip
+            /home/pmt/mandoc.gz
           name: Partition Manager ${{ env.PMT_VERSION }} Release
           tag_name: ${{ env.PMT_VERSION }}
           body_path: /home/pmt/release_body.txt

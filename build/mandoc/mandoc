@@ -1,0 +1,154 @@
+.\" By YZBruh
+
+.\" Copyright 2024 Partition Manager
+.\"
+.\" Licensed under the Apache License, Version 2.0 (the "License");
+.\" you may not use this file except in compliance with the License.
+.\" You may obtain a copy of the License at
+.\"
+.\"     http://www.apache.org/licenses/LICENSE-2.0
+.\"
+.\" Unless required by applicable law or agreed to in writing, software
+.\" distributed under the License is distributed on an "AS IS" BASIS,
+.\" WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+.\" See the License for the specific language governing permissions and
+.\" limitations under the License.
+.\"
+.TH "PMT" "8" "September 2024" "PMT 2.9.0" "Partition Manager"
+.SH NAME
+.B pmt
+\- Android Partition Manager Tool
+.SH SYNOSIS
+.B pmt
+[
+.I {OPTIONS}
+.B backup
+.I PARTITION {OUTPUT} {OPTIONS}...
+]
+[
+.I {OPTIONS}
+.B flash
+.I PARTITION FILE {OPTIONS}...
+]
+[
+.I {OPTIONS}
+.B format
+.I PARTITION FILE_SYSTEM{ext/2/3/4} {OPTIONS}...
+]
+[
+.I {OPTIONS}
+.B partition-size
+.I PARTITION {OPTIONS}...
+]
+[
+.B \-l
+|
+.B \-\-logical
+]
+[
+.B \-P
+|
+.B \-\-search\-path
+.I search\-path
+]
+[
+.B \-p
+|
+.B \-\-list
+]
+[
+.B \-s
+|
+.B \-\-silent
+]
+[
+.B \-V
+|
+.B \-\-verbose
+]
+[
+.B \-f
+|
+.B \-\-force
+]
+[
+.B \-S
+|
+.B \-\-set\-language
+]
+[
+.B \-v
+|
+.B \-\-version
+]
+[
+.B \-\-help
+]
+.SH DESCRIPTION
+.B pmt
+is a tool made to read android parts, make flash and format. Written with C++ language. It was first created as only a hobby but subsequently serialized
+.PP
+.SH OPTIONS
+.sp
+\fB\-l\fP, \fB\-\-logical\fP
+.RS 4
+It is meant to determine whether the target partition is logical.
+.RE
+.sp
+\fB\-c\fP, \fB\-\-context\fP
+.RS 4
+It is meant to specify a custom /dev context. Only classic partitions (default: /dev/block/by-name)
+.RE
+.sp
+\fB\-p\fP, \fB\-\-list\fP
+.RS 4
+List partitions.
+.RE
+.sp
+\fB\-s\fP, \fB\-\-silent\fP
+.RS 4
+Information and warning messages are silenced in normal work.
+.RE
+.sp
+\fB\-V\fP, \fB\-\-verbose
+.RS 4
+Verbose mode. Print detailed informations etc.
+.RE
+.sp
+\fB\-f\fP, \fB\-\-force\fP
+.RS 4
+Force mode. Some things are ignored.
+.RE
+.sp
+\fB\-S\fP, \fB\-\-set\-language\fP
+.RS 4
+Set current language.
+.RE
+.sp
+\fB\-v\fP, \fB\-\-version\fP
+.RS 4
+See version info.
+.RE
+.sp
+\fB\-\-help\fP
+.RS 4
+See help message.
+.SH EXAMPLES
+.B pmt
+backup boot_a -c /dev/block/platform/bootdevice/by-name
+.sp
+.B pmt
+flash boot_a /sdcard/twrp/boot.img -c /dev/block/platform/bootdevice/by-name
+.sp
+.B pmt
+format system_a ext4 --logical
+.sp
+.B pmt
+-c /dev/block/platform/bootdevice/by-name --list
+.SH AUTHOR
+This version of
+.B pmt
+has been written by YZBruh <github.com/YZBruh>
+.SH BUGS
+Report bugs to <t.me/ShawkTeam | Topics | pmt>
+.PP

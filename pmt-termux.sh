@@ -3,7 +3,8 @@
 # By YZBruh | ShawkTeam
 
 # Variables
-LOCAL_VERSION="2.8.0"
+LOCAL_VERSION="2.9.0"
+LOCAL_RELDATE=""
 LOCAL_OWNER="ShawkTeam"
 LOCAL_REPO="pmt"
 LOCAL_RELEASE_TAG="${LOCAL_VERSION}"
@@ -59,10 +60,7 @@ function view_help()
     printc "    uninstall, -u               Uninstall Partition Manager."
     printc "    status,    -s               Display install/uninstall status."
     printc "    --setup,   -S               Setup required packages."
-    printc "    --package <FILE>            If you already have a debug package, make\n                                  setup by specifying this way."
-    printc "    --binary  <FILE>            Setup binary instead of the deb pack."
-    printc "    --compress-algorithm [ALGO] Speficy custom algorithm for extracting                                           package (if only custom package specified)."
-    printc "Supported algorithms: xz, gzip, zip, 7z, tar, tar.xz, tar.gz\n"
+    printc "    --package <FILE>            If you already have a pmt package, make\n                                  setup by specifying this way."
     printc "Report bugs to <t.me/ShawkTeam | Topics | pmt>"
 
     exit 0
@@ -71,7 +69,7 @@ function view_help()
 # Script really operated termux proclamation?
 function really_termux()
 {
-    ls "${LOCAL_PREFIX}/bin" | grep "termux" &>/dev/null \
+    basename -a ${LOCAL_PREFIX}/bin/* | grep "termux" &>/dev/null \
     || abort "Are you sure you're in termux?"
 }
 
@@ -116,6 +114,14 @@ function check_status()
     exit 0
 }
 
+# check xz-utils install status
+function check_xz()
+{
+    # The outflow of the APT is not controlled in use
+    [ -f ${LOCAL_PREFIX}/bin/xz ] \
+    || abort "xz-utils not installed! Run setup command."
+}
+
 # Check internet connection
 function net_control()
 {
@@ -126,21 +132,20 @@ function net_control()
 # Download Partition Manager
 function download()
 {
-    local URL
+    local URL="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/tag/${LOCAL_RELEASE_TAG}/download/pmt-${LOCAL_ARCH}-${LOCAL_RELDATE}.xz"
+    local URL_MANDOC="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/tag/${LOCAL_RELEASE_TAG}/download/mandoc.gz"
 
-    if [ "${BINARY}" = 1 -a "${PACKAGE}" != 1 ]; then
-        URL="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/tag/${LOCAL_RELEASE_TAG}/download/pmt-${LOCAL_ARCH}.xz"
-    else
-        URL="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/tag/${LOCAL_RELEASE_TAG}/download/pmt-${LOCAL_ARCH}.deb"
-    fi
-
-    print "Downloading: \`${URL}'"
-
-    curl -L "${URL}" -o "${LOCAL_TMPDIR}/pmt-${LOCAL_ARCH}.deb" &>/dev/null \
+    print "Downloading: 'pmt-${LOCAL_ARCH}-${LOCAL_RELDATE}.xz'..."
+    curl -L "${URL}" -o "${LOCAL_TMPDIR}/pmt-${LOCAL_ARCH}.xz" &>/dev/null \
     || abort "Download failed!"
 
-    chmod -R 777 "${LOCAL_TMPDIR}" \
-    || warning "Cannot set mode '777' on installed sources."
+    HAVE_MANDOC=true
+    print "Downloading mandoc..."
+    curl -L "${URL_MANDOC}" -o "${LOCAL_TMPDIR}/pmt.8.gz" &>/dev/null \
+    || warning "Download failed! (mandoc)"
+
+    chmod -R 755 "${LOCAL_TMPDIR}" &>/dev/null \
+    || warning "Cannot set mode '777' on downloaded files."
 }
 
 # For installing required packages
@@ -149,14 +154,11 @@ function setup_packages()
     net_control
 
     print "Updating mirrors..."
-    if ! pkg update &>/dev/null || [ "$?" != 0 ]; then
-        abort "Updating failed!"
-    fi
+    pkg update &>/dev/null || abort "Updating failed!"
 
-    print "Installing: 'xz-utils, p7zip'"
-    if ! pkg install -y xz-utils p7zip || [ "$?" != 0 ]; then
-        abort "Installing failed!"
-    fi
+    print "Installing xz-utils..."
+    pkg install -y xz-utils &>/dev/null \
+    || abort "Installing failed!"
 
     print "Success."
     exit 0
@@ -165,56 +167,45 @@ function setup_packages()
 # Install deb package
 function install_fn()
 {
-    local mydir="$(pwd)"
+    local mydir="${PWD}"
     [ "${LOCAL_PACKAGE}" = "" ] || local bname=$(basename ${LOCAL_PACKAGE})
 
-    [ "${PACKAGE}" = 1 ] && \
+    ${PACKAGE} && \
     if [ ! -f "${LOCAL_PACKAGE}" ]; then
         [ -d "${LOCAL_PACKAGE}" ] \
         && abort "\`${LOCAL_PACKAGE}': is directory."
 
         abort "\`${LOCAL_PACKAGE}': no such file."
     else
-        cp "${LOCAL_PACKAGE}" "${LOCAL_TMPDIR}"
+        cp "${LOCAL_PACKAGE}" "${LOCAL_TMPDIR}/pmt-${LOCAL_ARCH}.xz"
     fi
 
     cd "${LOCAL_TMPDIR}"
 
-    [ "${BINARY}" = 1 -a "${NONE_ALGO}" != 1 ] \
-    && print "Extracting '${bname}'..." && \
-    if eval "${ALGO_DEC} ${ALGO_FLAGS} ${LOCAL_TMPDIR}/${bname}" &>/dev/null; then
-        rm -f "${bname}"
+    print "Extracting package..."
+    if xz -d "$(basename *.xz)" ; then
+        rm -f "pmt*.xz"
     else
-        abort "Failed! Try speficing algorithm."
+        abort "Failed! Cannot extract pmt package."
     fi
 
-    [ "$(basename *)" = "*" ] \
-    && abort "Deb pack or binary file was not found!"
+    [ -z $(basename "pmt-*") ] \
+    && abort "Extracted binary file was not found!"
+    mv "$(basename pmt-*)" pmt
 
-    bname=$(basename *)
-
-    if [ "${BINARY}" = 1 ]; then
-        mv "${bname}" pmt &>/dev/null
-
-        print "Copying..."
-        cp pmt "${LOCAL_PREFIX}/bin/pmt" &>/dev/null \
-        || abort "Copying failed"
-
-        print "Setting up permissions..."
-        chmod 777 "${LOCAL_PREFIX}/bin/pmt" &>/dev/null \
-        || abort "Cannot set permissions!"
-
-        print "Success."
-        return
+    print "Installing..."
+    cp pmt "${LOCAL_PREFIX}/bin/pmt" &>/dev/null \
+    || abort "Installing failed!"
+    
+    if ${HAVE_MANDOC}; then
+        print "Installing mandoc (force)..."
+        cp -f  pmt.8.gz ${LOCAL_PREFIX}/share/man/man8 &>/dev/null
+        chmod 755 ${LOCAL_PREFIX}/share/man/man8/pmt.8.gz &>/dev/null
     fi
 
-    print "Installing Partition Manager with APT..."
-    if ! apt -y install ./pmt-${LOCAL_ARCH}.deb; then
-        warning "Installing failed with APT. Trying installing with dpkg..."
-
-        dpkg install pmt-${LOCAL_ARCH}.deb &>/dev/null \
-        || abort "Cannot install Partition Manager!"
-    fi
+    print "Setting up permissions for binary..."
+    chmod 755 "${LOCAL_PREFIX}/bin/pmt" &>/dev/null \
+    || abort "Failed to set permissions!"
 
     print "Success."
     cd "${mydir}"
@@ -223,27 +214,21 @@ function install_fn()
 # Uninstall deb package
 function uninstall_fn()
 {
-    [ "${BINARY}" = 1 ] \
-    && print "Removing binary..." && \
+    print "Uninstalling Partition Manager..." && \
     if rm "${LOCAL_PREFIX}/bin/pmt" &>/dev/null; then
         print "Success."
-        return
     else
         abort "Failed!"
     fi
 
-    print "Uninstalling Partition Manager with APT..."
-    if ! apt -y remove pmt &>/dev/null; then
-        warning "Uninstalling failed with APT. Trying uninstalling with dpkg..."
-
-        dpkg remove pmt &>/dev/null \
-        || abort "Cannot uninstall Partition Manager!"
-    fi
-
-    print "Success."
+    rm -f ${LOCAL_PREFIX}/share/man/man8/pmt.8.gz
 }
 
-trap "abort Interrput; cleanup" SIGINT
+trap "abort Interrupt." SIGINT
+trap "cleanup" SIGQUIT
+PACKAGE=false
+ALREADY_SHIFT=false
+HAVE_MANDOC=false
 # set -x
 
 # Process arguments
@@ -267,73 +252,48 @@ while (($# >= 1)); do
             setup_packages
             ;;
         --package)
-            PACKAGE=1
+            PACKAGE=true
+            [ -z ${2} ] \
+            && printc "Option '--package' requires an argument (file)." \
+            && exit 1
             LOCAL_PACKAGE="${2}"
-            ;;
-        --binary)
-            BINARY=1
-            ;;
-        --not-compressed)
-            NOT_COMP=1
-            ;;
-        --compress-algorithm)
-            ALGO_SPEC=1
-            [ -z "${2}" ] \
-            && abort "'--compress-algorithm' requires an argument."
-            case "${2}" in
-                xz|gzip|zip|7z|tar|tar.xz|tar.gz)
-                    if echo "${2}" | grep "tar." &>/dev/null; then
-                        ALGO_DEC="tar"
-                        ALGO_FLAGS="-xf"
-                    elif [ "${2}" = "zip" ]; then
-                        ALGO_DEC="unzip"
-                        ALGO_FLAGS=
-                    elif [ "${2}" = "7z" ]; then
-                        ALGO_DEC="7z"
-                        ALGO_FLAGS="x"
-                    else
-                        ALGO_DEC="${2}"
-                        ALGO_FLAGS="-d"
-                    fi
-                    ;;
-                none)
-                    NONE_ALGO=1
-                    ;;
-                *)
-                    abort "Unknown compress algorithm: ${2}"
-                    ;;
-            esac
+            ALREADY_SHIFT=true && shift 1
             ;;
         --help)
             view_help
             ;;
+        *)
+            if echo ${1} | grep "-" &>/dev/null; then
+                if ! echo ${1} | grep ".xz" &>/dev/null; then
+                    printc "Unknown option: ${1}" \
+                    exit 1
+                else
+                    break;
+                fi
+            else
+                break
+            fi
+            ;;
     esac
 
-    shift 1
+    ${ALREADY_SHIFT} || shift 1
 done
 
 ### Main ###
 [ -z "${1}" -a "${SOME_SPEC}" != 1 ] && view_help
 
 script_head
-
-[ -z "${LOCAL_PACKAGE}" -a "${PACKAGE}" = 1 ] \
-&& abort "'--package' requires an argument (file)."
-
 really_termux
 gen_tempdir
-
-[ -z "${ALGO_DEC}" ] && ALGO_DEC="xz" && ALGO_FLAGS="-d"
-[ "${ALGO_SPEC}" = 1 -a "${PACKAGE}" != 1 ] \
-&& abort "Compression algorithm cannot be specified without package specification option."
 
 if [ "${PROCESS}" = 1 ]; then
     [ -f "${LOCAL_PREFIX}/bin/pmt" ] \
     && abort "Partition Manager already installed."
-    [ "${PACKAGE}" = 1 ] || net_control
+    ${PACKAGE} || net_control
+    check_xz
     get_architecture
     print "Starting install process..."
-    [ "${PACKAGE}" = 1 ] || download
+    ${PACKAGE} || download
     install_fn
 elif [ "${PROCESS}" = 2 ]; then
     [ ! -f "${LOCAL_PREFIX}/bin/pmt" ] \

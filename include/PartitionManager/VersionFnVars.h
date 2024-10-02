@@ -16,25 +16,23 @@
  * limitations under the License.
  */
 
-#ifndef __PMT_VERSIONING_H
-#define __PMT_VERSIONING_H
+#pragma once
 
 #ifdef __NDK_BUILD
   #include <android/ndk-version.h>
   #include <PartitionManager/generated/clang-version.h>
 #endif
+#include <e2fsprogs/version.h>
 
 /* versioning */
 #define PMT_MAJOR            2
-#define PMT_MINOR            8
-#define PMT_PATCHLEVEL       0
+#define PMT_MINOR            9
+#define PMT_PATCHLEVEL       1
 
 namespace PartitionManager {
     namespace Functions {
         void DisplayVersion(void);
     }
 }
-
-#endif
 
 /* end */

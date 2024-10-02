@@ -1,16 +1,11 @@
-### Version 2.8.0 Changelog
+### Version 2.9.0 Changelog
 
-    - Base switched to C++
-    - Static libraries deprecated
-    - A certain size-change replacement failure problem has been fixed
-    - Flash problem corrected in sizes under 1KB
-    - Unrelated ones were filtered while logical sections list
-    - Some memory leaks were fixed
-    - More properly code
+    - All dependencies related to e2fsprogs were added into pmt for built-in mke2fs
+    - Partition size displaying feature added
+    - Make compilation system deprecated, only Android NDK can be used
     - Some small fixes
-    - Some tiny additions
-    - Writed script for managing binary
+    - Some minor changes on compilation system
 
 ```
-END OF 2.8.0 UPDATE CHANGELOG
+END OF 2.9.0 UPDATE CHANGELOG
 ```
