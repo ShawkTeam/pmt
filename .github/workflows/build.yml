@@ -57,7 +57,7 @@ jobs:
       - name: Build pmt
         id: build-pmt
         run: |
-          make gen-ndk-makefiles
+          . build/bash/gen-header
           export NDK_PROJECT_PATH=${PWD}
           cd ${{ env.NDK_DIR }}
           ./ndk-build
