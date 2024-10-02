@@ -74,7 +74,6 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libext2fs
 LOCAL_SRC_FILES := \
-    $(LIBEXT2FS)/devname.c \
     $(LIBEXT2FS)/ext2_err.c \
     $(LIBEXT2FS)/alloc.c \
     $(LIBEXT2FS)/alloc_sb.c \
