@@ -21,11 +21,20 @@ Options:
    -v, --version     See version.
        --help        See this help message.
 
+partition-size flags:
+       --only-size   Only the size is displayed, the partition name etc is not displayed.
+       --as-byte     Display size as byte.
+       --as-kilobyte Display size as kilobyte.
+       --as-megabyte Display size as megabyte.
+       --as-gigabyte Display size as gigabyte.
+
 Examples:
    pmt backup boot_a -P /dev/block/platform/bootdevice/by-name
    pmt flash boot_a /sdcard/twrp/boot.img -c /dev/block/platform/bootdevice/by-name
    pmt format system_a ext4 --logical
    pmt -P /dev/block/platform/bootdevice/by-name --list
+   pmt partition-size boot --as-byte
+   pmt partition-size system --only-size --as-gigabyte --logical
 
 Report bugs and suggestions to <t.me/ShawkTeam | Topics | pmt>
 ```
