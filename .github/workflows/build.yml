@@ -59,6 +59,7 @@ jobs:
         run: |
           . build/bash/gen-header
           export NDK_PROJECT_PATH=${PWD}
+          export NDK_ROOT_DIR=${{ env.NDK_DIR }}
           cd ${{ env.NDK_DIR }}
           ./ndk-build
         working-directory: ${{ env.PMT_SRCDIR }}
