@@ -26,5 +26,6 @@ APP_ABI := \
 APP_PLATFORM := android-21
 APP_OPTIM := release
 APP_STL := c++_static
+APP_ALLOW_MISSING_DEPS := true
 
 # end
