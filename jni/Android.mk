@@ -24,6 +24,7 @@ include $(LOCAL_PATH)/../build/config/env.mk
 
 PMT_CXXFLAGS = \
     -O3 \
+    -Wall \
     -Wextra \
     -Wno-vla-cxx-extension \
     -Wno-nullability-completeness \
@@ -34,7 +35,6 @@ PMT_CXXFLAGS = \
     -D__NDK_BUILD \
     $(PMT_EXTRA_CXXFLAGS)
 E2FSPROGS_DEFAULT_CFLAGS = \
-    -Wall \
     -Werror \
     -Wno-pointer-arith \
     -Wno-sign-compare \
