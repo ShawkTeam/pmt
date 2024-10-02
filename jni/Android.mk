@@ -311,7 +311,7 @@ LOCAL_SRC_FILES := \
     $(PMT)/Tools.cpp \
     $(PMT)/LanguageTools.cpp \
     $(PMT)/Languages.cpp \
-    $(PMT)/Help.cpp
+    $(PMT)/Help.cpp \
     $(MKE2FS)/default_profile.c \
     $(MKE2FS)/mk_hugefiles.c \
     $(MKE2FS)/mke2fs.c \
