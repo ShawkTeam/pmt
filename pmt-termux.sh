@@ -48,7 +48,7 @@ function script_head() { printc " --- Partition Manager Termux Helper Script ---
 # For display help message
 function view_help()
 {
-    echo ${SILENT} -n "Usage: "
+    ${SILENT} || echo -n "Usage: "
     if echo "${0}" | grep "./" >&/dev/null; then
         printc "${0} [OPTIONS]..."
     else
@@ -135,9 +135,11 @@ function download()
     local URL="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/tag/${LOCAL_RELEASE_TAG}/download/pmt-${LOCAL_ARCH}-${LOCAL_RELDATE}.xz"
     local URL_MANDOC="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/tag/${LOCAL_RELEASE_TAG}/download/mandoc.gz"
 
+    cd "${LOCAL_TMPDIR}"
     print "Downloading: 'pmt-${LOCAL_ARCH}-${LOCAL_RELDATE}.xz'..."
-    curl -L "${URL}" -o "${LOCAL_TMPDIR}/pmt-${LOCAL_ARCH}.xz" &>/dev/null \
+    wget "${URL}" &>/dev/null \
     || abort "Download failed!"
+    cd - &>/dev/null
 
     HAVE_MANDOC=true
     print "Downloading mandoc..."
@@ -156,8 +158,8 @@ function setup_packages()
     print "Updating mirrors..."
     pkg update &>/dev/null || abort "Updating failed!"
 
-    print "Installing xz-utils..."
-    pkg install -y xz-utils &>/dev/null \
+    print "Installing xz-utils, wget..."
+    pkg install -y xz-utils wget &>/dev/null \
     || abort "Installing failed!"
 
     print "Success."
@@ -183,7 +185,7 @@ function install_fn()
     cd "${LOCAL_TMPDIR}"
 
     print "Extracting package..."
-    if xz -d "$(basename *.xz)" ; then
+    if unxz "$(basename *.xz)" &>/dev/null; then
         rm -f "pmt*.xz"
     else
         abort "Failed! Cannot extract pmt package."
@@ -229,7 +231,6 @@ trap "cleanup" SIGQUIT
 PACKAGE=false
 ALREADY_SHIFT=false
 HAVE_MANDOC=false
-# set -x
 
 # Process arguments
 while (($# >= 1)); do
@@ -286,7 +287,7 @@ done
 ### Main ###
 [ -z "${1}" -a "${SOME_SPEC}" != 1 ] && view_help && exit 1
 
-if [ "${PROCESS}" -le 2 ]; then
+if [ "${PROCESS}" = 1 -o "${PROCESS}" = 2 ]; then
     script_head
     really_termux
     gen_tempdir

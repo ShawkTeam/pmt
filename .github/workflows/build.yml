@@ -67,6 +67,7 @@ jobs:
       - name: Last small transactions
         id: small-transactions
         run: |
+          export CXX_64="${PWD}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++"
           export CXX_VERSION=$(${CXX_64} --version | head -n 1)
           echo "CXX_VERSION=${CXX_VERSION}" >> $GITHUB_ENV
           . ${{ env.PMT_SRCDIR }}/build/workflow/build.config
@@ -87,7 +88,6 @@ jobs:
         with:
           files: |
             /home/pmt/pmt*.xz
-            /home/pmt/pmt*.deb
             /home/pmt/pmt-objs-local.zip
             /home/pmt/mandoc.gz
           name: Partition Manager ${{ env.PMT_VERSION }} Release

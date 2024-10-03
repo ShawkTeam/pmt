@@ -1,4 +1,4 @@
-### Version 2.9.0 Changelog
+### Version 2.9.1 Changelog
 
     - All dependencies related to e2fsprogs were added into pmt for built-in mke2fs
     - Partition size displaying feature added
@@ -7,5 +7,5 @@
     - Some minor changes on compilation system
 
 ```
-END OF 2.9.0 UPDATE CHANGELOG
+END OF 2.9.1 UPDATE CHANGELOG
 ```
