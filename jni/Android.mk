@@ -15,7 +15,7 @@
 # limitations under the License.
 
 ########
-# 2.9.0
+# 2.9.1
 ########
 
 LOCAL_PATH := $(call my-dir)
@@ -32,7 +32,7 @@ PMT_CXXFLAGS = \
     -Wno-nullability-extension \
     -Wno-reorder-init-list \
     -Wno-gnu-zero-variadic-macro-arguments \
-    -D__NDK_BUILD \
+    -static \
     $(PMT_EXTRA_CXXFLAGS)
 E2FSPROGS_DEFAULT_CFLAGS = \
     -Werror \
@@ -258,6 +258,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libext2_quota
 LOCAL_SRC_FILES := \
+    $(LIBEXT2_QUOTA)/devname.c \
     $(LIBEXT2_QUOTA)/dict.c \
     $(LIBEXT2_QUOTA)/mkquota.c \
     $(LIBEXT2_QUOTA)/parse_qtype.c \
@@ -340,8 +341,5 @@ LOCAL_STATIC_LIBRARIES := \
     libext2_quota \
     libext2_misc \
     libext2_com_err
-LOCAL_SHARED_LIBRARIES := \
-    liblog \
-    libcutils
 
 include $(BUILD_EXECUTABLE)

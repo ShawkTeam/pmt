@@ -265,7 +265,11 @@ int Functions::Start(ushort_t progress_code)
         /* generate mke2fs argument list */
         VLOGD("PartitionManager: generating mke2fs argument list...\n");
         char bsize[25] = "";
+#ifdef __LP64__
         sprintf(bsize, "%lu", file_sys_inf.f_bsize);
+#else
+        sprintf(bsize, "%u", file_sys_inf.f_bsize);
+#endif
         char* arguments[] = {
             "mke2fs-static",
             "-Fq",

@@ -4,7 +4,7 @@
 
 # Variables
 LOCAL_VERSION="2.9.1"
-LOCAL_RELDATE="20241002"
+LOCAL_RELDATE="20241003"
 LOCAL_OWNER="ShawkTeam"
 LOCAL_REPO="pmt"
 LOCAL_RELEASE_TAG="${LOCAL_VERSION}"
@@ -12,6 +12,7 @@ LOCAL_PREFIX="${PREFIX}"
 [ -d "${LOCAL_PREFIX}" ] \
 || LOCAL_PREFIX="/data/data/com.termux/files/usr"
 LOCAL_TMPDIR="${LOCAL_PREFIX}/tmp/pmt-termux-helper"
+SILENT=false
 
 # Colors
 RESET="\033[0m"
@@ -20,13 +21,13 @@ GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
 
 # Printer functions
-function printc() { echo -e "$*" >&2; }
+function printc() { ${SILENT} || echo -e "$*" >&2; }
 function print()
 {
     if echo "$*" | grep "Success" &>/dev/null; then
-        echo -e " - ${GREEN}${1:0:7}${RESET}." >&2
+        ${SILENT} || echo -e " - ${GREEN}${1:0:7}${RESET}." >&2
     else
-        echo -e " - $*" >&2
+        ${SILENT} || echo -e " - $*" >&2
     fi
 }
 
@@ -47,7 +48,7 @@ function script_head() { printc " --- Partition Manager Termux Helper Script ---
 # For display help message
 function view_help()
 {
-    echo -n "Usage: "
+    echo ${SILENT} -n "Usage: "
     if echo "${0}" | grep "./" >&/dev/null; then
         printc "${0} [OPTIONS]..."
     else
@@ -59,11 +60,10 @@ function view_help()
     printc "    install,   -i [OPTS]        Download and install Partition Manager."
     printc "    uninstall, -u               Uninstall Partition Manager."
     printc "    status,    -s               Display install/uninstall status."
+    printc "    --quiet,   -q               Silent mode. No output."
     printc "    --setup,   -S               Setup required packages."
     printc "    --package <FILE>            If you already have a pmt package, make\n                                  setup by specifying this way."
     printc "Report bugs to <t.me/ShawkTeam | Topics | pmt>"
-
-    exit 0
 }
 
 # Script really operated termux proclamation?
@@ -196,7 +196,7 @@ function install_fn()
     print "Installing..."
     cp pmt "${LOCAL_PREFIX}/bin/pmt" &>/dev/null \
     || abort "Installing failed!"
-    
+
     if ${HAVE_MANDOC}; then
         print "Installing mandoc (force)..."
         cp -f  pmt.8.gz ${LOCAL_PREFIX}/share/man/man8 &>/dev/null
@@ -246,6 +246,9 @@ while (($# >= 1)); do
             script_head
             check_status y
             ;;
+        --quiet|-q)
+            SILENT=true
+            ;;
         --setup|-S)
             script_head
             print "Starting package setupper..."
@@ -261,11 +264,12 @@ while (($# >= 1)); do
             ;;
         --help)
             view_help
+            exit 0
             ;;
         *)
             if echo ${1} | grep "-" &>/dev/null; then
                 if ! echo ${1} | grep ".xz" &>/dev/null; then
-                    printc "Unknown option: ${1}" \
+                    printc "Unknown option: ${1}"
                     exit 1
                 else
                     break;
@@ -280,11 +284,13 @@ while (($# >= 1)); do
 done
 
 ### Main ###
-[ -z "${1}" -a "${SOME_SPEC}" != 1 ] && view_help
+[ -z "${1}" -a "${SOME_SPEC}" != 1 ] && view_help && exit 1
 
-script_head
-really_termux
-gen_tempdir
+if [ "${PROCESS}" -le 2 ]; then
+    script_head
+    really_termux
+    gen_tempdir
+fi
 
 if [ "${PROCESS}" = 1 ]; then
     [ -f "${LOCAL_PREFIX}/bin/pmt" ] \

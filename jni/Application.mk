@@ -15,7 +15,7 @@
 # limitations under the License.
 
 ########
-# 2.9.0
+# 2.9.1
 ########
 
 # architecture
@@ -23,9 +23,8 @@ APP_ABI := \
     arm64-v8a \
     armeabi-v7a
 
-APP_PLATFORM := android-21
+APP_PLATFORM := android-29
 APP_OPTIM := release
 APP_STL := c++_static
-APP_ALLOW_MISSING_DEPS := true
 
 # end
