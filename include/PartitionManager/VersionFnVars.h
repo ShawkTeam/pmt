@@ -18,10 +18,8 @@
 
 #pragma once
 
-#ifdef __NDK_BUILD
-  #include <android/ndk-version.h>
-  #include <PartitionManager/generated/clang-version.h>
-#endif
+#include <android/ndk-version.h>
+#include <PartitionManager/generated/clang-version.h>
 #include <e2fsprogs/version.h>
 
 /* versioning */

@@ -57,21 +57,7 @@ void Functions::DisplayVersion(void)
         E2FSPROGS_VERSION_PRIVATE,
         EXT2FS_LIB_VERSION_PRIVATE,
         E2FSPROGS_DATE);
-
-    VLOGD("DisplayVersion: build type: ");
-
-    if (Booleans::VerboseMode)
-#if defined(__clang__) && !defined(__NDK_BUILD)
-        printf("clang (manual).\n");
-    LOGD("pmt %s: clang %d.%d.%d\n",
-        Display::UsingDispString->compiler_str,
-        __clang_major__,
-        __clang_minor__,
-        __clang_patchlevel__);
-#elif defined(__NDK_BUILD)
-        printf("NDK.\n");
     LOGD("\n%s\n", __NDK_CXX_VERSION__);
-#endif
 }
 
 /* end of code */
