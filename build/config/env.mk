@@ -26,7 +26,7 @@
 PMT_EXTRA_CXXFLAGS ?= 
 
 # debugging mode (binary). it's enabling address sanitizer and source level debug information with dwarf version 5
-PMT_ENABLE_DEBUG ?= true
+PMT_ENABLE_DEBUG ?= 
 
 #########################################
 #########################################
