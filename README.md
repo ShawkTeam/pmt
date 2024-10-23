@@ -2,7 +2,7 @@
 
 [![Commit reviewed](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml/badge.svg)](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml)
 
-This binary, written with C++, is for writing/reading, formatting and getting size on Android partitions.
+This is a binary written with C++ and it is for writing/reading, formatting and getting size on Android partitions.
 
 ```
 Usage:  pmt [OPTIONS] backup PARTITION [OUTPUT] [OPTIONS]...
@@ -39,17 +39,17 @@ Examples:
 Report bugs and suggestions to <t.me/ShawkTeam | Topics | pmt>
 ```
 
-#### Some notes
+### Notes
 
-- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.9.1/LANGUAGES.md)
-- [Add language.](https://github.com/ShawkTeam/pmt/blob/2.9.1/ADD-LANGUAGES.md)
+- pmt now supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.9.1/LANGUAGES.md)
+- [Add a language.](https://github.com/ShawkTeam/pmt/blob/2.9.1/ADD-LANGUAGES.md)
 - Feel free to ask any questions you want.
 - Packages are available in publications.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
 - [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.9.1/CHANGELOG.md)
-- We are always open to your suggestions and support (developing)!
+- We are always open to your suggestions and support _(developing)_!
 
-### How to build?
+## How to build?
 Partition Manager only buildable with Android NDK (make compilation system deprecated).
 
  - [Download Android NDK](https://developer.android.com/ndk/downloads) and extract the NDK package.
