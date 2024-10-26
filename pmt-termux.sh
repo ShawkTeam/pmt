@@ -3,8 +3,8 @@
 # By YZBruh | ShawkTeam
 
 # Variables
-LOCAL_VERSION="2.9.1"
-LOCAL_RELDATE="20241003"
+LOCAL_VERSION="2.9.6"
+LOCAL_RELDATE="20241026"
 LOCAL_OWNER="ShawkTeam"
 LOCAL_REPO="pmt"
 LOCAL_RELEASE_TAG="${LOCAL_VERSION}"
@@ -257,9 +257,10 @@ while (($# >= 1)); do
             ;;
         --package)
             PACKAGE=true
-            [ -z ${2} ] \
-            && printc "Option '--package' requires an argument (file)." \
-            && exit 1
+            [ -z ${2} ] && \
+            { printc "Option '--package' requires an argument (file)."
+              exit 1
+            }
             LOCAL_PACKAGE="${2}"
             ALREADY_SHIFT=true && shift 1
             ;;
@@ -285,7 +286,7 @@ while (($# >= 1)); do
 done
 
 ### Main ###
-[ -z "${1}" -a "${SOME_SPEC}" != 1 ] && view_help && exit 1
+[ -z "${1}" -a "${SOME_SPEC}" != 1 ] && { view_help; exit 1; }
 
 if [ "${PROCESS}" = 1 -o "${PROCESS}" = 2 ]; then
     script_head

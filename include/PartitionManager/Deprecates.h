@@ -18,84 +18,84 @@
 
 #pragma once
 
-#define deprecated_opt   1
-#define changed_opt      2
-#define end_depr_pointer 0
-#define not_changed      0
-#define not_changed_long nullptr
+/* annotated macros */
+#define DeprecatedOption   1
+#define ChangedOption      2
+#define EndDeprcationPoint 0
+#define NotChanged         0
+#define NotChangedLong     nullptr
 
 /* versions */
-#define v150 "1.5.0"
-#define v160 "1.6.0"
-#define v170 "1.7.0"
-#define v180 "1.8.0"
-#define v190 "1.9.0"
-#define v200 "2.0.0"
-#define v210 "2.1.0"
-#define v220 "2.2.0"
-#define v230 "2.3.0"
-#define v240 "2.4.0"
-#define v250 "2.5.0"
-#define v260 "2.6.0"
-#define v270 "2.7.0"
-#define v280 "2.8.0"
-#define v290 "2.9.0"
-#define vUNK nullptr
+#define v150     "1.5.0"
+#define v160     "1.6.0"
+#define v170     "1.7.0"
+#define v180     "1.8.0"
+#define v190     "1.9.0"
+#define v200     "2.0.0"
+#define v210     "2.1.0"
+#define v220     "2.2.0"
+#define v230     "2.3.0"
+#define v240     "2.4.0"
+#define v250     "2.5.0"
+#define v260     "2.6.0"
+#define v270     "2.7.0"
+#define v280     "2.8.0"
+#define v290     "2.9.0"
+#define v291     "2.9.1"
+#define v296     "2.9.6"
+#define vUNKNOWN nullptr
 
-struct pmt_deprecates {
-    int depr_type;
-    int option;
-    int option_new;
-    const char* option_long;
-    const char* option_long_new;
-    const char* depr_version;
+struct DeprecationVarTab {
+    const int DeprecationType;
+    const int Option;
+    const int Option_new;
+    const char* Option_long;
+    const char* Option_long_new;
+    const char* DeprecatedOnVersion;
 };
 
-static struct pmt_deprecates depr_table[] = {
-    {deprecated_opt, 'b', not_changed, "backup", not_changed_long, v210},
-    {deprecated_opt, 'F', not_changed, "flash", not_changed_long, v210},
-    {deprecated_opt, 'r', not_changed, "format", not_changed_long, v210},
-    {deprecated_opt, 'L', not_changed, "license", not_changed_long, v250},
-    {changed_opt, 'D', 'p', "list", not_changed_long, v210},
-    {changed_opt, 'c', 'P', "context", "search-path", v290},
-    {end_depr_pointer, not_changed, not_changed, not_changed_long, not_changed_long, vUNK}
+static struct DeprecationVarTab DeprecationTable[] = {
+    {DeprecatedOption, 'b', NotChanged, "backup", NotChangedLong, v210},
+    {DeprecatedOption, 'F', NotChanged, "flash", NotChangedLong, v210},
+    {DeprecatedOption, 'r', NotChanged, "format", NotChangedLong, v210},
+    {DeprecatedOption, 'L', NotChanged, "license", NotChangedLong, v250},
+    {ChangedOption, 'D', 'p', "list", NotChangedLong, v210},
+    {ChangedOption, 'c', 'P', "context", "search-path", v290},
+    {EndDeprcationPoint, NotChanged, NotChanged, NotChangedLong, NotChanged, vUNKNOWN}
 };
 
 static void
-__process_deprecated_opts(int opt, const string& opt_long, const char* depr_msg)
+__process_deprecated_opts(int Opt, const string& OptionLong, const char* DeprecationMsg)
 {
-    static string long_e_msg;
+    string LongErrMsg = (OptionLong.empty()) ? PartitionManager::Display::UsingDispString->not_changed_opt : OptionLong;
 
-    if (opt_long.empty())
-        long_e_msg = PartitionManager::Display::UsingDispString->not_changed_opt;
-    else
-        long_e_msg = opt_long;
-
-    for (int optctrl = 0; depr_table[optctrl].depr_type != 0; optctrl++)
+    for (int optctrl = 0; DeprecationTable[optctrl].DeprecationType != 0; optctrl++)
     {
 
-        if (depr_table[optctrl].depr_type == 1)
+        if (DeprecationTable[optctrl].DeprecationType == 1)
         {
-            if (opt == depr_table[optctrl].option || strcmp(opt_long.c_str(), depr_table[optctrl].option_long) == 0)
-            {
-                LOGD("%s [%s]: -%c (%s): %s\n", PartitionManager::Display::UsingDispString->depr_opt_str, depr_table[optctrl].depr_version, (char)depr_table[optctrl].option, depr_table[optctrl].option_long, depr_msg);
-                exit(1);
-            }
-
+            if (Opt == DeprecationTable[optctrl].Option || strcmp(OptionLong.c_str(), DeprecationTable[optctrl].Option_long) == 0)
+                LOGD("%s [%s]: -%c (%s): %s\n", 
+                    PartitionManager::Display::UsingDispString->depr_opt_str,
+                    DeprecationTable[optctrl].DeprecatedOnVersion,
+                    (char)DeprecationTable[optctrl].Option,
+                    DeprecationTable[optctrl].Option_long,
+                    DeprecationMsg); exit(1);
         }
-        else if (depr_table[optctrl].depr_type == 2)
+        else if (DeprecationTable[optctrl].DeprecationType == 2)
         {
-            if (opt == depr_table[optctrl].option || strcmp(opt_long.c_str(), depr_table[optctrl].option_long) == 0)
-            {
-                LOGD("%s [%s]: -%c (%s): %s\n", PartitionManager::Display::UsingDispString->switched_opt_str, depr_table[optctrl].depr_version, (char)depr_table[optctrl].option, long_e_msg.c_str(), depr_msg);
-                exit(1);
-            }
-
+            if (Opt == DeprecationTable[optctrl].Option || strcmp(OptionLong.c_str(), DeprecationTable[optctrl].Option_long) == 0)
+                LOGD("%s [%s]: -%c (%s): %s\n",
+                    PartitionManager::Display::UsingDispString->switched_opt_str,
+                    DeprecationTable[optctrl].DeprecatedOnVersion,
+                    (char)DeprecationTable[optctrl].Option,
+                    LongErrMsg.c_str(),
+                    DeprecationMsg); exit(1);
         }
+
     }
 }
 
-#define DEPR_HANDLE(x, y, z) \
-    __process_deprecated_opts(x, y, z)
+#define DEPR_HANDLE __process_deprecated_opts
 
 /* end of code */

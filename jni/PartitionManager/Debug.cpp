@@ -24,82 +24,66 @@
 using namespace PartitionManager;
 
 /* it's prints standart logs */
-void Functions::DisplayLog(LogLevel status, const char* _Nullable fmt, ...)
+void PartitionManager::DisplayLog(LogLevel LogPriority, const char* _Nonnull fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
 
-    switch (status)
+    if (!Config.SilentEnabled)
     {
+        switch (LogPriority)
+        {
         case LOG_LEVEL_ERROR:
-            if (!Booleans::SilentEnabled)
-            {
-                fprintf(stderr, "%s: ", Strings::ExecutingName.c_str());
-                vfprintf(stderr, fmt, args);
-            }
-            exit(1);
+            fprintf(stderr, "%s: ", Strings::ExecutingName.c_str());
+            vfprintf(stderr, fmt, args);
             break;
         case LOG_LEVEL_WARN:
-            if (!Booleans::SilentEnabled)
-            {
-                fprintf(stdout, "%s: ", Display::UsingDispString->warn);
-                vfprintf(stdout, fmt, args);
-            }
+            fprintf(stdout, "%s: ", Display::UsingDispString->warn);
+            vfprintf(stdout, fmt, args);
             break;
         case LOG_LEVEL_FATAL:
-            if (!Booleans::SilentEnabled)
-            {
-                fprintf(stderr, "%s: ", Display::UsingDispString->fatal);
-                vfprintf(stderr, fmt, args);
-            }
-            abort();
+            fprintf(stderr, "%s: ", Display::UsingDispString->fatal);
+            vfprintf(stderr, fmt, args);
             break;
         case LOG_LEVEL_DEBUG:
-            if (!Booleans::SilentEnabled)
-                vfprintf(stdout, fmt, args);
+            vfprintf(stdout, fmt, args);
             break;
+        }
     }
+
+    if (LogPriority == LOG_LEVEL_ERROR) exit(1);
+    else if (LogPriority == LOG_LEVEL_FATAL) abort();
 
     va_end(args);
 }
 
 /* it's prints verbose logs */
-void Functions::DisplayVerboseLog(LogLevel status, const char* fmt, ...)
+void PartitionManager::DisplayVerboseLog(LogLevel LogPriority, const char* func, const int& line, const char* _Nonnull fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
 
-    switch (status)
+    if (Config.VerboseMode)
     {
-        case LOG_LEVEL_ERROR:
-            if (Booleans::VerboseMode)
-            {
-                fprintf(stderr, "E:[stderr]: ");
-                vfprintf(stderr, fmt, args);
-            }
+        switch (LogPriority)
+        {
+            case LOG_LEVEL_ERROR:
+            fprintf(stderr, "<E> [%s() Line<%d>]: ", func, line);
+            vfprintf(stderr, fmt, args);
             break;
         case LOG_LEVEL_WARN:
-            if (Booleans::VerboseMode)
-            {
-                fprintf(stdout, "W:[stdout]: ");
-                vfprintf(stdout, fmt, args);
-            }
+            fprintf(stdout, "<W> [%s() Line<%d>]: ", func, line);
+            vfprintf(stdout, fmt, args);
             break;
         case LOG_LEVEL_FATAL:
-            if (Booleans::VerboseMode)
-            {
-                fprintf(stderr, "F:[stderr]: ");
-                vfprintf(stderr, fmt, args);
-                abort();
-            }
+            fprintf(stderr, "<F> [%s() Line<%d>]: ", func, line);
+            vfprintf(stderr, fmt, args);
             break;
         case LOG_LEVEL_DEBUG:
-            if (Booleans::VerboseMode)
-            {
-                fprintf(stdout, "D:[stdout]: ");
-                vfprintf(stdout, fmt, args);
-            }
+            fprintf(stdout, "<D> [%s() Line<%d>]: ", func, line);
+            vfprintf(stdout, fmt, args);
             break;
+        }
     }
 
     va_end(args);
@@ -109,6 +93,6 @@ void Functions::DisplayVerboseLog(LogLevel status, const char* fmt, ...)
  * Last error is taken from strerror by taking 
  * the contents of errno or taking a special entry 
  */
-char* strqerror(int errno_macro) { return strerror(errno_macro); }
+char* strqerror(int __qerrno) { return strerror(__qerrno); }
 
 /* end of code */

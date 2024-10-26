@@ -23,13 +23,13 @@
 #include <PartitionManager/PartitionManager.h>
 
 /* root checker function */
-void PartitionManager::Functions::CheckRoot(void)
+void PartitionManager::CheckRoot(void)
 {
-    VLOGD("CheckRoot: trying to get UID with 'getuid <unistd.h>'\n");
+    VLOGD("Trying to get UID with 'getuid <unistd.h>'\n");
 
     if (getuid() != 0)
     {
-        VLOGE("CheckRoot: cannot get UID. Not executed with root!\n");
+        VLOGE("You are not superuser!\n");
         LOGE("%s\n", PartitionManager::Display::UsingDispString->no_root);
     }
 }

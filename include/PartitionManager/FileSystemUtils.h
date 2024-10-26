@@ -18,8 +18,6 @@
 
 #pragma once
 
-extern "C" {
-    int mke2fs_main(int argc, char* argv[]);
-}
+extern "C" int mke2fs_main(int argc, char* argv[]);
 
 /* end of code */

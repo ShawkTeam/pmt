@@ -25,7 +25,7 @@
 /* versioning */
 #define PMT_MAJOR            2
 #define PMT_MINOR            9
-#define PMT_PATCHLEVEL       1
+#define PMT_PATCHLEVEL       6
 
 namespace PartitionManager {
     namespace Functions {

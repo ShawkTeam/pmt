@@ -29,7 +29,6 @@
   #include <string>
   #include <cstring>
   #include <cstdarg>
-
   #ifdef IS_MAIN
     #include <clocale>
   #endif
@@ -54,8 +53,6 @@
 #endif
 #ifdef INC_TOOLS_REQS
   #include <sys/vfs.h>
-
-  typedef unsigned short ushort_t;
 #endif
 #ifdef INC_LIBGEN
   #include <libgen.h>
@@ -71,11 +68,38 @@ typedef enum {
     LOG_LEVEL_DEBUG
 } LogLevel;
 
+/* config structure */
+struct Configuration {
+    bool UseLogical;
+    bool UseCustomSearchPath;
+    bool UsesSlots;
+    bool UsesLogical;
+    bool OnlyViewSize;
+    bool SilentEnabled;
+    bool FlashMode;
+    bool BackupMode;
+    bool FormatMode;
+    bool PartSizeViewMode;
+    bool ForceMode;
+    bool VerboseMode;
+    bool InstalledOnTermux;
+};
+
 /**
- * Fast error processing without errno entry 
+ * Fast error processing without errno entry
  * but errno can be given in the entrance
  */
-extern "C" char* strqerror(int errno_macro = errno);
+extern "C" char* strqerror(int __qerrno = errno);
+
+/**
+ * ushort_t = unsigned short type
+ */
+typedef unsigned short ushort_t;
+
+/**
+ * bool type configurations
+ */
+extern struct Configuration Config;
 
 /* create a special namespace */
 namespace PartitionManager {
@@ -94,22 +118,6 @@ namespace PartitionManager {
         extern int PartSizeViewType;
     } /* namespace Integers */
 
-    namespace Booleans {
-        extern bool UseLogical;
-        extern bool UseCustomSearchPath;
-        extern bool UsesSlots;
-        extern bool UsesLogical;
-        extern bool OnlyViewSize;
-        extern bool SilentEnabled;
-        extern bool FlashMode;
-        extern bool BackupMode;
-        extern bool FormatMode;
-        extern bool PartSizeViewMode;
-        extern bool ForceMode;
-        extern bool VerboseMode;
-        extern bool InstalledOnTermux;
-    } /* namespace Booleans */
-
     namespace Display {
         extern struct langdb_general* UsingDispString;
         extern struct langdb_docs* UsingDocDispString;
@@ -119,39 +127,37 @@ namespace PartitionManager {
         extern struct langdb_docs LangDocTr;
     } /* namespace Display */
 
-    namespace Functions {
-        int ListPartitions(void);
-        int GetState(const string& filepath, const string& stype = "file");
-        int Start(unsigned short progress_code);
-        void SetLanguage(const string& lang, unsigned short null_conf_stat);
-        void DisplayLog(LogLevel status, const char* fmt, ...);
-        void DisplayVerboseLog(LogLevel status, const char* fmt, ...);
-        void CheckDevPoint(void);
-        void CheckRoot(void);
-        bool CleanSWPoint(void);
-        bool LoadLanguage(void);
-    } /* namespace Functions */
-
+    /* functions */
+    int ListPartitions(void);
+    int GetState(const string& filepath, const string& stype = "file");
+    int PartitionManagerMain(const ushort_t& progress_code);
+    void SetLanguage(const string& lang, ushort_t null_conf_stat);
+    void DisplayLog(LogLevel LogPriority, const char* fmt, ...);
+    void DisplayVerboseLog(LogLevel LogPriority, const char* func, const int& line, const char* fmt, ...);
+    void CheckDevPoint(void);
+    void CheckRoot(void);
+    bool CleanSWPoint(void);
+    bool LoadLanguage(void);
 } /* namespace PartitionManager */
 
 /* logging macros */
 #define LOGF(fmt, ...) \
-    PartitionManager::Functions::DisplayLog(LOG_LEVEL_FATAL, fmt, ##__VA_ARGS__)
+    ((void)PartitionManager::DisplayLog(LOG_LEVEL_FATAL, (fmt)__VA_OPT__(, ) __VA_ARGS__))
 #define LOGE(fmt, ...) \
-    PartitionManager::Functions::DisplayLog(LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
+    ((void)PartitionManager::DisplayLog(LOG_LEVEL_ERROR, (fmt)__VA_OPT__(, ) __VA_ARGS__))
 #define LOGW(fmt, ...) \
-    PartitionManager::Functions::DisplayLog(LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
+    ((void)PartitionManager::DisplayLog(LOG_LEVEL_WARN, (fmt)__VA_OPT__(, ) __VA_ARGS__))
 #define LOGD(fmt, ...) \
-    PartitionManager::Functions::DisplayLog(LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
+    ((void)PartitionManager::DisplayLog(LOG_LEVEL_DEBUG, (fmt)__VA_OPT__(, ) __VA_ARGS__))
 
 /* verbose logging macros */
 #define VLOGF(fmt, ...) \
-    PartitionManager::Functions::DisplayVerboseLog(LOG_LEVEL_FATAL, fmt, ##__VA_ARGS__)
+    ((void)PartitionManager::DisplayVerboseLog(LOG_LEVEL_FATAL, __func__, __LINE__, (fmt)__VA_OPT__(, ) __VA_ARGS__))
 #define VLOGE(fmt, ...) \
-    PartitionManager::Functions::DisplayVerboseLog(LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
+    ((void)PartitionManager::DisplayVerboseLog(LOG_LEVEL_ERROR, __func__, __LINE__, (fmt)__VA_OPT__(, ) __VA_ARGS__))
 #define VLOGW(fmt, ...) \
-    PartitionManager::Functions::DisplayVerboseLog(LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
+    ((void)PartitionManager::DisplayVerboseLog(LOG_LEVEL_WARN, __func__, __LINE__, (fmt)__VA_OPT__(, ) __VA_ARGS__))
 #define VLOGD(fmt, ...) \
-    PartitionManager::Functions::DisplayVerboseLog(LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
+    ((void)PartitionManager::DisplayVerboseLog(LOG_LEVEL_DEBUG, __func__, __LINE__, (fmt)__VA_OPT__(, ) __VA_ARGS__))
 
 /* end of code */

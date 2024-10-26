@@ -25,9 +25,9 @@
 
 using namespace PartitionManager;
 
-void Functions::DisplayVersion(void)
+void PartitionManager::DisplayVersion(void)
 {
-    VLOGD("DisplayVersion: printing main info...\n");
+    VLOGD("Printing main info...\n");
     LOGD("%s %s %d.%d.%d (%d%d%d / C++) ",
         Strings::ExecutingName.c_str(),
         Display::UsingDispString->version_str,
@@ -38,14 +38,10 @@ void Functions::DisplayVersion(void)
         PMT_MINOR,
         PMT_PATCHLEVEL);
 
-#if __SIZEOF_POINTER__ == 4
-    LOGD("32-bit %s\n", Display::UsingDispString->bin_str);
-#elif __SIZEOF_POINTER__ == 8
+#ifdef __LP64__
     LOGD("64-bit %s\n", Display::UsingDispString->bin_str);
 #else
-    LOGD("<%s> %s\n",
-        Display::UsingDispString->unknw_str,
-        Display::UsingDispString->bin_str);
+    LOGD("32-bit %s\n", Display::UsingDispString->bin_str);
 #endif
 
     LOGD("mke2fs %s %s (%s)\n",

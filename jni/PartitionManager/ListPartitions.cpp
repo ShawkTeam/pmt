@@ -80,15 +80,15 @@ directory:
 }
 
 /* list existing partitions */
-int Functions::ListPartitions(void)
+int PartitionManager::ListPartitions(void)
 {
-    VLOGD("ListPartitions: selecting search path...\n");
-    string AccessDir = (Booleans::UseCustomSearchPath) ? Strings::CustomSearchPath : CUR_DEV_SP;
+    VLOGD("Selecting search path...\n");
+    string AccessDir = (Config.UseCustomSearchPath) ? Strings::CustomSearchPath : CUR_DEV_SP;
 
-    VLOGD("ListPartitions: trying to access `%s'...\n", AccessDir.c_str());
+    VLOGD("Trying to access `%s'...\n", AccessDir.c_str());
     if (ListDir(AccessDir) != 0)
     {
-        if (!Booleans::ForceMode)
+        if (!Config.ForceMode)
             LOGE("%s: `%s': %s\n",
                 Display::UsingDispString->not_open,
                 AccessDir.c_str(),
@@ -102,9 +102,9 @@ int Functions::ListPartitions(void)
         ListDir(AccessDir, true);
     }
 
-    if (Booleans::UsesLogical)
+    if (Config.UsesLogical)
     {
-        VLOGD("ListPartitions: checking for listing `%s'...\n", LGC_DEV_SP);
+        VLOGD("Checking for listing `%s'...\n", LGC_DEV_SP);
 
         if (ListDir(LGC_DEV_SP) != 0)
             LOGE("%s: `%s': %s\n",
@@ -118,17 +118,17 @@ int Functions::ListPartitions(void)
         }
     }
 
-    VLOGD("ListPartitions: (if have) warnings are printed...\n");
+    VLOGD("(if have) warnings are printed...\n");
 
-    if (Booleans::UsesLogical)
+    if (Config.UsesLogical)
     {
         LOGD("\n");
         LOGW("%s\n", Display::UsingDispString->logical_warn);
     }
 
-    if (Booleans::UsesSlots)
+    if (Config.UsesSlots)
     {
-        if (!Booleans::UsesSlots)
+        if (!Config.UsesLogical)
             LOGD("\n");
 
         LOGW("%s\n", Display::UsingDispString->ab_warn);

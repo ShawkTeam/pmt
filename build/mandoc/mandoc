@@ -14,7 +14,7 @@
 .\" See the License for the specific language governing permissions and
 .\" limitations under the License.
 .\"
-.TH "PMT" "8" "September 2024" "PMT 2.9.0" "Partition Manager"
+.TH "PMT" "8" "October 2024" "PMT 2.9.6" "Partition Manager"
 .SH NAME
 .B pmt
 \- Android Partition Manager Tool

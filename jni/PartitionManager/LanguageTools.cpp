@@ -42,7 +42,7 @@ string supp_langs[] = {
 static bool
 InternalStorageDirFound(void)
 {
-    return (Functions::GetState(INTERNAL_STORAGE_DIR, "dir") == 0) ? true : false;
+    return (GetState(INTERNAL_STORAGE_DIR, "dir") == 0) ? true : false;
 }
 
 static bool
@@ -57,29 +57,29 @@ LanguageControl(const string& lang)
     return false;
 }
 
-bool Functions::LoadLanguage(void)
+bool PartitionManager::LoadLanguage(void)
 {
     string lang_fpr = "en";
     langconf.close();
 
-    VLOGD("LoadLanguage: checking install type...\n");
-    if (Functions::GetState(TERMUX_PMT_MANDOC) == 0)
-        Booleans::InstalledOnTermux = true;
+    VLOGD("Checking install type...\n");
+    if (GetState(TERMUX_PMT_MANDOC) == 0)
+        Config.InstalledOnTermux = true;
 
-    VLOGD("LoadLanguage: checking internal storage dir: `%s'\n", INTERNAL_STORAGE_DIR);
+    VLOGD("Checking internal storage dir: `%s'\n", INTERNAL_STORAGE_DIR);
     if (!InternalStorageDirFound())
-        LOGE("PartitionManagerLoadLanguage: internal storage directory (`%s') not found or accessible.\n", INTERNAL_STORAGE_DIR);
+        LOGE("PartitionManagerLanguageTools: İnternal storage directory (`%s') not found or accessible.\n", INTERNAL_STORAGE_DIR);
 
-    VLOGD("LoadLanguage: trying to open `%s' with 'open <fstream>'\n", PMTLANG_CONF);
+    VLOGD("Trying to open `%s' with 'open <fstream>'\n", PMTLANG_CONF);
     langconf.open(PMTLANG_CONF, ios::in | ios::out);
 
-    VLOGD("LoadLanguage: checking status: `%s'...\n", PMTLANG_CONF);
+    VLOGD("Checking status: `%s'...\n", PMTLANG_CONF);
     if (!langconf.is_open())
     {
         langconf.open(PMTLANG_CONF, ios::out | ios::trunc);
 
-        VLOGD("LoadLanguage: calling SetLanguage()...\n");
-        Functions::SetLanguage("en", 1);
+        VLOGD("Calling SetLanguage()...\n");
+        SetLanguage("en", 1);
         Display::UsingDispString = &Display::LangEn;
         Strings::CurrentLanguage = "en";
 
@@ -90,7 +90,7 @@ bool Functions::LoadLanguage(void)
     }
     else
     {
-        VLOGD("LoadLanguage: reading `%s'\n", PMTLANG_CONF);
+        VLOGD("Reading `%s'\n", PMTLANG_CONF);
         while (getline(langconf, lang_fpr))
         {
             if (lang_fpr == "en")
@@ -99,20 +99,20 @@ bool Functions::LoadLanguage(void)
                 goto SetTr;
             else
             {
-                VLOGD("LoadLanguage: calling SetLanguage()\n");
-                Functions::SetLanguage("en", 1);
-                VLOGD("LoadLanguage: re-calling LoadLanguage()\n");
-                Functions::LoadLanguage();
+                VLOGD("Calling SetLanguage()\n");
+                SetLanguage("en", 1);
+                VLOGD("Re-calling LoadLanguage()\n");
+                PartitionManager::LoadLanguage();
                 return true;
             }
         }
 
         if (!getline(langconf, lang_fpr))
         {
-            VLOGD("LoadLanguage: calling SetLanguage()\n");
-            Functions::SetLanguage("en", 1);
-            VLOGD("LoadLanguage: re-calling LoadLanguage()\n");
-            Functions::LoadLanguage();
+            VLOGD("Calling SetLanguage()\n");
+            SetLanguage("en", 1);
+            VLOGD("Re-calling LoadLanguage()\n");
+            PartitionManager::LoadLanguage();
             return true;
         }
     }
@@ -121,38 +121,38 @@ SetEn:
     langconf.close();
     Display::UsingDispString = &Display::LangEn;
     Strings::CurrentLanguage = "en";
-    VLOGD("LoadLanguage: loaded \"en\"\n");
+    VLOGD("Loaded \"en\"\n");
     return true;
 
 SetTr:
     langconf.close();
     Display::UsingDispString = &Display::LangTr;
     Strings::CurrentLanguage = "tr";
-    VLOGD("LoadLanguage: loaded \"tr\"\n");
+    VLOGD("Loaded \"tr\"\n");
     return true;
 
     return false;
 }
 
-void Functions::SetLanguage(const string& lang, unsigned short null_conf_stat)
+void PartitionManager::SetLanguage(const string& lang, ushort_t null_conf_stat)
 {
-    VLOGD("SetLanguage: checking speficed language (from input).\n");
+    VLOGD("Checking speficed language (from input).\n");
     if (!LanguageControl(lang))
         LOGE("Unknown language: %s.\n", lang.c_str());
 
     langconf.close();
 
-    VLOGD("SetLanguage: checking internal storage dir: `%s'\n", INTERNAL_STORAGE_DIR);
+    VLOGD("Checking internal storage dir: `%s'\n", INTERNAL_STORAGE_DIR);
     if (!InternalStorageDirFound())
-        LOGE("PartitionManagerSetLanguage: internal storage directory (`%s') not found or accessible.\n", INTERNAL_STORAGE_DIR);
+        LOGE("PartitionManagerSetLanguage: Internal storage directory (`%s') not found or accessible.\n", INTERNAL_STORAGE_DIR);
 
-    VLOGD("SetLanguage: trying to open `%s' with 'open <fstream>'\n", PMTLANG_CONF);
+    VLOGD("Trying to open `%s' with 'open <fstream>'\n", PMTLANG_CONF);
     langconf.open(PMTLANG_CONF, ios::out | ios::trunc);
 
     if (!langconf.is_open())
         LOGE("PartitionManagerLanguageTools: Cannot open/write config file!!!\n");
 
-    VLOGD("SetLanguage: write \"%s\" to `%s' with 'std <iostream>'\n", lang.c_str(), PMTLANG_CONF);
+    VLOGD("Write \"%s\" to `%s' with 'std <iostream>'\n", lang.c_str(), PMTLANG_CONF);
     langconf << lang;
     if (!langconf)
         LOGE("PartitionManagerLanguageTools: Couldn't write config!!!\n");
@@ -161,23 +161,23 @@ void Functions::SetLanguage(const string& lang, unsigned short null_conf_stat)
 
     if (null_conf_stat != 1)
     {
-        VLOGD("SetLanguage: generating dummy file `%s' with 'ofstream <fstream>'\n", PMT_SW_POINT);
+        VLOGD("Generating dummy file `%s' with 'ofstream <fstream>'\n", PMT_SW_POINT);
         ofstream sw_point(PMT_SW_POINT, ios::trunc);
         if (sw_point.is_open())
             sw_point.close();
     }
 }
 
-bool Functions::CleanSWPoint(void)
+bool PartitionManager::CleanSWPoint(void)
 {
-    if (Functions::GetState(PMT_SW_POINT) == 0)
+    if (GetState(PMT_SW_POINT) == 0)
     {
-        VLOGD("CleanSWPoint: removing (force) `%s' with 'remove <unistd.h>'\n", PMT_SW_POINT);
+        VLOGD("Removing (force) `%s' with 'remove <unistd.h>'\n", PMT_SW_POINT);
         remove(PMT_SW_POINT);
         return true;
     }
-    else
-        return false;
+
+    return false;
 }
 
 /* end of code */

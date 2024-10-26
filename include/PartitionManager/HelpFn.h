@@ -18,10 +18,6 @@
 
 #pragma once
 
-namespace PartitionManager {
-    namespace Functions {
-        void DisplayHelp(void);
-    }
-}
+namespace PartitionManager { void DisplayHelp(void); }
 
 /* end */

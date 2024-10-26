@@ -28,7 +28,7 @@ using namespace PartitionManager;
 struct langdb_docs* Display::UsingDocDispString = nullptr;
 
 static void
-prepare_langconf_docs(void)
+PrepareLangconfDocs(void)
 {
     if (Strings::CurrentLanguage == "en")
         Display::UsingDocDispString = &Display::LangDocEn;
@@ -36,11 +36,11 @@ prepare_langconf_docs(void)
         Display::UsingDocDispString = &Display::LangDocTr;
 }
 
-void Functions::DisplayHelp(void)
+void PartitionManager::DisplayHelp(void)
 {
-    VLOGD("DisplayHelp: Loading language for help messages... Calling prepare_langconf_docs() <local function>...\n");
-    prepare_langconf_docs();
-    VLOGD("DisplayHelp: Printing...\n");
+    VLOGD("Loading language for help messages... Calling PrepareLangconfDocs() <local function>...\n");
+    PrepareLangconfDocs();
+    VLOGD("Printing...\n");
     LOGD("%s:  %s %s\n", Display::UsingDocDispString->usage_docstr, Strings::ExecutingName.c_str(), Display::UsingDocDispString->docs_strs_l1);
     LOGD("  %s:   %s %s\n", Display::UsingDocDispString->or_str, Strings::ExecutingName.c_str(), Display::UsingDocDispString->docs_strs_l2);
     LOGD("  %s:   %s %s\n", Display::UsingDocDispString->or_str, Strings::ExecutingName.c_str(), Display::UsingDocDispString->docs_strs_l3);

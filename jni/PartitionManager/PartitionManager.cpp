@@ -42,32 +42,45 @@ namespace PartitionManager {
         string CurrentLanguage = "";
     } /* namespace Strings */
 
-    namespace Booleans {
-        bool UseLogical = false;
-        bool UseCustomSearchPath = false;
-        bool UsesSlots = false;
-        bool UsesLogical = false;
-        bool OnlyViewSize = false;
-        bool SilentEnabled = false;
-        bool FlashMode = false;
-        bool BackupMode = false;
-        bool FormatMode = false;
-        bool PartSizeViewMode = false;
-        bool ForceMode = false;
-        bool VerboseMode = false;
-        bool InstalledOnTermux = false;
-    } /* namespace Booleans */
-
     namespace Integers {
         int PartSizeViewType = VIEW_AS_MIB;
     } /* namespace Integers */
 } /* namespace PartitionManager */
 
-/* variable for use in control of '-' expression */
+/* configure struct body */
+struct Configuration Config {
+    .UseLogical = false,
+    .UseCustomSearchPath = false,
+    .UsesSlots = false,
+    .UsesLogical = false,
+    .OnlyViewSize = false,
+    .SilentEnabled = false,
+    .FlashMode = false,
+    .BackupMode = false,
+    .FormatMode = false,
+    .PartSizeViewMode = false,
+    .ForceMode = false,
+    .VerboseMode = false,
+    .InstalledOnTermux = false
+};
+
+/* some variables. for parsing and processing arguments */
+static bool ViewHelp = false;
+static bool ViewVersion = false;
+static bool LogicalSpeficy = false;
+static bool ListRequired = false;
+static bool MultipleViewers = false;
+static bool SetLanguageReq = false;
+static bool SomeSpec = false;
+static bool PartSizeArgSpeficed = false;
+static char* SpeficedLanguagePr;
+static string Option;
+static string Target;
 static string SymbolRule;
+static int StdinArgcTotal;
+static int SearchOnMainInt;
 
 namespace PartitionManager {
-namespace Functions {
 
 /**
  * He controls whether the '-' sign at 
@@ -84,19 +97,17 @@ CheckOptSymbol(const string& Symbol)
 }
 
 static bool
-ControlArg(const char* ArgvHolder)
+ControlArg(char* &ArgvHolder)
 {
-    if (ArgvHolder[0] != '-')
-        return true;
+    if (ArgvHolder[0] != '-') return true;
 
     return false;
 }
 
-} /* namespace Functions */
 } /* namespace PartitionManager */
 
 static void
-deprecated(const char opt, const char* deprecation_message, const char* opt_long = "ISNULL")
+deprecated(const char &opt, const char* &deprecation_message, const char* opt_long = "ISNULL")
 {
     VLOGE("Deprecated Option: -%c (--%s). Printing error...\n", opt, opt_long);
     DEPR_HANDLE(opt, opt_long, deprecation_message);
@@ -107,12 +118,10 @@ deprecated(const char opt, const char* deprecation_message, const char* opt_long
 static void
 PrSpInput(const string& sp)
 {
-    PartitionManager::Booleans::UseCustomSearchPath = true;
+    Config.UseCustomSearchPath = true;
     PartitionManager::Strings::CustomSearchPath = sp;
-    PartitionManager::Functions::CheckOptSymbol(PartitionManager::Strings::CustomSearchPath);
+    PartitionManager::CheckOptSymbol(PartitionManager::Strings::CustomSearchPath);
 }
-
-using namespace PartitionManager;
 
 class PartitionManagerBase {
 protected:
@@ -123,15 +132,15 @@ protected:
 public:
     void CallTargetBaseFunction(void)
     {
-        VLOGD("CallTargetBaseFunction [class]: Start(%d)\n", StartCode);
-        Functions::Start(StartCode);
+        VLOGD("[class]: Call PartitionManagerMain(%d)\n", StartCode);
+        PartitionManager::PartitionManagerMain(StartCode);
     }
 
-    void GenericNumericalController(int searchOn, int total, const char* MissingArgMessage)
+    void GenericNumericalController(int& searchOn, int& total, const char* &MissingArgMessage)
     {
         if (total <= searchOn)
         {
-            VLOGE("ArgumentProcessor [class]: Missing argument total (for %s function).\n", BaseFunctionName);
+            VLOGE("[class]: Missing argument total (for %s function).\n", BaseFunctionName);
             LOGE("%s 0.\n", MissingArgMessage);
         }
 
@@ -139,139 +148,192 @@ public:
         {
             if (total <= (searchOn + 1))
             {
-                VLOGE("ArgumentProcessor [class]: Missing argument total (for %s function).\n", BaseFunctionName);
+                VLOGE("[class]: Missing argument total (for %s function).\n", BaseFunctionName);
                 LOGE("%s 1.\n", MissingArgMessage);
             }
         }
     }
 
-    virtual void ArgumentProcessor(int searchOn, int total, char** arguments) { /* dummy */ }
+    virtual void ArgumentProcessor(int& searchOn, int& total, char** &arguments) { /* dummy */ }
 };
 
 class PartitionManagerBackup : public PartitionManagerBase {
 public:
-    void ArgumentProcessor(int searchOn, int total, char** arguments) override
+    void ArgumentProcessor(int& searchOn, int& total, char** &arguments) override
     {
         BaseFunctionName = "backup";
         StartCode = 1;
         IsRequiredOnlyOneArg = true;
 
-        GenericNumericalController(searchOn, total, Display::UsingDispString->expected_backup_arg);
+        GenericNumericalController(searchOn, total, PartitionManager::Display::UsingDispString->expected_backup_arg);
 
-        if (Functions::ControlArg(arguments[searchOn]))
-            Strings::TargetPartition = arguments[searchOn];
+        if (PartitionManager::ControlArg(arguments[searchOn]))
+            PartitionManager::Strings::TargetPartition = arguments[searchOn];
         else
-            LOGE("%s.\n", Display::UsingDispString->not_spec_opt);
+            LOGE("%s.\n", PartitionManager::Display::UsingDispString->not_spec_opt);
 
-        Strings::OutputName = Strings::TargetPartition;
+        PartitionManager::Strings::OutputName = PartitionManager::Strings::TargetPartition;
 
-        if (total > (searchOn + 1) && Functions::ControlArg(arguments[(searchOn + 1)]))
+        if (total > (searchOn + 1) && PartitionManager::ControlArg(arguments[(searchOn + 1)]))
         {
-            VLOGD("ArgumentProcessor [class]: Non-mandatory argument was detected and retrieved (for %s function).\n", BaseFunctionName);
-            Strings::OutputName = arguments[(searchOn + 1)];
+            VLOGD("[class]: Non-mandatory argument was detected and retrieved (for %s function).\n", BaseFunctionName);
+            PartitionManager::Strings::OutputName = arguments[(searchOn + 1)];
         }
 
-        Functions::CheckOptSymbol(Strings::TargetPartition);
-        Functions::CheckOptSymbol(Strings::OutputName);
+        PartitionManager::CheckOptSymbol(PartitionManager::Strings::TargetPartition);
+        PartitionManager::CheckOptSymbol(PartitionManager::Strings::OutputName);
     }
 };
 
 class PartitionManagerFlash : public PartitionManagerBase {
 public:
-    void ArgumentProcessor(int searchOn, int total, char** arguments) override
+    void ArgumentProcessor(int& searchOn, int& total, char** &arguments) override
     {
         BaseFunctionName = "flash";
         StartCode = 2;
         IsRequiredOnlyOneArg = false;
 
-        GenericNumericalController(searchOn, total, Display::UsingDispString->expected_flash_arg);
+        GenericNumericalController(searchOn, total, PartitionManager::Display::UsingDispString->expected_flash_arg);
 
-        if (Functions::ControlArg(arguments[searchOn]))
-            Strings::TargetPartition = arguments[searchOn ];
+        if (PartitionManager::ControlArg(arguments[searchOn]))
+            PartitionManager::Strings::TargetPartition = arguments[searchOn];
         else
-            LOGE("%s.\n", Display::UsingDispString->not_spec_opt);
+            LOGE("%s.\n", PartitionManager::Display::UsingDispString->not_spec_opt);
 
-        if (Functions::ControlArg(arguments[(searchOn + 1)]))
-            Strings::TargetFlashFile = arguments[(searchOn + 1)];
+        if (PartitionManager::ControlArg(arguments[(searchOn + 1)]))
+            PartitionManager::Strings::TargetFlashFile = arguments[(searchOn + 1)];
         else
-            LOGE("%s.\n", Display::UsingDispString->not_spec_opt);
+            LOGE("%s.\n", PartitionManager::Display::UsingDispString->not_spec_opt);
 
-        Functions::CheckOptSymbol(Strings::TargetFlashFile);
-        Functions::CheckOptSymbol(Strings::TargetPartition);
+        PartitionManager::CheckOptSymbol(PartitionManager::Strings::TargetFlashFile);
+        PartitionManager::CheckOptSymbol(PartitionManager::Strings::TargetPartition);
     }
 };
 
 class PartitionManagerFormat : public PartitionManagerBase {
 public:
-    void ArgumentProcessor(int searchOn, int total, char** arguments) override
+    void ArgumentProcessor(int& searchOn, int& total, char** &arguments) override
     {
         BaseFunctionName = "format";
         StartCode = 3;
         IsRequiredOnlyOneArg = false;
 
-        GenericNumericalController(searchOn, total, Display::UsingDispString->expected_format_arg);
+        GenericNumericalController(searchOn, total, PartitionManager::Display::UsingDispString->expected_format_arg);
 
-        if (Functions::ControlArg(arguments[searchOn]))
-            Strings::TargetPartition = arguments[searchOn];
+        if (PartitionManager::ControlArg(arguments[searchOn]))
+            PartitionManager::Strings::TargetPartition = arguments[searchOn];
         else
-            LOGE("%s.\n", Display::UsingDispString->not_spec_opt);
+            LOGE("%s.\n", PartitionManager::Display::UsingDispString->not_spec_opt);
 
-        if (Functions::ControlArg(arguments[(searchOn + 1)]))
-            Strings::TargetFormatFS = arguments[(searchOn + 1)];
+        if (PartitionManager::ControlArg(arguments[(searchOn + 1)]))
+            PartitionManager::Strings::TargetFormatFS = arguments[(searchOn + 1)];
         else
-            LOGE("%s.\n", Display::UsingDispString->not_spec_opt);
+            LOGE("%s.\n", PartitionManager::Display::UsingDispString->not_spec_opt);
 
-        Functions::CheckOptSymbol(Strings::TargetFormatFS);
-        Functions::CheckOptSymbol(Strings::TargetPartition);
+        PartitionManager::CheckOptSymbol(PartitionManager::Strings::TargetFormatFS);
+        PartitionManager::CheckOptSymbol(PartitionManager::Strings::TargetPartition);
     }
 };
 
 class PartitionManagerPartSize : public PartitionManagerBase {
 public:
-    void ArgumentProcessor(int searchOn, int total, char** arguments) override
+    void ArgumentProcessor(int& searchOn, int& total, char** &arguments) override
     {
         BaseFunctionName = "partition-size";
         StartCode = 4;
         IsRequiredOnlyOneArg = true;
 
-        GenericNumericalController(searchOn, total, Display::UsingDispString->expected_partsz_arg);
+        GenericNumericalController(searchOn, total, PartitionManager::Display::UsingDispString->expected_partsz_arg);
 
-        if (Functions::ControlArg(arguments[searchOn]))
-            Strings::TargetPartition = arguments[searchOn];
+        if (PartitionManager::ControlArg(arguments[searchOn]))
+            PartitionManager::Strings::TargetPartition = arguments[searchOn];
         else
-            LOGE("%s.\n", Display::UsingDispString->not_spec_opt);
+            LOGE("%s.\n", PartitionManager::Display::UsingDispString->not_spec_opt);
 
-        Functions::CheckOptSymbol(Strings::TargetPartition);
+        PartitionManager::CheckOptSymbol(PartitionManager::Strings::TargetPartition);
     }
 };
 
-int main(int argc, char** argv)
+/* Generate classes */
+PartitionManagerBase* Base;
+PartitionManagerBase BaseTemplate;
+PartitionManagerBackup BackupArgProcessorBase;
+PartitionManagerFlash FlashArgProcessorBase;
+PartitionManagerFormat FormatArgProcessorBase;
+PartitionManagerPartSize PartSizeArgProcessorBase;
+
+namespace PartitionManager {
+
+static void
+ParseMainOperations(int argc, char** argv)
 {
-    Strings::ExecutingName = basename(argv[0]);
+    SearchOnMainInt = -1;
+    Base = &BaseTemplate;
 
-    for (int i = 0; i <= (argc - 1); i++)
+    VLOGD("Starting cycle for trapping main options...\n");
+    while (1)
     {
-        if (strncmp(argv[i], "-V", 2) == 0 || strcmp(argv[i], "--verbose") == 0)
-            Booleans::VerboseMode = true;
-        else
+        if ((argc - 1) == 0)
+        {
+            VLOGD("argc - 1 = 0. Breaking...\n");
+            break;
+        }
+
+        if (argv[(argc - 1)][0] == '-')
+        {
+            VLOGD("argv[%d] starts with '-'. Continue.\n", (argc - 1));
+            argc--;
             continue;
+        }
+        else
+        {
+            Target = argv[(argc - 1)];
+            SearchOnMainInt = argc;
+            VLOGD("argv[%d] = %s\n", (argc - 1), argv[(argc - 1)]);
+            VLOGD("Variable of \"Target\" (string): %s\n", Target.c_str());
+
+            if (Target == "backup")
+            {
+                Base = &BackupArgProcessorBase;
+                Config.BackupMode = true;
+                break;
+            }
+            else if (Target == "flash")
+            {
+                Base = &FlashArgProcessorBase;
+                Config.FlashMode = true;
+                break;
+            }
+            else if (Target == "format")
+            {
+                Base = &FormatArgProcessorBase;
+                Config.FormatMode = true;
+                break;
+            }
+            else if (Target == "partition-size")
+            {
+                Base = &PartSizeArgProcessorBase;
+                Config.PartSizeViewMode = true;
+                break;
+            }
+            else
+            {
+                Target = "";
+                SearchOnMainInt = -1;
+                argc--;
+                continue;
+            }
+        }
+
+        break;
     }
+}
 
-    /* Generate classes */
-    VLOGD("Generating classes...\n");
-    PartitionManagerBase* Base;
-    PartitionManagerBase BaseTemplate;
-    PartitionManagerBackup BackupArgProcessorBase;
-    PartitionManagerFlash FlashArgProcessorBase;
-    PartitionManagerFormat FormatArgProcessorBase;
-    PartitionManagerPartSize PartSizeArgProcessorBase;
-
-    VLOGD("Main function started. Setting up locale. Calling 'setlocale <clocale>'\n");
-    setlocale(LC_ALL, "");
-
-    int argc_n = argc;
+static char**
+ParseStdin(int argc, char** argv)
+{
+    StdinArgcTotal = 0;
     char buf[256];
-    char** args = argv;
 
     VLOGD("Checking stdin status...\n");
     if (!isatty(fileno(stdin)))
@@ -283,80 +345,61 @@ int main(int argc, char** argv)
         {
             buf[strcspn(buf, "\n")] = 0;
 
-            args[argc_n] = strdup(buf);
-            argc_n++;
+            argv[argc] = strdup(buf);
+            argc++;
+            StdinArgcTotal++;
         }
 
         VLOGD("Parsing completed.\n");
     }
-    else
-        VLOGD("stdin empty.\n");
 
-    /* load language */
-    VLOGD("Loading language... Calling LoadLanguage()...\n");
-    if (!Functions::LoadLanguage())
-    {
-        cout << "LoadLanguage() process failed..!" << endl;
-        abort();
-    }
+    VLOGD("stdin empty.\n");
+    return argv;
+}
 
-    SymbolRule = Display::UsingDispString->symbol_rule;
-    argc = argc_n;
-    int argc_parse = (argc - 1);
-    char** args_ctrl = args;
-    args_ctrl++;
-
-    static bool ViewHelp = false;
-    static bool ViewVersion = false;
-    static bool LogicalSpeficy = false;
-    static bool ListRequired = false;
-    static bool MultipleViewers = false;
-    static bool SetLanguageReq = false;
-    static bool SomeSpec = false;
-    static bool PartSizeArgSpeficed = false;
-    static char* SpeficedLanguagePr;
-    static string Option;
-    static string Target;
-    static int SearchResult = 3;
-    static int SearchOnMainInt = -1;
+static void
+ParseOptions(int argc, char** argv)
+{
+    argc--;
+    argv++;
 
     VLOGD("Parsing standart arguments...\n");
-    while (argc_parse && args_ctrl[0] != nullptr)
+    while (argc && argv[0] != nullptr)
     {
-        if (args_ctrl[0][0] != '-')
+        if (argv[0][0] != '-')
         {
-            argc_parse--;
-            args_ctrl++;
+            argc--;
+            argv++;
             continue;
         }
 
         for (int x = 1; true; x++)
         {
-            Option = args_ctrl[0];
+            Option = argv[0];
             SomeSpec = true;
 
-            switch (args_ctrl[0][x])
+            switch (argv[0][x])
             {
                 case '-':
                     if (Option == "--backup")
                         deprecated('b',
-                            Display::UsingDispString->depr_backup_opt,
+                            PartitionManager::Display::UsingDispString->depr_backup_opt,
                             "backup");
                     else if (Option == "--flash")
                         deprecated('F',
-                            Display::UsingDispString->depr_flash_opt,
+                            PartitionManager::Display::UsingDispString->depr_flash_opt,
                             "flash");
                     else if (Option == "--format")
                         deprecated('r',
-                            Display::UsingDispString->depr_format_opt,
+                            PartitionManager::Display::UsingDispString->depr_format_opt,
                             "format");
                     else if (Option == "--license")
                         deprecated('L',
-                            Display::UsingDispString->depr_Vlicense_opt,
+                            PartitionManager::Display::UsingDispString->depr_Vlicense_opt,
                             "license");
                     else if (Option == "--context")
                         deprecated('c',
-                            Display::UsingDispString->depr_ch_sp_opt,
+                            PartitionManager::Display::UsingDispString->depr_ch_sp_opt,
                             "context");
                     else if (Option == "--logical")
                     {
@@ -367,14 +410,14 @@ int main(int argc, char** argv)
                     else if (Option == "--search-path")
                     {
                         VLOGD("Custom search path specified.\n");
-                        if (argc_parse > 1)
-                            PrSpInput(args_ctrl[1]);
+                        if (argc > 1)
+                            PrSpInput(argv[1]);
                         else
                             LOGE("--search-path: %s.\n%s `%s --help' %s.\n", \
-                            Display::UsingDispString->is_requires_arg, \
-                            Display::UsingDispString->try_h, \
-                            Strings::ExecutingName.c_str(), \
-                            Display::UsingDispString->for_more);
+                            PartitionManager::Display::UsingDispString->is_requires_arg, \
+                            PartitionManager::Display::UsingDispString->try_h, \
+                            PartitionManager::Strings::ExecutingName.c_str(), \
+                            PartitionManager::Display::UsingDispString->for_more);
                         break;
                     }
                     else if (Option == "--list")
@@ -388,66 +431,66 @@ int main(int argc, char** argv)
                     else if (Option == "--force")
                     {
                         VLOGD("Force mode speficed.\n");
-                        Booleans::ForceMode = true;
+                        Config.ForceMode = true;
                         break;
                     }
                     else if (Option == "--verbose")
                     {
                         VLOGD("Verbose mode speficed.\n");
-                        Booleans::VerboseMode = true;
+                        Config.VerboseMode = true;
                         break;
                     }
                     else if (Option == "--silent")
                     {
                         VLOGD("Silent mode speficed.\n");
-                        Booleans::SilentEnabled = true;
+                        Config.SilentEnabled = true;
                         break;
                     }
                     else if (Option == "--set-language")
                     {
                         VLOGD("It was requested to adjust the language.\n");
-                        if (argc_parse > 1)
+                        if (argc > 1)
                         {
                             VLOGE("Language inputs: getting inputs...\n");
                             SetLanguageReq = true;
-                            SpeficedLanguagePr = args_ctrl[1];
+                            SpeficedLanguagePr = argv[1];
                         }
                         else
                             LOGE("--set-language: %s.\n%s `%s --help' %s.\n",
-                                Display::UsingDispString->is_requires_arg,
-                                Display::UsingDispString->try_h,
-                                Strings::ExecutingName.c_str(),
-                                Display::UsingDispString->for_more);
+                                PartitionManager::Display::UsingDispString->is_requires_arg,
+                                PartitionManager::Display::UsingDispString->try_h,
+                                PartitionManager::Strings::ExecutingName.c_str(),
+                                PartitionManager::Display::UsingDispString->for_more);
                         break;
                     }
                     else if (Option == "--as-byte")
                     {
                         PartSizeArgSpeficed = true;
-                        Integers::PartSizeViewType = VIEW_AS_BYTE;
+                        PartitionManager::Integers::PartSizeViewType = VIEW_AS_BYTE;
                         break;
                     }
                     else if (Option == "--as-kilobyte")
                     {
                         PartSizeArgSpeficed = true;
-                        Integers::PartSizeViewType = VIEW_AS_KIB;
+                        PartitionManager::Integers::PartSizeViewType = VIEW_AS_KIB;
                         break;
                     }
                     else if (Option == "--as-megabyte")
                     {
                         PartSizeArgSpeficed = true;
-                        Integers::PartSizeViewType = VIEW_AS_MIB;
+                        PartitionManager::Integers::PartSizeViewType = VIEW_AS_MIB;
                         break;
                     }
                     else if (Option == "--as-gigabyte")
                     {
                         PartSizeArgSpeficed = true;
-                        Integers::PartSizeViewType = VIEW_AS_GIB;
+                        PartitionManager::Integers::PartSizeViewType = VIEW_AS_GIB;
                         break;
                     }
                     else if (Option == "--only-size")
                     {
                         PartSizeArgSpeficed = true;
-                        Booleans::OnlyViewSize = true;
+                        Config.OnlyViewSize = true;
                         break;
                     }
                     else if (Option == "--version")
@@ -468,41 +511,41 @@ int main(int argc, char** argv)
                     }
                     else
                     {
-                        VLOGE("Unknown Option: %s\n", args_ctrl[0]);
-                        LOGE("%s: %s.\n%s `%s --help' %s.\n", args_ctrl[0],
-                            Display::UsingDispString->unknw_arg,
-                            Display::UsingDispString->try_h,
-                            Strings::ExecutingName.c_str(),
-                            Display::UsingDispString->for_more);
+                        VLOGE("Unknown Option: %s\n", argv[0]);
+                        LOGE("%s: %s.\n%s `%s --help' %s.\n", argv[0],
+                            PartitionManager::Display::UsingDispString->unknw_arg,
+                            PartitionManager::Display::UsingDispString->try_h,
+                            PartitionManager::Strings::ExecutingName.c_str(),
+                            PartitionManager::Display::UsingDispString->for_more);
                     }
                     break;
                 case 'b':
                     deprecated('b',
-                        Display::UsingDispString->depr_backup_opt,
+                        PartitionManager::Display::UsingDispString->depr_backup_opt,
                         "backup");
                     break;
                 case 'F':
                     deprecated('F',
-                        Display::UsingDispString->depr_flash_opt,
+                        PartitionManager::Display::UsingDispString->depr_flash_opt,
                         "flash");
                     break;
                 case 'r':
                     deprecated('r',
-                        Display::UsingDispString->depr_format_opt,
+                        PartitionManager::Display::UsingDispString->depr_format_opt,
                         "format");
                     break;
                 case 'L':
                     deprecated('L',
-                        Display::UsingDispString->depr_Vlicense_opt,
+                        PartitionManager::Display::UsingDispString->depr_Vlicense_opt,
                         "license");
                     break;
                 case 'D':
                     deprecated('D',
-                        Display::UsingDispString->depr_ch_list_opt);
+                        PartitionManager::Display::UsingDispString->depr_ch_list_opt);
                     break;
                 case 'c':
                     deprecated('c',
-                        Display::UsingDispString->depr_ch_sp_opt,
+                        PartitionManager::Display::UsingDispString->depr_ch_sp_opt,
                         "context");
                 case 'l':
                     VLOGD("Logical partition type specified.\n");
@@ -510,18 +553,18 @@ int main(int argc, char** argv)
                     continue;
                 case 'P':
                     VLOGD("Custom search path speficed.\n");
-                    if (argc_parse > 1)
+                    if (argc > 1)
                     {
                         VLOGE("Search-path inputs: getting inputs...\n");
-                        PrSpInput(args_ctrl[1]);
+                        PrSpInput(argv[1]);
                         continue;
                     }
                     else
                         LOGE("-P: %s.\n%s `%s --help' %s.\n",
-                            Display::UsingDispString->is_requires_arg,
-                            Display::UsingDispString->try_h,
-                            Strings::ExecutingName.c_str(),
-                            Display::UsingDispString->for_more);
+                            PartitionManager::Display::UsingDispString->is_requires_arg,
+                            PartitionManager::Display::UsingDispString->try_h,
+                            PartitionManager::Strings::ExecutingName.c_str(),
+                            PartitionManager::Display::UsingDispString->for_more);
                     break;
                 case 'p':
                     VLOGD("It was requested to list the partitions.\n");
@@ -531,31 +574,31 @@ int main(int argc, char** argv)
                     continue;
                 case 'f':
                     VLOGD("Force mode speficed.\n");
-                    Booleans::ForceMode = true;
+                    Config.ForceMode = true;
                     continue;
                 case 'V':
                     VLOGD("Verbose mode speficed.\n");
-                    Booleans::VerboseMode = true;
+                    Config.VerboseMode = true;
                     continue;
                 case 's':
                     VLOGD("Silent mode speficed.\n");
-                    Booleans::SilentEnabled = true;
+                    Config.SilentEnabled = true;
                     continue;
                 case 'S':
                     VLOGD("It was requested to adjust the language.\n");
-                    if (argc_parse > 1)
+                    if (argc > 1)
                     {
                         VLOGE("Language inputs: getting inputs...\n");
                         SetLanguageReq = true;
-                        SpeficedLanguagePr = args_ctrl[1];
+                        SpeficedLanguagePr = argv[1];
                         continue;
                     }
                     else
                         LOGE("-S: %s.\n%s `%s --help' %s.\n",
-                            Display::UsingDispString->is_requires_arg,
-                            Display::UsingDispString->try_h,
-                            Strings::ExecutingName.c_str(),
-                            Display::UsingDispString->for_more);
+                            PartitionManager::Display::UsingDispString->is_requires_arg,
+                            PartitionManager::Display::UsingDispString->try_h,
+                            PartitionManager::Strings::ExecutingName.c_str(),
+                            PartitionManager::Display::UsingDispString->for_more);
                 case 'v':
                     VLOGD("The version info was requested to be displayed.\n");
                     ViewVersion = true;
@@ -565,162 +608,137 @@ int main(int argc, char** argv)
                 case '\0':
                     break;
                 default:
-                    VLOGE("Unknown Option: -%c\n", args_ctrl[0][x]);
+                    VLOGE("Unknown Option: -%c\n", argv[0][x]);
                     LOGE("-%c: %s.\n%s `%s --help' %s.\n",
-                        args_ctrl[0][x],
-                        Display::UsingDispString->unknw_arg,
-                        Display::UsingDispString->try_h,
-                        Strings::ExecutingName.c_str(),
-                        Display::UsingDispString->for_more);
+                        argv[0][x],
+                        PartitionManager::Display::UsingDispString->unknw_arg,
+                        PartitionManager::Display::UsingDispString->try_h,
+                        PartitionManager::Strings::ExecutingName.c_str(),
+                        PartitionManager::Display::UsingDispString->for_more);
             }
 
             break;
         }
 
-        argc_parse--;
-        args_ctrl++;
+        argc--;
+        argv++;
     }
+}
 
-    Base = &BaseTemplate;
-    argc_parse = argc;
+} /* namespace PartitionManager */
 
-    VLOGD("Starting cycle for trapping main options...\n");
-    while (1)
+int main(int argc, char** argv)
+{
+    PartitionManager::Strings::ExecutingName = basename(argv[0]);
+
+    for (int i = 0; i <= (argc - 1); i++)
     {
-        if ((argc_parse - 1) == 0)
-        {
-            VLOGD("MainFnController: argc - 1 = 0. Breaking...\n");
-            break;
-        }
-
-        if (args[(argc_parse - 1)][0] == '-')
-        {
-            VLOGD("MainFnController: args[%d] starts with '-'. Continue.\n", (argc_parse - 1));
-            argc_parse--;
-            continue;
-        }
+        if (strncmp(argv[i], "-V", 2) == 0 || strcmp(argv[i], "--verbose") == 0)
+            Config.VerboseMode = true;
         else
-        {
-            Target = args[(argc_parse - 1)];
-            SearchOnMainInt = argc_parse;
-            VLOGD("MainFnController: args[%d] = %s\n", (argc_parse - 1), args[(argc_parse - 1)]);
-            VLOGD("MainFnController: variable of \"Target\" (string): %s\n", Target.c_str());
-
-            if (Target == "backup")
-            {
-                Base = &BackupArgProcessorBase;
-                Booleans::BackupMode = true;
-                break;
-            }
-            else if (Target == "flash")
-            {
-                Base = &FlashArgProcessorBase;
-                Booleans::FlashMode = true;
-                break;
-            }
-            else if (Target == "format")
-            {
-                Base = &FormatArgProcessorBase;
-                Booleans::FormatMode = true;
-                break;
-            }
-            else if (Target == "partition-size")
-            {
-                Base = &PartSizeArgProcessorBase;
-                Booleans::PartSizeViewMode = true;
-                break;
-            }
-            else
-            {
-                Target = "";
-                SearchOnMainInt = -1;
-                argc_parse--;
-                continue;
-            }
-        }
-
-        break;
+            continue;
     }
 
-    if (Booleans::SilentEnabled && Booleans::VerboseMode)
+    VLOGD("Main function started. Setting up locale. Calling 'setlocale <clocale>'\n");
+    setlocale(LC_ALL, "");
+
+    char** args = PartitionManager::ParseStdin(argc, argv);
+    argc = (argc + StdinArgcTotal);
+    /* It's not gonna be okay even 0. */
+
+    /* load language */
+    VLOGD("Loading language... Calling LoadLanguage()...\n");
+    if (!PartitionManager::LoadLanguage())
+    {
+        cout << "LoadLanguage() process failed..!" << endl;
+        abort();
+    }
+
+    SymbolRule = PartitionManager::Display::UsingDispString->symbol_rule;
+    int SearchResult = 3;
+
+    PartitionManager::ParseOptions(argc, argv);
+    PartitionManager::ParseMainOperations(argc, argv);
+
+    if (Config.SilentEnabled && Config.VerboseMode)
     {
         VLOGE("Silent and verbose mode is one-way.\n");
-        cout << Strings::ExecutingName << ": " << Display::UsingDispString->s_and_v << endl;
+        cout << PartitionManager::Strings::ExecutingName << ": " << PartitionManager::Display::UsingDispString->s_and_v << endl;
         exit(1);
     }
 
     VLOGD("Checking last language switch status...\n");
-    if (Functions::CleanSWPoint())
+    if (PartitionManager::CleanSWPoint())
     {
         VLOGD("Last transactions found that language was changed between.\n");
 
-        if (Display::UsingDispString->welcome_ != nullptr)
-            LOGD("%s", Display::UsingDispString->welcome_);
+        if (PartitionManager::Display::UsingDispString->welcome_ != nullptr)
+            LOGD("%s", PartitionManager::Display::UsingDispString->welcome_);
 
         LOGD("%s %s %s %s.\n",
-            Display::UsingDispString->language,
-            Display::UsingDispString->welcome,
-            Display::UsingDispString->by_str,
-            Display::UsingDispString->lang_by_s);
+            PartitionManager::Display::UsingDispString->language,
+            PartitionManager::Display::UsingDispString->welcome,
+            PartitionManager::Display::UsingDispString->by_str,
+            PartitionManager::Display::UsingDispString->lang_by_s);
     }
 
     /* check argument total */
     VLOGD("argc (arguments) total: %d.\n", argc);
     if (argc < 2)
         LOGE("%s.\n%s '%s --help' %s.\n",
-            Display::UsingDispString->missing_operand,
-            Display::UsingDispString->try_h,
-            Strings::ExecutingName.c_str(),
-            Display::UsingDispString->for_more);
+            PartitionManager::Display::UsingDispString->missing_operand,
+            PartitionManager::Display::UsingDispString->try_h,
+            PartitionManager::Strings::ExecutingName.c_str(),
+            PartitionManager::Display::UsingDispString->for_more);
 
     /* stop the program if multiple viewer is used */
     if (MultipleViewers)
     {
         VLOGE("Multiple viewer option selected!\n");
-        LOGE("%s\n", Display::UsingDispString->multiple_wiewers);
+        LOGE("%s\n", PartitionManager::Display::UsingDispString->multiple_wiewers);
     }
 
-    if (!Booleans::PartSizeViewMode && PartSizeArgSpeficed)
+    if (!Config.PartSizeViewMode && PartSizeArgSpeficed)
     {
         VLOGE("Related flags were detected, although some partition size was not requested.\n");
-        LOGE("%s.\n", Display::UsingDispString->only_partsz_args);
+        LOGE("%s.\n", PartitionManager::Display::UsingDispString->only_partsz_args);
     }
 
     /* controller to handle viewer */
     if (ViewHelp)
     {
         VLOGD("The help message was asked to display. It's displayed... Calling DisplayHelp()\n");
-        Functions::DisplayHelp();
+        PartitionManager::DisplayHelp();
         return 0;
     }
     else if (ViewVersion)
     {
         VLOGD("The version info message was asked to display. It's displayed... Calling DisplayVersion()\n");
-        Functions::DisplayVersion();
+        PartitionManager::DisplayVersion();
         return 0;
     }
     else if (ListRequired)
     {
         VLOGD("Partitions were asked to be listed. It's listed... Calling CheckRoot() (root check is required), CheckDevPoint() (for generating warnings etc.) and ListPartitions()\n");
-        Functions::CheckRoot();
+        PartitionManager::CheckRoot();
         VLOGD("CheckRoot() completed.\n");
-        Functions::CheckDevPoint();
+        PartitionManager::CheckDevPoint();
         VLOGD("CheckDevPoint() completed.\n");
-        return Functions::ListPartitions();
+        return PartitionManager::ListPartitions();
     }
 
     if (SetLanguageReq)
     {
         VLOGD("The language was asked to adjust. Calling SetLanguage()...\n");
         LOGD("%s: %s\n",
-            Strings::ExecutingName.c_str(),
-            Display::UsingDispString->switching_lang);
-        Functions::SetLanguage(SpeficedLanguagePr, 0);
+            PartitionManager::Strings::ExecutingName.c_str(),
+            PartitionManager::Display::UsingDispString->switching_lang);
+        PartitionManager::SetLanguage(SpeficedLanguagePr, 0);
         sleep(2);
         VLOGD("SetLanguage() completed.\n");
         LOGD("%s: %s.\n",
-            Strings::ExecutingName.c_str(),
-            Display::UsingDispString->please_rerun);
+            PartitionManager::Strings::ExecutingName.c_str(),
+            PartitionManager::Display::UsingDispString->please_rerun);
         return 0;
     }
 
@@ -728,99 +746,99 @@ int main(int argc, char** argv)
     {
         VLOGE("There's no job to do.\n");
         LOGD("%s: %s.\n",
-            Strings::ExecutingName.c_str(),
-            Display::UsingDispString->missing_operand);
+            PartitionManager::Strings::ExecutingName.c_str(),
+            PartitionManager::Display::UsingDispString->missing_operand);
 
         if (SomeSpec)
-            LOGD("%s.\n", Display::UsingDispString->some_spec);
+            LOGD("%s.\n", PartitionManager::Display::UsingDispString->some_spec);
 
         LOGD("%s '%s --help' %s.\n",
-            Display::UsingDispString->try_h,
-            Strings::ExecutingName.c_str(),
-            Display::UsingDispString->for_more);
+            PartitionManager::Display::UsingDispString->try_h,
+            PartitionManager::Strings::ExecutingName.c_str(),
+            PartitionManager::Display::UsingDispString->for_more);
         exit(1);
     }
 
     Base->ArgumentProcessor(SearchOnMainInt, argc, args);
 
-    if (Booleans::FormatMode)
+    if (Config.FormatMode)
     {
         VLOGD("File system name specified for formatting is being contaminated...\n");
-        if (Strings::TargetFormatFS != "ext4" \
-        && Strings::TargetFormatFS != "ext3" \
-        && Strings::TargetFormatFS != "ext2")
+        if (PartitionManager::Strings::TargetFormatFS != "ext4" \
+        && PartitionManager::Strings::TargetFormatFS != "ext3" \
+        && PartitionManager::Strings::TargetFormatFS != "ext2")
         {
-            VLOGE("Unsupported file system: %s.\n", Strings::TargetFormatFS.c_str());
+            VLOGE("Unsupported file system: %s.\n", PartitionManager::Strings::TargetFormatFS.c_str());
             LOGE("%s: %s\n",
-                Display::UsingDispString->unsupported_fs,
-                Strings::TargetFormatFS.c_str());
+                PartitionManager::Display::UsingDispString->unsupported_fs,
+                PartitionManager::Strings::TargetFormatFS.c_str());
         }
     }
 
     /* checks */
     VLOGD("Checking root status... Calling CheckRoot()...\n");
-    Functions::CheckRoot();
+    PartitionManager::CheckRoot();
     VLOGD("Checking A/B and logical device status... Calling CheckDevPoint()...\n");
-    Functions::CheckDevPoint();
+    PartitionManager::CheckDevPoint();
 
     if (LogicalSpeficy)
     {
         VLOGD("Logical partition type speficed. Checking partition statust's...\n");
-        if (Booleans::UsesLogical)
-            Booleans::UseLogical = true;
+        if (Config.UsesLogical)
+            Config.UseLogical = true;
         else
-            LOGE("%s\n", Display::UsingDispString->not_logical);
+            LOGE("%s\n", PartitionManager::Display::UsingDispString->not_logical);
     }
 
-    if (Booleans::FlashMode)
+    if (Config.FlashMode)
     {
         VLOGD("The status of the specified file for flashing is being checked...\n");
-        SearchResult = Functions::GetState(Strings::TargetFlashFile);
+        SearchResult = PartitionManager::GetState(PartitionManager::Strings::TargetFlashFile);
 
         if (SearchResult == 1)
             LOGE("%s: `%s': %s\n",
-                Display::UsingDispString->cannot_stat,
-                Strings::TargetFlashFile.c_str(),
+                PartitionManager::Display::UsingDispString->cannot_stat,
+                PartitionManager::Strings::TargetFlashFile.c_str(),
                 strqerror());
         else if (SearchResult == -1)
             LOGE("`%s': %s\n",
-                Strings::TargetFlashFile.c_str(),
-                Display::UsingDispString->not_file);
+                PartitionManager::Strings::TargetFlashFile.c_str(),
+                PartitionManager::Display::UsingDispString->not_file);
     }
 
     /* custom search path checker */
-    if (Booleans::UseCustomSearchPath)
+    if (Config.UseCustomSearchPath)
     {
         VLOGD("The status of the \"dev\" is controlled in the specified custom /dev search path...\n");
-        if (strncmp(Strings::CustomSearchPath.c_str(), "/dev", 4) != 0)
+        if (strncmp(PartitionManager::Strings::CustomSearchPath.c_str(), "/dev", 4) != 0)
         {
-            if (!Booleans::ForceMode)
-                LOGE("%s\n", Display::UsingDispString->not_in_dev);
+            if (!Config.ForceMode)
+                LOGE("%s\n", PartitionManager::Display::UsingDispString->not_in_dev);
         }
 
         VLOGD("The specified custom /dev search path is being put in countless...\n");
-        SearchResult = Functions::GetState(Strings::CustomSearchPath, "dir");
+        SearchResult = PartitionManager::GetState(PartitionManager::Strings::CustomSearchPath, "dir");
 
         if (SearchResult == 1)
             LOGE("%s: `%s': %s\n",
-                Display::UsingDispString->cannot_stat,
-                Strings::CustomSearchPath.c_str(),
+                PartitionManager::Display::UsingDispString->cannot_stat,
+                PartitionManager::Strings::CustomSearchPath.c_str(),
                 strqerror());
         else if (SearchResult == -1)
             LOGE("`%s': %s\n",
-                Strings::CustomSearchPath.c_str(),
-                Display::UsingDispString->not_dir);
+                PartitionManager::Strings::CustomSearchPath.c_str(),
+                PartitionManager::Display::UsingDispString->not_dir);
     }
 
     VLOGD("The partition specification status is controlled...\n");
-    if (Strings::TargetPartition.empty())
+    if (PartitionManager::Strings::TargetPartition.empty())
     {
-        if (!Booleans::ForceMode)
+        if (!Config.ForceMode)
             LOGE("%s\n%s `%s --help' %s\n",
-                Display::UsingDispString->req_part_name,
-                Display::UsingDispString->try_h,
-                Strings::ExecutingName.c_str(),
-                Display::UsingDispString->for_more);
+                PartitionManager::Display::UsingDispString->req_part_name,
+                PartitionManager::Display::UsingDispString->try_h,
+                PartitionManager::Strings::ExecutingName.c_str(),
+                PartitionManager::Display::UsingDispString->for_more);
     }
     else
     {
