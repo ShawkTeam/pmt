@@ -28,9 +28,7 @@
 #define PMT_PATCHLEVEL       6
 
 namespace PartitionManager {
-    namespace Functions {
-        void DisplayVersion(void);
-    }
+    void DisplayVersion(void);
 }
 
 /* end */
