@@ -1,11 +1,11 @@
-### Version 2.9.1 Changelog
+### Version 2.9.6 Changelog
 
-    - All dependencies related to e2fsprogs were added into pmt for built-in mke2fs
-    - Partition size displaying feature added
-    - Make compilation system deprecated, only Android NDK can be used
-    - Some small fixes
-    - Some minor changes on compilation system
+    - Improved verbose logging.
+    - Some adjustments were made to increase performance.
+    - Cleaned up unnecessary e2fsprog sources.
+    - Code simplified.
+    - And some minor changes...
 
 ```
-END OF 2.9.1 UPDATE CHANGELOG
+END OF 2.9.6 UPDATE CHANGELOG
 ```
