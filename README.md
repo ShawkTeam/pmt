@@ -41,12 +41,12 @@ Report bugs and suggestions to <t.me/ShawkTeam | Topics | pmt>
 
 ### Notes
 
-- pmt now supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.9.1/LANGUAGES.md)
-- [Add a language.](https://github.com/ShawkTeam/pmt/blob/2.9.1/ADD-LANGUAGES.md)
+- pmt now supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.9.6/LANGUAGES.md)
+- [Add a language.](https://github.com/ShawkTeam/pmt/blob/2.9.6/ADD-LANGUAGES.md)
 - Feel free to ask any questions you want.
 - Packages are available in publications.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
-- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.9.1/CHANGELOG.md)
+- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.9.6/CHANGELOG.md)
 - We are always open to your suggestions and support _(developing)_!
 
 ## How to build?
@@ -55,7 +55,7 @@ Partition Manager only buildable with Android NDK (make compilation system depre
  - [Download Android NDK](https://developer.android.com/ndk/downloads) and extract the NDK package.
  - Clone this repository. And get access to it.
 ```
-git clone https://github.com/ShawkTeam/pmt -b 2.9.1
+git clone https://github.com/ShawkTeam/pmt -b 2.9.6
 cd pmt
 ```
  - Set the NDK working directory variable.
