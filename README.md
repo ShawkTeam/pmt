@@ -94,7 +94,7 @@ bash build/bash/gen-header
  - Download script.
 
 ```
-curl -LSs https://github.com/ShawkTeam/pmt/raw/2.9.1/pmt-termux.sh > pmt-termux.sh
+curl -LSs https://github.com/ShawkTeam/pmt/raw/2.9.6/pmt-termux.sh > pmt-termux.sh
 ```
  - Some informations...
 ```
