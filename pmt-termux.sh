@@ -290,7 +290,7 @@ if [ "${PROCESS}" = 1 ]; then
 	install_fn
 elif [ "${PROCESS}" = 2 ]; then
 	/system/bin/which pmt &>/dev/null \
-	&& abort "Partition Manager already uninstalled."
+	|| abort "Partition Manager already uninstalled."
 	print "Starting uninstall process..."
 	uninstall_fn
 fi
