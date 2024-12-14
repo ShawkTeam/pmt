@@ -143,7 +143,7 @@ function setup_packages()
 	pkg update &>/dev/null || abort "Updating failed!"
 
 	print "Installing xz-utils, wget..."
-	pkg install -y xz-utils wget &>/dev/null \
+	pkg install -y xz-utils wget tsu &>/dev/null \
 	|| abort "Installing failed!"
 
 	print "Success."
