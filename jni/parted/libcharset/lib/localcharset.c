@@ -72,6 +72,7 @@
 # include <xlocale.h>
 #endif
 
+char* nl_langinfo (nl_item item);
 
 #if HAVE_LANGINFO_CODESET || defined WINDOWS_NATIVE || defined OS2
 
