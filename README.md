@@ -2,22 +2,24 @@
 
 [![Commit reviewed](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml/badge.svg)](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml)
 
-This is a binary written with C++ and it is for writing/reading, formatting and getting size on Android partitions.
+This binary, written with C++, is for managing (partition) table, writing/reading, formatting and getting size on Android partitions.
 
 ```
-Usage:  pmt [OPTIONS] backup PARTITION [OUTPUT] [OPTIONS]...
+Usage:  pmt [OPTIONS] start-parted [DEVICE]...
+  or:   pmt [OPTIONS] backup PARTITION [OUTPUT] [OPTIONS]...
   or:   pmt [OPTIONS] flash PARTITION FILE [OPTIONS]...
   or:   pmt [OPTIONS] format PARTITION FILE_SYSTEM[ext/2/3/4] [OPTIONS]...
   or:   pmt [OPTIONS] partition-size PARTITION [OPTIONS]...
 
 Options:
    -l, --logical     It is meant to determine whether the target partition is logical.
-   -P, --search-path It is meant to specify a custom partition search path. Only classic partitions (default: /dev/block/by-name).
+   -P, --search-path It is meant to specify a custom partition search path. Only normal partitions (default: /dev/block/by-name).
    -p, --list        List partitions.
    -s, --silent      Information and warning messages are silenced in normal work.
    -f, --force       Force mode. Some things are ignored.
    -V, --verbose     Verbose mode. Print detailed informations etc.
    -S, --set-lang    Set current language.
+   -U, --view-langs  See supported languages.
    -v, --version     See version.
        --help        See this help message.
 
@@ -39,41 +41,46 @@ Examples:
 Report bugs and suggestions to <t.me/ShawkTeam | Topics | pmt>
 ```
 
-### Notes
+#### Some notes
 
-- pmt now supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/2.9.6/LANGUAGES.md)
-- [Add a language.](https://github.com/ShawkTeam/pmt/blob/2.9.6/ADD-LANGUAGES.md)
+- pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/3.0.2/LANGUAGES.md)
+- [Add language.](https://github.com/ShawkTeam/pmt/blob/3.0.2/ADD-LANGUAGES.md)
 - Feel free to ask any questions you want.
 - Packages are available in publications.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
-- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/2.9.6/CHANGELOG.md)
-- We are always open to your suggestions and support _(developing)_!
+- [Click to see special version changes.](https://github.com/ShawkTeam/pmt/blob/3.0.2/CHANGELOG.md)
+- We are always open to your suggestions and support (developing)!
 
-## How to build?
-Partition Manager only buildable with Android NDK (make compilation system deprecated).
+### How is it built?
+Make or Android NDK is required to build.
 
+##### Build with NDK
  - [Download Android NDK](https://developer.android.com/ndk/downloads) and extract the NDK package.
  - Clone this repository. And get access to it.
 ```
-git clone https://github.com/ShawkTeam/pmt -b 2.9.6
+git clone https://github.com/ShawkTeam/pmt -b 3.0.2
 cd pmt
 ```
  - Set the NDK working directory variable.
 ```
-export NDK_PROJECT_PATH="${PWD}" # or where the source directory is everywhere
-export NDK_ROOT_DIR=<PATH> # Note that if the NDK is in the directory
+make gen-ndk-makefiles
+# If you fail the audit etc, use FORCE_GEN.
+# Example:
+    make gen-ndk-makefiles FORCE_GEN=true
 
-# Generate clang version header
-bash build/bash/gen-header
+# Required by Android NDK
+export NDK_PROJECT_PATH="${PWD}"
 ```
  - Go to the NDK directory and start the build
 ```
-./ndk-build
+# Required for creating clang version information and directory access
+export NDK_ROOT_DIR="${PWD}"
+cd "${NDK_PROJECT_PATH}" \
+&& bash build/bash/gen-header \
+&& cd "${NDK_ROOT_DIR}"
 
-# Permission denied? Change mode and retry
-(sudo) chmod +x ndk-build
-# OR
-(sudo) chmod 755 ndk-build
+# Start build
+./ndk-build
 ```
  - The output files will be inside the `pmt` folder. Binaries are available in two architectures within the `libs` folder. `arm64-v8a` (64-bit) and `armeabi-v7a` (32-bit).
 ```
@@ -90,40 +97,30 @@ bash build/bash/gen-header
                           pmt                 pmt
 ```
 
-### Manage pmt with termux script
- - Download script.
+```
+# Manage pmt with termux script
+## Download script
+curl -LSs https://github.com/ShawkTeam/pmt/raw/3.0.2/pmt-termux.sh > pmt-termux.sh
 
-```
-curl -LSs https://github.com/ShawkTeam/pmt/raw/2.9.6/pmt-termux.sh > pmt-termux.sh
-```
- - Some informations...
-```
 ## View script help
 bash pmt-termux.sh # --help (optional)
 
 ## The commands will be told to you anyway. Ask your questions from the telegram group.
-```
 
 ### How to use
 ```
-# Directly access root shell
+# Run
 /system/bin/su
-
-# If you are using termux, use with
-# tsu (sudo) will be a better choice
-pkg install -y tsu # install tsu (sudo)
-
-sudo <COMMAND(S)>
 ```
 
 - If you have installed the deb package of pmt, installed it with a makefile, or installed it to `$PATH` using any path, just the name of the pmt is enough (or the file name if you did it manually)
 ```
-(sudo) pmt <ARGUMENT(S)>
+pmt <...>
 ```
 
-- If you have not done this type of institution, pmt is in the directory where you are present you can run with `(sudo) ./`.
+- If you have not done this type of institution, pmt is in the directory where you are present you can run with `./`.
 ```
-(sudo) ./pmt <ARGUMENT(S)> # or whatever the file name is
+./pmt <...> # or whatever the file name is
 ```
 
 ### Notes

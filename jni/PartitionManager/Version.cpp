@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *	 http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-#define INC_MAIN_LIBS
-#define INC_STRINGKEYS
-#define VERSIONING
+#define INC_MAIN_LIBS 1
+#define INC_STRINGKEYS 1
+#define VERSION_CPP 1
 
 #include <PartitionManager/PartitionManager.h>
 #include <PartitionManager/VersionFnVars.h>
@@ -27,33 +27,34 @@ using namespace PartitionManager;
 
 void PartitionManager::DisplayVersion(void)
 {
-    VLOGD("Printing main info...\n");
-    LOGD("%s %s %d.%d.%d (%d%d%d / C++) ",
-        Strings::ExecutingName.c_str(),
-        Display::UsingDispString->version_str,
-        PMT_MAJOR,
-        PMT_MINOR,
-        PMT_PATCHLEVEL,
-        PMT_MAJOR,
-        PMT_MINOR,
-        PMT_PATCHLEVEL);
+	VLOGD("Printing main info...\n");
+	LOGD("%s %s %d.%d.%d (%d%d%d / C++) ",
+		Strings::ExecutingName.c_str(),
+		Display::UsingDispString->version_str,
+		PMT_MAJOR,
+		PMT_MINOR,
+		PMT_PATCHLEVEL,
+		PMT_MAJOR,
+		PMT_MINOR,
+		PMT_PATCHLEVEL);
 
 #ifdef __LP64__
-    LOGD("64-bit %s\n", Display::UsingDispString->bin_str);
+	LOGD("64-bit %s\n", Display::UsingDispString->bin_str);
 #else
-    LOGD("32-bit %s\n", Display::UsingDispString->bin_str);
+	LOGD("32-bit %s\n", Display::UsingDispString->bin_str);
 #endif
 
-    LOGD("mke2fs %s %s (%s)\n",
-        Display::UsingDispString->version_str,
-        E2FSPROGS_VERSION_PRIVATE,
-        E2FSPROGS_DATE);
-    LOGD("libext2fs %s %s (%s / %s)\n",
-        Display::UsingDispString->version_str,
-        E2FSPROGS_VERSION_PRIVATE,
-        EXT2FS_LIB_VERSION_PRIVATE,
-        E2FSPROGS_DATE);
-    LOGD("\n%s\n", __NDK_CXX_VERSION__);
+	LOGD("mke2fs %s %s (%s)\n",
+		Display::UsingDispString->version_str,
+		E2FSPROGS_VERSION_PRIVATE,
+		E2FSPROGS_DATE);
+	LOGD("libext2fs %s %s (%s / %s)\n",
+		Display::UsingDispString->version_str,
+		E2FSPROGS_VERSION_PRIVATE,
+		EXT2FS_LIB_VERSION_PRIVATE,
+		E2FSPROGS_DATE);
+
+	LOGD("\n%s\n", __NDK_CXX_VERSION__);
 }
 
 /* end of code */

@@ -14,7 +14,7 @@
 .\" See the License for the specific language governing permissions and
 .\" limitations under the License.
 .\"
-.TH "PMT" "8" "October 2024" "PMT 2.9.6" "Partition Manager"
+.TH "PMT" "8" "December 2024" "PMT 3.0.2" "Partition Manager"
 .SH NAME
 .B pmt
 \- Android Partition Manager Tool
@@ -39,6 +39,11 @@
 .I {OPTIONS}
 .B partition-size
 .I PARTITION {OPTIONS}...
+]
+[
+.I {OPTIONS}
+.B start-parted
+.I \[DEVICE\] {OPTIONS}
 ]
 [
 .B \-l
@@ -86,7 +91,7 @@
 ]
 .SH DESCRIPTION
 .B pmt
-is a tool made to read android parts, make flash and format. Written with C++ language. It was first created as only a hobby but subsequently serialized
+is a tool made to professionaly manage with parted, read android parts, make flash and format. Written with C++ language. It was first created as only a hobby but subsequently serialized
 .PP
 .SH OPTIONS
 .sp

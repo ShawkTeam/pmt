@@ -30,12 +30,12 @@ On this page, I will tell you how to add languages to pmt. This is not a difficu
           ~ $ 
 
  C / C++
-     const char* _Nonnull missing_operand = "missing operand.";
-     const std::string missing_operand = "missing operand.";
+     const char* _Nonnull missing_operand = "missing operand."; // C - 
+     const std::string missing_operand = "missing operand."; // C++ - (not necessarily using 'string' type)
 
      APPLYING (C / C++):
-          printf("%s\n", missing_operand); // Move to new line with '\n' character
-          std::cout << missing_operand << std::endl; // Move to new line with std::endl
+          printf("%s\n", missing_operand); // C - Move to new line with '\n' character
+          std::cout << missing_operand << std::endl; // C++ - Move to new line with std::endl
  ```
 
  For example, let's take the output directly in pmt without any arguments and process the variables and structures behind the work.
@@ -48,7 +48,7 @@ On this page, I will tell you how to add languages to pmt. This is not a difficu
       ~ $
 
  Code pieces (C++)
-      struct pmt_langdb_general en = {
+      struct langdb_general en = {
           // other translations
           .missing_operand = "missing operand",
           .try_h = "Try",
@@ -64,8 +64,8 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 
 ##### Translating main program texts (relevant part)
 
- - Let's open our jni/Languages.cpp source file.
- - Now, let's create the translation with the ready-made struct structure (see include/pmt/StringKeys.h for the structure).
+ - Let's open our jni/PartitionManager/Languages.cpp source file.
+ - Now, let's create the translation with the ready-made struct structure (see include/PartitionManager/StringKeys.h for the structure).
  ```
  // Main
  struct langdb_general Lang<LANGUAGE_PREFIX> = { // LANGUAGE_PREFIX must be the corresponding abbreviation of the language in English. For example, it's like En in English.
@@ -79,8 +79,6 @@ In short, there are variables for texts. And I made these dynamic by using [stru
  ```
  - We need to add some information about the language.
  ```
- VERY IMPORTANT NOTE: You should do your translations from within the function called WCHAR_T!
- 
  struct langdb_general Lang<LANGUAGE_PREFIX> = {
       .lang_by_s = // Names of those who made the translation. It's up to you. Do you use & between more than one person?
       .language = // Language name. For example English
@@ -90,11 +88,11 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 
  // Example
  struct langdb_general LangEn = {
-      .lang_by_s = WCHAR_T("YZBruh & r0manas"),
-      .language = WCHAR_T("English"),
-      .lang_prefix = WCHAR_T("en"),
+      .lang_by_s = "YZBruh & r0manas",
+      .language = "English",
+      .lang_prefix = "en",
       // other translations
-      .by_str = WCHAR_T("By") // Example for end translate
+      .by_str = "By" // Example for end translate
  }
 
  // CRITIC WARNING: Do not add ',' to the end of the last translation text. But others always...
@@ -104,15 +102,15 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 
 ##### Document texts translation (relevant part)
 
- - Let's open our jni/Languages.cpp source file.
- - Now, let's create the translation with the ready-made struct structure (see include/pmt/StringKeys.h for the structure).
+ - Let's open our jni/PartitionManager/Languages.cpp source file.
+ - Now, let's create the translation with the ready-made struct structure (see include/PartitionManager/StringKeys.h for the structure).
  ```
  struct langdb_docs LangDoc<LANGUAGE_PREFIX> = {
       // translations
  }
 
  // Example
- struct pmt_langdb_docs LangDocEn = {
+ struct langdb_docs LangDocEn = {
       // translations
  }
 
@@ -122,24 +120,20 @@ In short, there are variables for texts. And I made these dynamic by using [stru
 
 ##### General things to do in translation
 
- - Open jni/LanguageTools.cpp
-```
-string supp_langs[] = {
-    "en",
-    "tr",
-    // language prefix. "<LANGUAGE_PREFIX>",
-    "" // PLEASE DO NOT ADD IT UNDER `""`!
-};
+ - Open include/PartitionManager/LanguageConfigs.h
+ ```
+ // Example
+ struct LanguageConfigs LanguageConfig[] {
+     {"en", "English", Display::LangEn, Display::LangDocEn},
+     {"tr", "Türkçe", Display::LangTr, Display::LangDocTr}
+ };
 
-// Example
-string supp_langs[] = {
-    "en",
-    "tr",
-    "az",
-    ""
-};
-
-// Add the language you are translating into these existing language prefixes. I will fix the errors here (if there is an error)
+ // Add the language you are translating into these existing language prefixes. I will fix the errors here (if there is an error)
+ struct LanguageConfigs LanguageConfig[] {
+     {"en", "English", Display::LangEn, Display::LangDocEn},
+     {"tr", "Türkçe", Display::LangTr, Display::LangDocTr},
+     {"az", "Azərbaycan", Display::LangAz, Display::LangDocAz}
+ };
 ```
 
 ##### Notes
