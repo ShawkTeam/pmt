@@ -63,11 +63,6 @@ cd pmt
 ```
  - Set the NDK working directory variable.
 ```
-make gen-ndk-makefiles
-# If you fail the audit etc, use FORCE_GEN.
-# Example:
-    make gen-ndk-makefiles FORCE_GEN=true
-
 # Required by Android NDK
 export NDK_PROJECT_PATH="${PWD}"
 ```
