@@ -26,13 +26,13 @@ PMT_CXXFLAGS = \
 	-O3 \
 	-Wall \
 	-Wextra \
-	-std=c++17 \
 	-Wno-vla-cxx-extension \
 	-Wno-nullability-completeness \
 	-Wno-writable-strings \
 	-Wno-nullability-extension \
 	-Wno-reorder-init-list \
 	-Wno-gnu-zero-variadic-macro-arguments \
+	-Wno-unused-parameter \
 	-static \
 	$(PMT_EXTRA_CXXFLAGS)
 E2FSPROGS_DEFAULT_CFLAGS = \
@@ -60,16 +60,16 @@ ifneq ($(PMT_ENABLE_DEBUG),)
 	PMT_CXXFLAGS += -gdwarf-5 -fsanitize=address
 endif
 
-PMT := PartitionManager
-PARTED := parted
+PMT := $(LOCAL_PATH)/PartitionManager
+PARTED := $(LOCAL_PATH)/parted
 PARTED_SRCDIR := $(PARTED)/parted
-MKE2FS := e2fsprogs/mke2fs
+MKE2FS := $(LOCAL_PATH)/e2fsprogs/mke2fs
 LIBGNULIB := $(PARTED)/libgnulib
 LIBCHARSET := $(PARTED)/libcharset
 LIBICRT := $(PARTED)/libiconv/icrt
 LIBICONV := $(PARTED)/libiconv
 LIBPARTED := $(PARTED)/libparted
-LIB := e2fsprogs/lib
+LIB := $(LOCAL_PATH)/e2fsprogs/lib
 LIBEXT2FS := $(LIB)/ext2fs
 LIBEXT2_UUID := $(LIB)/uuid
 LIBEXT2_E2P := $(LIB)/e2p
