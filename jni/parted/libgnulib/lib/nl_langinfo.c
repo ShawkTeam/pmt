@@ -29,6 +29,11 @@
 # include <stdio.h>
 #endif
 
+#ifdef REPLACE_NL_LANGINFO
+#undef REPLACE_NL_LANGINFO
+#define REPLACE_NL_LANGINFO 0
+#endif
+
 #if REPLACE_NL_LANGINFO && !NL_LANGINFO_MTSAFE
 
 # if AVOID_ANY_THREADS

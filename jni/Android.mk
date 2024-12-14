@@ -44,6 +44,7 @@ E2FSPROGS_DEFAULT_CFLAGS = \
 	-Wno-typedef-redefinition \
 	-Wno-unused-parameter \
 	-Wno-unused-command-line-argument \
+	-Wno-nullability-completeness \
 	-include ../include/PartitionManager/Alternatives.h
 PARTED_DEFAULTS_CFLAGS = \
 	-std=c17 \
@@ -88,7 +89,8 @@ E2FSPROGS_INCLUDES := \
 	$(INC_DIR)/support \
 	$(INC_DIR)/uuid \
 	$(INC_DIR)/e2fsck \
-	$(INC_DIR)
+	$(INC_DIR) \
+	$(LOCAL_PATH)/../include
 
 include $(CLEAR_VARS)
 
@@ -292,6 +294,7 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES := $(E2FSPROGS_INCLUDES)
 LOCAL_CFLAGS := \
 	$(E2FSPROGS_DEFAULT_CFLAGS) \
+	-U_FORTIFY_SOURCE \
 	-fPIC \
 	-pthread
 
@@ -409,7 +412,8 @@ LOCAL_MODULE := libcharset
 LOCAL_SRC_FILES := \
 	$(LIBCHARSET)/lib/localcharset.c \
 	$(LIBCHARSET)/lib/relocatable-stub.c
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include/libcharset
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/../include/libcharset
 LOCAL_CFLAGS := \
 	-Wall \
 	-Wextra \
@@ -446,6 +450,7 @@ LOCAL_CFLAGS := \
 	-Wno-unused-function \
 	-Wno-unused-but-set-variable \
 	-Wno-missing-field-initializers \
+	-Wno-shift-count-overflow \
 	-fPIC
 
 include $(BUILD_STATIC_LIBRARY)
@@ -548,6 +553,7 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include \
 	$(LOCAL_PATH)/../include/libgnulib \
+	$(LOCAL_PATH)/../include/libiconv \
 	$(PARTED) \
 	$(LIBPARTED) \
 	$(LIBPARTED)/labels \
@@ -560,13 +566,13 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := lib__parted_objs
 LOCAL_SRC_FILES := \
-	$(PARTED)/command.c \
-	$(PARTED)/jsonwrt.c \
-	$(PARTED)/parted.c \
-	$(PARTED)/strlist.c \
-	$(PARTED)/table.c \
-	$(PARTED)/ui.c \
-	$(PARTED)/version.c
+	$(PARTED_SRCDIR)/command.c \
+	$(PARTED_SRCDIR)/jsonwrt.c \
+	$(PARTED_SRCDIR)/parted.c \
+	$(PARTED_SRCDIR)/strlist.c \
+	$(PARTED_SRCDIR)/table.c \
+	$(PARTED_SRCDIR)/ui.c \
+	$(PARTED_SRCDIR)/version.c
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include \
 	$(LOCAL_PATH)/../include/libgnulib \

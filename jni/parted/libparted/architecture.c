@@ -28,16 +28,8 @@ ped_set_architecture ()
 	if (ped_architecture)
 		return;
 
-#ifdef linux
 	extern PedArchitecture ped_linux_arch;
 	const PedArchitecture* arch = &ped_linux_arch;
-#elif defined(__BEOS__)
-	extern PedArchitecture ped_beos_arch;
-	const PedArchitecture* arch = &ped_beos_arch;
-#else
-	extern PedArchitecture ped_gnu_arch;
-	const PedArchitecture* arch = &ped_gnu_arch;
-#endif
 
 	ped_architecture = arch;
 }
