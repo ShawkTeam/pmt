@@ -101,6 +101,7 @@ curl -LSs https://github.com/ShawkTeam/pmt/raw/3.0.2/pmt-termux.sh > pmt-termux.
 bash pmt-termux.sh # --help (optional)
 
 ## The commands will be told to you anyway. Ask your questions from the telegram group.
+```
 
 ### How to use
 ```

@@ -57,12 +57,12 @@ function view_help()
 
 	printc "Install, uninstall, install status checker for Partition Manager binary.\n"
 	printc "Options:"
-	printc "	install,   -i [OPTS]		Download and install Partition Manager."
-	printc "	uninstall, -u			   Uninstall Partition Manager."
-	printc "	status,	-s			   Display install/uninstall status."
-	printc "	--quiet,   -q			   Silent mode. No output."
-	printc "	--setup,   -S			   Setup required packages."
-	printc "	--package <FILE>			If you already have a pmt package, make\n								  setup by specifying this way."
+	printc "	install,   -i [OPTS]              Download and install Partition Manager."
+	printc "	uninstall, -u                     Uninstall Partition Manager."
+	printc "	status,	   -s                     Display install/uninstall status."
+	printc "	--quiet,   -q                     Silent mode. No output."
+	printc "	--setup,   -S                     Setup required packages."
+	printc "	--package <FILE>                  If you already have a pmt package, make\n								  setup by specifying this way."
 	printc "Report bugs to <t.me/ShawkTeam | Topics | pmt>"
 }
 
