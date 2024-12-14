@@ -14,19 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[ -z ${NDK_ROOT_DIR} ] && \
-    {
-        echo "Please set NDK_ROOT_DIR variable!"
-        exit 1
-    }
+[ -z ${NDK_ROOT_DIR} ] \
+&& echo "Please set NDK_ROOT_DIR variable!" \
+&& exit 1
 
-[ -z ${NDK_PROJECT_PATH} ] && \
-    {
-        echo "Please set NDK_PROJECT_PATH variable!"
-        exit 1
-    }
+[ -z ${NDK_PROJECT_PATH} ] \
+&& echo "Please set NDK_PROJECT_PATH variable!" \
+&& exit 1
 
-CXX_IS="${NDK_ROOT_DIR}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++"
+CXX_IS="${NDK_ROOT_DIR}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang++"
 CXX_VERS=$(${CXX_IS} --version | head -n 1)
 
 mkdir -p ${NDK_PROJECT_PATH}/include/PartitionManager/generated

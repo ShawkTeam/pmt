@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *	 http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,22 +16,22 @@
  * limitations under the License.
  */
 
-#define INC_MAIN_LIBS
-#define INC_DEBUGERS
-#define INC_STRINGKEYS
+#define INC_MAIN_LIBS 1
+#define INC_DEBUGERS 1
+#define INC_STRINGKEYS 1
 
 #include <PartitionManager/PartitionManager.h>
 
 /* root checker function */
 void PartitionManager::CheckRoot(void)
 {
-    VLOGD("Trying to get UID with 'getuid <unistd.h>'\n");
+	VLOGD("Trying to get UID with 'getuid <unistd.h>'\n");
 
-    if (getuid() != 0)
-    {
-        VLOGE("You are not superuser!\n");
-        LOGE("%s\n", PartitionManager::Display::UsingDispString->no_root);
-    }
+	if (getuid() != 0)
+	{
+		VLOGE("You are not superuser!\n");
+		LOGE("%s\n", PartitionManager::Display::UsingDispString->no_root);
+	}
 }
 
 /* end of code */

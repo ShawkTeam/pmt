@@ -1,4 +1,4 @@
-echo -e "\`${CXX_VERSION}\`
+echo -e "\`${CC_VERSION}\`
 
 Version and code: \`${PMT_VERSION}\`/\`${PMT_VERSION_CODE}\`
 Supported architectures: \`arm64-v8a\` (64-bit), \`armeabi-v7a\` (32-bit)

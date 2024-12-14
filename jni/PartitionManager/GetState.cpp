@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *	 http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-#define INC_MAIN_LIBS
-#define INC_STAT
+#define INC_MAIN_LIBS 1
+#define INC_STAT 1
 
 #include <PartitionManager/PartitionManager.h>
 
@@ -31,21 +31,22 @@
  */
 int PartitionManager::GetState(const string& filepath, const string& stype)
 {
-    struct stat GetStat;
-    VLOGD("Checking `%s' with 'stat <sys/stat.h>'...\n", filepath.c_str());
+	struct stat GetStat;
+	VLOGD("Checking `%s' with 'stat <sys/stat.h>'...\n", filepath.c_str());
 
-    if (stat(filepath.c_str(), &GetStat) != 0) return 1;
-    if (stype == "dir")
-        return (S_ISDIR(GetStat.st_mode)) ? 0 : -1;
-    else if (stype == "file")
-        return (S_ISREG(GetStat.st_mode)) ? 0 : -1;
-    else if (stype == "blk")
-        return (S_ISBLK(GetStat.st_mode)) ? 0 : -1;
-    else if (stype == "link")
-        return (S_ISLNK(GetStat.st_mode)) ? 0 : -1;
-    else return 3;
+	if (stat(filepath.c_str(), &GetStat) != 0) return 1;
+	if (stype == "none") return 0;
+	if (stype == "dir")
+		return (S_ISDIR(GetStat.st_mode)) ? 0 : -1;
+	else if (stype == "file")
+		return (S_ISREG(GetStat.st_mode)) ? 0 : -1;
+	else if (stype == "blk")
+		return (S_ISBLK(GetStat.st_mode)) ? 0 : -1;
+	else if (stype == "link")
+		return (S_ISLNK(GetStat.st_mode)) ? 0 : -1;
+	else return 3;
 
-    return 2; /* it's a dummy value */
+	return 2; /* it's a dummy value */
 }
 
 /* end of code */
