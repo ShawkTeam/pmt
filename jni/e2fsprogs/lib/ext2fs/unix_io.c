@@ -17,9 +17,7 @@
 
 #if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #define _XOPEN_SOURCE 600
-#ifndef _DARWIN_C_SOURCE
 #define _DARWIN_C_SOURCE
-#endif
 #define _FILE_OFFSET_BITS 64
 #ifndef _LARGEFILE_SOURCE
 #define _LARGEFILE_SOURCE

@@ -20,8 +20,8 @@
 extern "C" {
 #endif
 
-#define BLKID_VERSION	"1.0.0"
-#define BLKID_DATE	"12-Feb-2003"
+#define BLKID_VERSION	"2.40.2"
+#define BLKID_DATE	"04-Jul-2024"
 
 typedef struct blkid_struct_dev *blkid_dev;
 typedef struct blkid_struct_cache *blkid_cache;
