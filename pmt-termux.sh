@@ -116,8 +116,8 @@ function net_control()
 # Download Partition Manager
 function download()
 {
-	local URL="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/tag/${LOCAL_RELEASE_TAG}/download/pmt-${LOCAL_ARCH}-${LOCAL_RELDATE}.xz"
-	local URL_MANDOC="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/tag/${LOCAL_RELEASE_TAG}/download/mandoc.gz"
+	local URL="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/download/${LOCAL_RELEASE_TAG}/pmt-${LOCAL_ARCH}-${LOCAL_RELDATE}.xz"
+	local URL_MANDOC="https://github.com/${LOCAL_OWNER}/${LOCAL_REPO}/releases/download/${LOCAL_RELEASE_TAG}/mandoc.gz"
 
 	cd "${LOCAL_TMPDIR}"
 	print "Downloading: 'pmt-${LOCAL_ARCH}-${LOCAL_RELDATE}.xz'..."
@@ -169,14 +169,12 @@ function install_fn()
 	cd "${LOCAL_TMPDIR}"
 
 	print "Extracting package..."
-	if unxz "$(basename *.xz)" &>/dev/null; then
+	if xz -d "$(basename *.xz)"; then
 		rm -f "pmt*.xz"
 	else
 		abort "Failed! Cannot extract pmt package."
 	fi
 
-	[ -z $(basename "pmt-*") ] \
-	&& abort "Extracted binary file was not found!"
 	mv "$(basename pmt-*)" pmt
 
 	print "Installing..."
