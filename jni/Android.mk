@@ -67,11 +67,6 @@ LIBEXT2_QUOTA := $(LIB)/support
 LIBEXT2_MISC := $(LIB)/misc
 LIBEXT2_COM_ERR := $(LIB)/et
 LIBEXT2_BLKID := $(LIB)/blkid
-LIBGNULIB := $(PARTED)/libgnulib
-LIBCHARSET := $(PARTED)/libcharset
-LIBICRT := $(PARTED)/libiconv/icrt
-LIBICONV := $(PARTED)/libiconv
-LIBPARTED := $(PARTED)/libparted
 INC_DIR := $(LOCAL_PATH)/../include/e2fsprogs
 E2FSPROGS_INCLUDES := \
 	$(INC_DIR)/misc \
@@ -322,11 +317,245 @@ LOCAL_CFLAGS := \
 
 include $(BUILD_STATIC_LIBRARY)
 
-include $(LIBGNULIB)/Android.mk
-include $(LIBCHARSET)/Android.mk
-include $(LIBICRT)/Android.mk
-include $(LIBICONV)/Android.mk
-include $(LIBPARTED)/Android.mk
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libgnulib
+LOCAL_SRC_FILES := \
+	$(LOCAL_PATH)/lib/argmatch.c \
+	$(LOCAL_PATH)/lib/basename-lgpl.c \
+	$(LOCAL_PATH)/lib/basename.c \
+	$(LOCAL_PATH)/lib/btowc.c \
+	$(LOCAL_PATH)/lib/c-ctype.c \
+	$(LOCAL_PATH)/lib/c-strcasecmp.c \
+	$(LOCAL_PATH)/lib/c-strncasecmp.c \
+	$(LOCAL_PATH)/lib/c32isprint.c \
+	$(LOCAL_PATH)/lib/canonicalize-lgpl.c \
+	$(LOCAL_PATH)/lib/cloexec.c \
+	$(LOCAL_PATH)/lib/close-stream.c \
+	$(LOCAL_PATH)/lib/closeout.c \
+	$(LOCAL_PATH)/lib/dirname-lgpl.c \
+	$(LOCAL_PATH)/lib/dirname.c \
+	$(LOCAL_PATH)/lib/error.c \
+	$(LOCAL_PATH)/lib/exitfail.c \
+	$(LOCAL_PATH)/lib/fcntl.c \
+	$(LOCAL_PATH)/lib/free.c \
+	$(LOCAL_PATH)/lib/getdtablesize.c \
+	$(LOCAL_PATH)/lib/hard-locale.c \
+	$(LOCAL_PATH)/lib/ialloc.c \
+	$(LOCAL_PATH)/lib/iswctype.c \
+	$(LOCAL_PATH)/lib/iswdigit.c \
+	$(LOCAL_PATH)/lib/iswpunct.c \
+	$(LOCAL_PATH)/lib/iswxdigit.c \
+	$(LOCAL_PATH)/lib/localcharset.c \
+	$(LOCAL_PATH)/lib/long-options.c \
+	$(LOCAL_PATH)/lib/malloca.c \
+	$(LOCAL_PATH)/lib/mbrtoc32.c \
+	$(LOCAL_PATH)/lib/mbrtowc.c \
+	$(LOCAL_PATH)/lib/mbszero.c \
+	$(LOCAL_PATH)/lib/nl_langinfo.c \
+	$(LOCAL_PATH)/lib/progname.c \
+	$(LOCAL_PATH)/lib/quotearg.c \
+	$(LOCAL_PATH)/lib/rawmemchr.c \
+	$(LOCAL_PATH)/lib/regex.c \
+	$(LOCAL_PATH)/lib/rpmatch.c \
+	$(LOCAL_PATH)/lib/safe-read.c \
+	$(LOCAL_PATH)/lib/setlocale-lock.c \
+	$(LOCAL_PATH)/lib/setlocale_null-unlocked.c \
+	$(LOCAL_PATH)/lib/setlocale_null.c \
+	$(LOCAL_PATH)/lib/stat-time.c \
+	$(LOCAL_PATH)/lib/stripslash.c \
+	$(LOCAL_PATH)/lib/tempname.c \
+	$(LOCAL_PATH)/lib/version-etc-fsf.c \
+	$(LOCAL_PATH)/lib/version-etc.c \
+	$(LOCAL_PATH)/lib/wctype.c \
+	$(LOCAL_PATH)/lib/unictype/ctype_print.c \
+	$(LOCAL_PATH)/lib/xalloc-die.c \
+	$(LOCAL_PATH)/lib/xmalloc.c \
+	$(LOCAL_PATH)/lib/xstrtol.c \
+	$(LOCAL_PATH)/lib/xstrtoll.c \
+	$(LOCAL_PATH)/lib/xstrtoul.c \
+	$(LOCAL_PATH)/lib/xstrtoull.c
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/../include/libgnulib \
+	$(LOCAL_PATH)/../include \
+	$(LOCAL_PATH)/../parted/lib/libgnulib \
+	$(LOCAL_PATH)/parted/libgnuliblib
+LOCAL_CFLAGS := \
+	-Wall \
+	-Wextra \
+	-Wno-sign-compare \
+	-Wno-unused-const-variable \
+	-Wno-unused-parameter \
+	-Wno-nullability-completeness \
+	-Wno-macro-redefined \
+	-fPIC \
+	-include $(LOCAL_PATH)/../include/PartitionManager/Alternatives.h
+
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libcharset
+LOCAL_SRC_FILES := \
+	$(LOCAL_PATH)/parted/libcharset/lib/localcharset.c \
+	$(LOCAL_PATH)/parted/libcharset/lib/relocatable-stub.c
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include/libcharset
+LOCAL_CFLAGS := \
+	-Wall \
+	-Wextra \
+	-Wno-sign-compare \
+	-Wno-unused-const-variable \
+	-Wno-unused-parameter \
+	-fPIC \
+	-g \
+	-fvisibility=hidden
+
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libicrt
+LOCAL_SRC_FILES := \
+	$(LOCAL_PATH)/parted/libiconv/icrt/allocator.c \
+	$(LOCAL_PATH)/parted/libiconv/icrt/areadlink.c \
+	$(LOCAL_PATH)/parted/libiconv/icrt/binary-io.c \
+	$(LOCAL_PATH)/parted/libiconv/icrt/careadlinkat.c \
+	$(LOCAL_PATH)/parted/libiconv/icrt/fd-hook.c \
+	$(LOCAL_PATH)/parted/libiconv/icrt/getprogname.c \
+	$(LOCAL_PATH)/parted/libiconv/icrt/unistd.c \
+	$(LOCAL_PATH)/parted/libiconv/icrt/xreadlink.c
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/parted/libiconv/lib \
+	$(LOCAL_PATH)/parted/libiconv/srclib
+LOCAL_CFLAGS := \
+	-Wall \
+	-Wextra \
+	-Wno-sign-compare \
+	-Wno-unused-const-variable \
+	-Wno-unused-parameter \
+	-Wno-unused-function \
+	-Wno-unused-but-set-variable \
+	-Wno-missing-field-initializers \
+	-fPIC
+
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libiconv
+LOCAL_SRC_FILES := \
+	$(LOCAL_PATH)/parted/libiconv/lib/iconv.c \
+	$(LOCAL_PATH)/parted/libiconv/lib/relocatable.c
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/../include/libiconv \
+	$(LOCAL_PATH)/parted/libiconv/lib \
+	$(LOCAL_PATH)/parted/libiconv/srclib
+LOCAL_CFLAGS := \
+	-Wall \
+	-Wextra \
+	-Wno-sign-compare \
+	-Wno-unused-const-variable \
+	-Wno-unused-parameter \
+	-Wno-unused-function \
+	-Wno-unused-but-set-variable \
+	-Wno-missing-field-initializers \
+	-fPIC
+
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := libparted
+LOCAL_SRC_FILES := \
+	$(LOCAL_PATH)/parted/libparted/architecture.c \
+	$(LOCAL_PATH)/parted/libparted/debug.c \
+	$(LOCAL_PATH)/parted/libparted/device.c \
+	$(LOCAL_PATH)/parted/libparted/disk.c \
+	$(LOCAL_PATH)/parted/libparted/exception.c \
+	$(LOCAL_PATH)/parted/libparted/filesys.c \
+	$(LOCAL_PATH)/parted/libparted/libparted.c \
+	$(LOCAL_PATH)/parted/libparted/timer.c \
+	$(LOCAL_PATH)/parted/libparted/unit.c \
+	$(LOCAL_PATH)/parted/libparted/arch/linux.c \
+	$(LOCAL_PATH)/parted/libparted/cs/constraint.c \
+	$(LOCAL_PATH)/parted/libparted/cs/geom.c \
+	$(LOCAL_PATH)/parted/libparted/cs/natmath.c \
+	$(LOCAL_PATH)/parted/libparted/fs/amiga/a-interface.c \
+	$(LOCAL_PATH)/parted/libparted/fs/amiga/affs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/amiga/amiga.c \
+	$(LOCAL_PATH)/parted/libparted/fs/amiga/apfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/amiga/asfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/btrfs/btrfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/ext2/interface.c \
+	$(LOCAL_PATH)/parted/libparted/fs/f2fs/f2fs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/fat/bootsector.c \
+	$(LOCAL_PATH)/parted/libparted/fs/fat/fat.c \
+	$(LOCAL_PATH)/parted/libparted/fs/hfs/hfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/hfs/probe.c \
+	$(LOCAL_PATH)/parted/libparted/fs/jfs/jfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/linux_swap/linux_swap.c \
+	$(LOCAL_PATH)/parted/libparted/fs/nilfs2/nilfs2.c \
+	$(LOCAL_PATH)/parted/libparted/fs/ntfs/ntfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/filesys.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/bootsector.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/calc.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/clstdup.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/context.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/count.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/fat.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/fatio.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/resize.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/table.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/fat/traverse.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/advfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/advfs_plus.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/cache.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/file.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/file_plus.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/hfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/journal.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/probe.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/reloc.c \
+	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/reloc_plus.c \
+	$(LOCAL_PATH)/parted/libparted/fs/reiserfs/reiserfs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/udf/udf.c \
+	$(LOCAL_PATH)/parted/libparted/fs/ufs/ufs.c \
+	$(LOCAL_PATH)/parted/libparted/fs/xfs/xfs.c \
+	$(LOCAL_PATH)/parted/libparted/labels/aix.c \
+	$(LOCAL_PATH)/parted/libparted/labels/atari.c \
+	$(LOCAL_PATH)/parted/libparted/labels/bsd.c \
+	$(LOCAL_PATH)/parted/libparted/labels/dos.c \
+	$(LOCAL_PATH)/parted/libparted/labels/dvh.c \
+	$(LOCAL_PATH)/parted/libparted/labels/efi_crc32.c \
+	$(LOCAL_PATH)/parted/libparted/labels/fdasd.c \
+	$(LOCAL_PATH)/parted/libparted/labels/gpt.c \
+	$(LOCAL_PATH)/parted/libparted/labels/loop.c \
+	$(LOCAL_PATH)/parted/libparted/labels/mac.c \
+	$(LOCAL_PATH)/parted/libparted/labels/pt-tools.c \
+	$(LOCAL_PATH)/parted/libparted/labels/rdb.c \
+	$(LOCAL_PATH)/parted/libparted/labels/sun.c \
+	$(LOCAL_PATH)/parted/libparted/labels/vtoc.c
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/../include \
+	$(LOCAL_PATH)/../include/libgnulib \
+	$(LOCAL_PATH)/parted \
+	$(LOCAL_PATH)/parted/libparted \
+	$(LOCAL_PATH)/parted/libparted/labels \
+	$(LOCAL_PATH)/parted/lib
+LOCAL_CFLAGS := \
+	-Wall \
+	-Wextra \
+	-fPIC \
+	-Wno-pointer-sign \
+	-Wno-sign-compare \
+	-Wno-gnu-designator \
+	-Wno-unused-variable \
+	-Wno-unused-parameter \
+	-Wno-unused-command-line-argument \
+	-Wno-missing-field-initializers \
+	-Wno-single-bit-bitfield-constant-conversion
+
+include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
