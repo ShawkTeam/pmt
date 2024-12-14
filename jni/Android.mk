@@ -590,7 +590,6 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include/PartitionManager \
 	$(LOCAL_PATH)/../include/libgnulib \
 	$(LOCAL_PATH)/../include/libparted \
-	$(LOCAL_PATH)/parted/lib
 	$(E2FSPROGS_INCLUDES)
 LOCAL_CFLAGS := \
 	$(PMT_CXXFLAGS) \
