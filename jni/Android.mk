@@ -26,6 +26,7 @@ PMT_CXXFLAGS = \
 	-O3 \
 	-Wall \
 	-Wextra \
+	-std=c++17 \
 	-Wno-vla-cxx-extension \
 	-Wno-nullability-completeness \
 	-Wno-writable-strings \
@@ -36,13 +37,16 @@ PMT_CXXFLAGS = \
 	$(PMT_EXTRA_CXXFLAGS)
 E2FSPROGS_DEFAULT_CFLAGS = \
 	-Werror \
+	-std=c17 \
 	-Wno-pointer-arith \
 	-Wno-sign-compare \
 	-Wno-type-limits \
 	-Wno-typedef-redefinition \
 	-Wno-unused-parameter \
-	-Wno-unused-command-line-argument
+	-Wno-unused-command-line-argument \
+	-include ../include/PartitionManager/Alternatives.h
 PARTED_DEFAULTS_CFLAGS = \
+	-std=c17 \
 	-Wno-pointer-sign \
 	-Wno-sign-compare \
 	-Wno-gnu-designator \
@@ -58,7 +62,13 @@ endif
 
 PMT := PartitionManager
 PARTED := parted
+PARTED_SRCDIR := $(PARTED)/parted
 MKE2FS := e2fsprogs/mke2fs
+LIBGNULIB := $(PARTED)/libgnulib
+LIBCHARSET := $(PARTED)/libcharset
+LIBICRT := $(PARTED)/libiconv/icrt
+LIBICONV := $(PARTED)/libiconv
+LIBPARTED := $(PARTED)/libparted
 LIB := e2fsprogs/lib
 LIBEXT2FS := $(LIB)/ext2fs
 LIBEXT2_UUID := $(LIB)/uuid
@@ -321,65 +331,65 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libgnulib
 LOCAL_SRC_FILES := \
-	$(LOCAL_PATH)/lib/argmatch.c \
-	$(LOCAL_PATH)/lib/basename-lgpl.c \
-	$(LOCAL_PATH)/lib/basename.c \
-	$(LOCAL_PATH)/lib/btowc.c \
-	$(LOCAL_PATH)/lib/c-ctype.c \
-	$(LOCAL_PATH)/lib/c-strcasecmp.c \
-	$(LOCAL_PATH)/lib/c-strncasecmp.c \
-	$(LOCAL_PATH)/lib/c32isprint.c \
-	$(LOCAL_PATH)/lib/canonicalize-lgpl.c \
-	$(LOCAL_PATH)/lib/cloexec.c \
-	$(LOCAL_PATH)/lib/close-stream.c \
-	$(LOCAL_PATH)/lib/closeout.c \
-	$(LOCAL_PATH)/lib/dirname-lgpl.c \
-	$(LOCAL_PATH)/lib/dirname.c \
-	$(LOCAL_PATH)/lib/error.c \
-	$(LOCAL_PATH)/lib/exitfail.c \
-	$(LOCAL_PATH)/lib/fcntl.c \
-	$(LOCAL_PATH)/lib/free.c \
-	$(LOCAL_PATH)/lib/getdtablesize.c \
-	$(LOCAL_PATH)/lib/hard-locale.c \
-	$(LOCAL_PATH)/lib/ialloc.c \
-	$(LOCAL_PATH)/lib/iswctype.c \
-	$(LOCAL_PATH)/lib/iswdigit.c \
-	$(LOCAL_PATH)/lib/iswpunct.c \
-	$(LOCAL_PATH)/lib/iswxdigit.c \
-	$(LOCAL_PATH)/lib/localcharset.c \
-	$(LOCAL_PATH)/lib/long-options.c \
-	$(LOCAL_PATH)/lib/malloca.c \
-	$(LOCAL_PATH)/lib/mbrtoc32.c \
-	$(LOCAL_PATH)/lib/mbrtowc.c \
-	$(LOCAL_PATH)/lib/mbszero.c \
-	$(LOCAL_PATH)/lib/nl_langinfo.c \
-	$(LOCAL_PATH)/lib/progname.c \
-	$(LOCAL_PATH)/lib/quotearg.c \
-	$(LOCAL_PATH)/lib/rawmemchr.c \
-	$(LOCAL_PATH)/lib/regex.c \
-	$(LOCAL_PATH)/lib/rpmatch.c \
-	$(LOCAL_PATH)/lib/safe-read.c \
-	$(LOCAL_PATH)/lib/setlocale-lock.c \
-	$(LOCAL_PATH)/lib/setlocale_null-unlocked.c \
-	$(LOCAL_PATH)/lib/setlocale_null.c \
-	$(LOCAL_PATH)/lib/stat-time.c \
-	$(LOCAL_PATH)/lib/stripslash.c \
-	$(LOCAL_PATH)/lib/tempname.c \
-	$(LOCAL_PATH)/lib/version-etc-fsf.c \
-	$(LOCAL_PATH)/lib/version-etc.c \
-	$(LOCAL_PATH)/lib/wctype.c \
-	$(LOCAL_PATH)/lib/unictype/ctype_print.c \
-	$(LOCAL_PATH)/lib/xalloc-die.c \
-	$(LOCAL_PATH)/lib/xmalloc.c \
-	$(LOCAL_PATH)/lib/xstrtol.c \
-	$(LOCAL_PATH)/lib/xstrtoll.c \
-	$(LOCAL_PATH)/lib/xstrtoul.c \
-	$(LOCAL_PATH)/lib/xstrtoull.c
+	$(LIBGNULIB)/lib/argmatch.c \
+	$(LIBGNULIB)/lib/basename-lgpl.c \
+	$(LIBGNULIB)/lib/basename.c \
+	$(LIBGNULIB)/lib/btowc.c \
+	$(LIBGNULIB)/lib/c-ctype.c \
+	$(LIBGNULIB)/lib/c-strcasecmp.c \
+	$(LIBGNULIB)/lib/c-strncasecmp.c \
+	$(LIBGNULIB)/lib/c32isprint.c \
+	$(LIBGNULIB)/lib/canonicalize-lgpl.c \
+	$(LIBGNULIB)/lib/cloexec.c \
+	$(LIBGNULIB)/lib/close-stream.c \
+	$(LIBGNULIB)/lib/closeout.c \
+	$(LIBGNULIB)/lib/dirname-lgpl.c \
+	$(LIBGNULIB)/lib/dirname.c \
+	$(LIBGNULIB)/lib/error.c \
+	$(LIBGNULIB)/lib/exitfail.c \
+	$(LIBGNULIB)/lib/fcntl.c \
+	$(LIBGNULIB)/lib/free.c \
+	$(LIBGNULIB)/lib/getdtablesize.c \
+	$(LIBGNULIB)/lib/hard-locale.c \
+	$(LIBGNULIB)/lib/ialloc.c \
+	$(LIBGNULIB)/lib/iswctype.c \
+	$(LIBGNULIB)/lib/iswdigit.c \
+	$(LIBGNULIB)/lib/iswpunct.c \
+	$(LIBGNULIB)/lib/iswxdigit.c \
+	$(LIBGNULIB)/lib/localcharset.c \
+	$(LIBGNULIB)/lib/long-options.c \
+	$(LIBGNULIB)/lib/malloca.c \
+	$(LIBGNULIB)/lib/mbrtoc32.c \
+	$(LIBGNULIB)/lib/mbrtowc.c \
+	$(LIBGNULIB)/lib/mbszero.c \
+	$(LIBGNULIB)/lib/nl_langinfo.c \
+	$(LIBGNULIB)/lib/progname.c \
+	$(LIBGNULIB)/lib/quotearg.c \
+	$(LIBGNULIB)/lib/rawmemchr.c \
+	$(LIBGNULIB)/lib/regex.c \
+	$(LIBGNULIB)/lib/rpmatch.c \
+	$(LIBGNULIB)/lib/safe-read.c \
+	$(LIBGNULIB)/lib/setlocale-lock.c \
+	$(LIBGNULIB)/lib/setlocale_null-unlocked.c \
+	$(LIBGNULIB)/lib/setlocale_null.c \
+	$(LIBGNULIB)/lib/stat-time.c \
+	$(LIBGNULIB)/lib/stripslash.c \
+	$(LIBGNULIB)/lib/tempname.c \
+	$(LIBGNULIB)/lib/version-etc-fsf.c \
+	$(LIBGNULIB)/lib/version-etc.c \
+	$(LIBGNULIB)/lib/wctype.c \
+	$(LIBGNULIB)/lib/unictype/ctype_print.c \
+	$(LIBGNULIB)/lib/xalloc-die.c \
+	$(LIBGNULIB)/lib/xmalloc.c \
+	$(LIBGNULIB)/lib/xstrtol.c \
+	$(LIBGNULIB)/lib/xstrtoll.c \
+	$(LIBGNULIB)/lib/xstrtoul.c \
+	$(LIBGNULIB)/lib/xstrtoull.c
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include/libgnulib \
 	$(LOCAL_PATH)/../include \
-	$(LOCAL_PATH)/../parted/lib/libgnulib \
-	$(LOCAL_PATH)/parted/libgnuliblib
+	$(PARTED)/lib \
+	$(LIBGNULIB)/lib
 LOCAL_CFLAGS := \
 	-Wall \
 	-Wextra \
@@ -397,8 +407,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libcharset
 LOCAL_SRC_FILES := \
-	$(LOCAL_PATH)/parted/libcharset/lib/localcharset.c \
-	$(LOCAL_PATH)/parted/libcharset/lib/relocatable-stub.c
+	$(LIBCHARSET)/lib/localcharset.c \
+	$(LIBCHARSET)/lib/relocatable-stub.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include/libcharset
 LOCAL_CFLAGS := \
 	-Wall \
@@ -416,17 +426,17 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libicrt
 LOCAL_SRC_FILES := \
-	$(LOCAL_PATH)/parted/libiconv/icrt/allocator.c \
-	$(LOCAL_PATH)/parted/libiconv/icrt/areadlink.c \
-	$(LOCAL_PATH)/parted/libiconv/icrt/binary-io.c \
-	$(LOCAL_PATH)/parted/libiconv/icrt/careadlinkat.c \
-	$(LOCAL_PATH)/parted/libiconv/icrt/fd-hook.c \
-	$(LOCAL_PATH)/parted/libiconv/icrt/getprogname.c \
-	$(LOCAL_PATH)/parted/libiconv/icrt/unistd.c \
-	$(LOCAL_PATH)/parted/libiconv/icrt/xreadlink.c
+	$(LIBICRT)/allocator.c \
+	$(LIBICRT)/areadlink.c \
+	$(LIBICRT)/binary-io.c \
+	$(LIBICRT)/careadlinkat.c \
+	$(LIBICRT)/fd-hook.c \
+	$(LIBICRT)/getprogname.c \
+	$(LIBICRT)/unistd.c \
+	$(LIBICRT)/xreadlink.c
 LOCAL_C_INCLUDES := \
-	$(LOCAL_PATH)/parted/libiconv/lib \
-	$(LOCAL_PATH)/parted/libiconv/srclib
+	$(LIBICONV)/lib \
+	$(LIBICONV)/srclib
 LOCAL_CFLAGS := \
 	-Wall \
 	-Wextra \
@@ -444,12 +454,12 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libiconv
 LOCAL_SRC_FILES := \
-	$(LOCAL_PATH)/parted/libiconv/lib/iconv.c \
-	$(LOCAL_PATH)/parted/libiconv/lib/relocatable.c
+	$(LIBICONV)/lib/iconv.c \
+	$(LIBICONV)/lib/relocatable.c
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include/libiconv \
-	$(LOCAL_PATH)/parted/libiconv/lib \
-	$(LOCAL_PATH)/parted/libiconv/srclib
+	$(LIBICONV)/lib \
+	$(LIBICONV)/srclib
 LOCAL_CFLAGS := \
 	-Wall \
 	-Wextra \
@@ -467,93 +477,117 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libparted
 LOCAL_SRC_FILES := \
-	$(LOCAL_PATH)/parted/libparted/architecture.c \
-	$(LOCAL_PATH)/parted/libparted/debug.c \
-	$(LOCAL_PATH)/parted/libparted/device.c \
-	$(LOCAL_PATH)/parted/libparted/disk.c \
-	$(LOCAL_PATH)/parted/libparted/exception.c \
-	$(LOCAL_PATH)/parted/libparted/filesys.c \
-	$(LOCAL_PATH)/parted/libparted/libparted.c \
-	$(LOCAL_PATH)/parted/libparted/timer.c \
-	$(LOCAL_PATH)/parted/libparted/unit.c \
-	$(LOCAL_PATH)/parted/libparted/arch/linux.c \
-	$(LOCAL_PATH)/parted/libparted/cs/constraint.c \
-	$(LOCAL_PATH)/parted/libparted/cs/geom.c \
-	$(LOCAL_PATH)/parted/libparted/cs/natmath.c \
-	$(LOCAL_PATH)/parted/libparted/fs/amiga/a-interface.c \
-	$(LOCAL_PATH)/parted/libparted/fs/amiga/affs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/amiga/amiga.c \
-	$(LOCAL_PATH)/parted/libparted/fs/amiga/apfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/amiga/asfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/btrfs/btrfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/ext2/interface.c \
-	$(LOCAL_PATH)/parted/libparted/fs/f2fs/f2fs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/fat/bootsector.c \
-	$(LOCAL_PATH)/parted/libparted/fs/fat/fat.c \
-	$(LOCAL_PATH)/parted/libparted/fs/hfs/hfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/hfs/probe.c \
-	$(LOCAL_PATH)/parted/libparted/fs/jfs/jfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/linux_swap/linux_swap.c \
-	$(LOCAL_PATH)/parted/libparted/fs/nilfs2/nilfs2.c \
-	$(LOCAL_PATH)/parted/libparted/fs/ntfs/ntfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/filesys.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/bootsector.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/calc.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/clstdup.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/context.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/count.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/fat.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/fatio.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/resize.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/table.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/fat/traverse.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/advfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/advfs_plus.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/cache.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/file.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/file_plus.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/hfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/journal.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/probe.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/reloc.c \
-	$(LOCAL_PATH)/parted/libparted/fs/r/hfs/reloc_plus.c \
-	$(LOCAL_PATH)/parted/libparted/fs/reiserfs/reiserfs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/udf/udf.c \
-	$(LOCAL_PATH)/parted/libparted/fs/ufs/ufs.c \
-	$(LOCAL_PATH)/parted/libparted/fs/xfs/xfs.c \
-	$(LOCAL_PATH)/parted/libparted/labels/aix.c \
-	$(LOCAL_PATH)/parted/libparted/labels/atari.c \
-	$(LOCAL_PATH)/parted/libparted/labels/bsd.c \
-	$(LOCAL_PATH)/parted/libparted/labels/dos.c \
-	$(LOCAL_PATH)/parted/libparted/labels/dvh.c \
-	$(LOCAL_PATH)/parted/libparted/labels/efi_crc32.c \
-	$(LOCAL_PATH)/parted/libparted/labels/fdasd.c \
-	$(LOCAL_PATH)/parted/libparted/labels/gpt.c \
-	$(LOCAL_PATH)/parted/libparted/labels/loop.c \
-	$(LOCAL_PATH)/parted/libparted/labels/mac.c \
-	$(LOCAL_PATH)/parted/libparted/labels/pt-tools.c \
-	$(LOCAL_PATH)/parted/libparted/labels/rdb.c \
-	$(LOCAL_PATH)/parted/libparted/labels/sun.c \
-	$(LOCAL_PATH)/parted/libparted/labels/vtoc.c
+	$(LIBPARTED)/architecture.c \
+	$(LIBPARTED)/debug.c \
+	$(LIBPARTED)/device.c \
+	$(LIBPARTED)/disk.c \
+	$(LIBPARTED)/exception.c \
+	$(LIBPARTED)/filesys.c \
+	$(LIBPARTED)/libparted.c \
+	$(LIBPARTED)/timer.c \
+	$(LIBPARTED)/unit.c \
+	$(LIBPARTED)/arch/linux.c \
+	$(LIBPARTED)/cs/constraint.c \
+	$(LIBPARTED)/cs/geom.c \
+	$(LIBPARTED)/cs/natmath.c \
+	$(LIBPARTED)/fs/amiga/a-interface.c \
+	$(LIBPARTED)/fs/amiga/affs.c \
+	$(LIBPARTED)/fs/amiga/amiga.c \
+	$(LIBPARTED)/fs/amiga/apfs.c \
+	$(LIBPARTED)/fs/amiga/asfs.c \
+	$(LIBPARTED)/fs/btrfs/btrfs.c \
+	$(LIBPARTED)/fs/ext2/interface.c \
+	$(LIBPARTED)/fs/f2fs/f2fs.c \
+	$(LIBPARTED)/fs/fat/bootsector.c \
+	$(LIBPARTED)/fs/fat/fat.c \
+	$(LIBPARTED)/fs/hfs/hfs.c \
+	$(LIBPARTED)/fs/hfs/probe.c \
+	$(LIBPARTED)/fs/jfs/jfs.c \
+	$(LIBPARTED)/fs/linux_swap/linux_swap.c \
+	$(LIBPARTED)/fs/nilfs2/nilfs2.c \
+	$(LIBPARTED)/fs/ntfs/ntfs.c \
+	$(LIBPARTED)/fs/r/filesys.c \
+	$(LIBPARTED)/fs/r/fat/bootsector.c \
+	$(LIBPARTED)/fs/r/fat/calc.c \
+	$(LIBPARTED)/fs/r/fat/clstdup.c \
+	$(LIBPARTED)/fs/r/fat/context.c \
+	$(LIBPARTED)/fs/r/fat/count.c \
+	$(LIBPARTED)/fs/r/fat/fat.c \
+	$(LIBPARTED)/fs/r/fat/fatio.c \
+	$(LIBPARTED)/fs/r/fat/resize.c \
+	$(LIBPARTED)/fs/r/fat/table.c \
+	$(LIBPARTED)/fs/r/fat/traverse.c \
+	$(LIBPARTED)/fs/r/hfs/advfs.c \
+	$(LIBPARTED)/fs/r/hfs/advfs_plus.c \
+	$(LIBPARTED)/fs/r/hfs/cache.c \
+	$(LIBPARTED)/fs/r/hfs/file.c \
+	$(LIBPARTED)/fs/r/hfs/file_plus.c \
+	$(LIBPARTED)/fs/r/hfs/hfs.c \
+	$(LIBPARTED)/fs/r/hfs/journal.c \
+	$(LIBPARTED)/fs/r/hfs/probe.c \
+	$(LIBPARTED)/fs/r/hfs/reloc.c \
+	$(LIBPARTED)/fs/r/hfs/reloc_plus.c \
+	$(LIBPARTED)/fs/reiserfs/reiserfs.c \
+	$(LIBPARTED)/fs/udf/udf.c \
+	$(LIBPARTED)/fs/ufs/ufs.c \
+	$(LIBPARTED)/fs/xfs/xfs.c \
+	$(LIBPARTED)/labels/aix.c \
+	$(LIBPARTED)/labels/atari.c \
+	$(LIBPARTED)/labels/bsd.c \
+	$(LIBPARTED)/labels/dos.c \
+	$(LIBPARTED)/labels/dvh.c \
+	$(LIBPARTED)/labels/efi_crc32.c \
+	$(LIBPARTED)/labels/fdasd.c \
+	$(LIBPARTED)/labels/gpt.c \
+	$(LIBPARTED)/labels/loop.c \
+	$(LIBPARTED)/labels/mac.c \
+	$(LIBPARTED)/labels/pt-tools.c \
+	$(LIBPARTED)/labels/rdb.c \
+	$(LIBPARTED)/labels/sun.c \
+	$(LIBPARTED)/labels/vtoc.c
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include \
 	$(LOCAL_PATH)/../include/libgnulib \
-	$(LOCAL_PATH)/parted \
-	$(LOCAL_PATH)/parted/libparted \
-	$(LOCAL_PATH)/parted/libparted/labels \
-	$(LOCAL_PATH)/parted/lib
-LOCAL_CFLAGS := \
-	-Wall \
-	-Wextra \
-	-fPIC \
-	-Wno-pointer-sign \
-	-Wno-sign-compare \
-	-Wno-gnu-designator \
-	-Wno-unused-variable \
-	-Wno-unused-parameter \
-	-Wno-unused-command-line-argument \
-	-Wno-missing-field-initializers \
-	-Wno-single-bit-bitfield-constant-conversion
+	$(PARTED) \
+	$(LIBPARTED) \
+	$(LIBPARTED)/labels \
+	$(PARTED)/lib
+LOCAL_CFLAGS := $(PARTED_DEFAULTS_CFLAGS)
+
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := lib__parted_objs
+LOCAL_SRC_FILES := \
+	$(PARTED)/command.c \
+	$(PARTED)/jsonwrt.c \
+	$(PARTED)/parted.c \
+	$(PARTED)/strlist.c \
+	$(PARTED)/table.c \
+	$(PARTED)/ui.c \
+	$(PARTED)/version.c
+LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/../include \
+	$(LOCAL_PATH)/../include/libgnulib \
+	$(PARTED) \
+	$(LIBPARTED) \
+	$(LIBPARTED)/labels \
+	$(PARTED)/lib
+LOCAL_CFLAGS := $(PARTED_DEFAULTS_CFLAGS)
+
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := lib__mke2fs_objs
+LOCAL_SRC_FILES := \
+	$(MKE2FS)/default_profile.c \
+	$(MKE2FS)/mk_hugefiles.c \
+	$(MKE2FS)/mke2fs.c \
+	$(MKE2FS)/util.c
+LOCAL_C_INCLUDES := $(E2FSPROGS_INCLUDES)
+LOCAL_CFLAGS := $(E2FSPROGS_DEFAULT_CFLAGS)
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -573,28 +607,11 @@ LOCAL_SRC_FILES := \
 	$(PMT)/Tools.cpp \
 	$(PMT)/LanguageTools.cpp \
 	$(PMT)/Languages.cpp \
-	$(PMT)/Help.cpp \
-	$(MKE2FS)/default_profile.c \
-	$(MKE2FS)/mk_hugefiles.c \
-	$(MKE2FS)/mke2fs.c \
-	$(MKE2FS)/util.c \
-	$(PARTED)/parted/command.c \
-	$(PARTED)/parted/jsonwrt.c \
-	$(PARTED)/parted/parted.c \
-	$(PARTED)/parted/strlist.c \
-	$(PARTED)/parted/table.c \
-	$(PARTED)/parted/ui.c \
-	$(PARTED)/parted/version.c
+	$(PMT)/Help.cpp
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include \
-	$(LOCAL_PATH)/../include/PartitionManager \
-	$(LOCAL_PATH)/../include/libgnulib \
-	$(LOCAL_PATH)/../include/libparted \
-	$(E2FSPROGS_INCLUDES)
-LOCAL_CFLAGS := \
-	$(PMT_CXXFLAGS) \
-	$(E2FSPROGS_DEFAULT_CFLAGS) \
-	$(PARTED_DEFAULTS_CFLAGS)
+	$(LOCAL_PATH)/../include/PartitionManager
+LOCAL_CFLAGS := $(PMT_CXXFLAGS)
 LOCAL_STATIC_LIBRARIES := \
 	libext2fs \
 	libext2_blkid \
@@ -607,6 +624,8 @@ LOCAL_STATIC_LIBRARIES := \
 	libparted \
 	libiconv \
 	libcharset \
-	libicrt
+	libicrt \
+	lib__parted_objs \
+	lib__mke2fs_objs
 
 include $(BUILD_EXECUTABLE)
