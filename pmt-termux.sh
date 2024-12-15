@@ -78,7 +78,7 @@ function get_architecture()
 {
 	LOCAL_ARCH=$(getprop ro.product.cpu.abi)
 
-	print "Device architecture: ${arch}."
+	print "Device architecture: ${LOCAL_ARCH}."
 }
 
 # Generate template dir
