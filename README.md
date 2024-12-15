@@ -43,8 +43,9 @@ Report bugs and suggestions to <t.me/ShawkTeam | Topics | pmt>
 
 #### Some notes
 
+- See the [guide](https://github.com/ShawkTeam/pmt/blob/3.0.2/INSTALLING.md) for installation (`INSTALLING.md`).
 - pmt supports multiple languages. [See languages.](https://github.com/ShawkTeam/pmt/blob/3.0.2/LANGUAGES.md)
-- [Add language.](https://github.com/ShawkTeam/pmt/blob/3.0.2/ADD-LANGUAGES.md)
+- [Add a language!](https://github.com/ShawkTeam/pmt/blob/3.0.2/ADD-LANGUAGES.md)
 - Feel free to ask any questions you want.
 - Packages are available in publications.
 - If the logical partition flag is not used, a classic partition is tried to be processing by default.
