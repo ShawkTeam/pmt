@@ -93,33 +93,6 @@ cd "${NDK_PROJECT_PATH}" \
                           pmt                 pmt
 ```
 
-```
-# Manage pmt with termux script
-## Download script
-curl -LSs https://github.com/ShawkTeam/pmt/raw/3.0.2/pmt-termux.sh > pmt-termux.sh
-
-## View script help
-bash pmt-termux.sh # --help (optional)
-
-## The commands will be told to you anyway. Ask your questions from the telegram group.
-```
-
-### How to use
-```
-# Run
-/system/bin/su
-```
-
-- If you have installed the deb package of pmt, installed it with a makefile, or installed it to `$PATH` using any path, just the name of the pmt is enough (or the file name if you did it manually)
-```
-pmt <...>
-```
-
-- If you have not done this type of institution, pmt is in the directory where you are present you can run with `./`.
-```
-./pmt <...> # or whatever the file name is
-```
-
 ### Notes
 If you want to change something, take a look at the configuration. You can change him.
 it is located in the `build/config` folder. His name is `env.mk`. I gave the information in the file. You can ask more.
