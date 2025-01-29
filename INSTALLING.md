@@ -37,7 +37,7 @@ The simplest installation in this guide is the one to be performed on termux. Be
    sudo pmt --help
    ```
 
-**NOTES:**
+##### **NOTES:**
    - You must be connected to the **Internet** when performing these operations.
    - Root access is **not required** during the installation process, do not use it!
 
