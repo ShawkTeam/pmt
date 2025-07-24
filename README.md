@@ -2,6 +2,8 @@
 
 [![Commit reviewed](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml/badge.svg)](https://github.com/ShawkTeam/pmt/actions/workflows/check_commits.yml)
 
+## Work continues on the renovated pmt! You can check it out now :) [ShawkTeam/pmt-renovated](https://github.com/ShawkTeam/pmt-renovated)
+
 This binary, written with C++, is for managing (partition) table, writing/reading, formatting and getting size on Android partitions.
 
 ```
